@@ -55,7 +55,7 @@ void loop() {
   //Serial.write(4);
 
   if(status==1)
-  changeStripColor(GREEN);
+    strip.clear();
 
   if (Serial.available() > 0) {
     // read the incoming bytes:
