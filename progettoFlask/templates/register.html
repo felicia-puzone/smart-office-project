@@ -1,0 +1,35 @@
+<!-- Store this code in 'register.html' file inside the 'templates' folder -->
+ 
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title> Register </title>  
+    </head>
+    <body></br></br></br></br></br>
+        <div align="center">
+          <div align="center" class="border">
+             <div class="header">
+                <h1 class="word">Registrazione</h1>
+             </div></br></br></br>
+            <h2 class="word">
+                <form action="{{ url_for('register') }}" method="post">
+                  <div class="msg">{{ msg }}</div>
+                    <input id="CF" name="CF" type="text" placeholder="Il tuo codice fiscale" class="textbox" required/></br></br>				
+                    <input id="username" name="username" type="text" placeholder="Username" class="textbox" required/></br></br>
+                    <input id="password" name="password" type="password" placeholder="Password" class="textbox" required/></br></br>
+		    <input type="date" id="birthday" name="birthday" required/> </br></br>
+		    <select id="sesso" name="sesso">
+ 			 <option value="1">Maschio</option>
+  			 <option value="2">Femmina</option>
+  			 <option value="3">Altro</option>
+		    </select>
+                    <input type="color" id="color" name="color" value="#f6b73c" required/> </br></br>
+		    
+		    <input type="submit" class="btn" value="Sign Up"></br>
+                </form>
+            </h2>
+            <p class="bottom">Hai già un account?  <a class="bottom" href="{{url_for('login')}}">Accedi qui</a></p>
+          </div>
+        </div>
+    </body>
+</html>
