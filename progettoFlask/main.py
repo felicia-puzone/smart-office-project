@@ -1,19 +1,39 @@
 # This is a sample Python script.
 import configparser
+import datetime
 import re
-# Press Maiusc+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-import sqlite3, flask_mqtt
-from sqlite3 import Error
+import sqlite3
+from sqlite3 import Error, connect
+
+import requests as requests
 from flask import Flask, request, render_template, session, redirect, url_for
 from flask_mqtt import Mqtt
+from flask_socketio import SocketIO
 
-import json
 import paho.mqtt.client as mqtt
 appname="IOT main"
 app = Flask(appname)
 app.secret_key = 'secretkey'
-mqtt=Mqtt
+app.config['MQTT_BROKER_URL'] = 'ilvero.davidepalma.it'  # use the free broker from HIVEMQ
+app.config['MQTT_BROKER_PORT'] = 80  # default port for non-tls connection
+app.config['MQTT_USERNAME'] = 'uni'  # set the username here if you need authentication for the broker
+app.config['MQTT_PASSWORD'] = 'more'  # set the password here if the broker demands authentication
+app.config['MQTT_KEEPALIVE'] = 5  # set the time interval for sending a ping to the broker to 5 seconds
+app.config['MQTT_TLS_ENABLED'] = False  # set TLS to disabled for testing purposes
+mqtt=Mqtt(app)
+socketio=SocketIO(app)
+@mqtt.on_connect()
+def handle_connect(client,userdata,flags,rc):
+    mqtt.subscribe('provatopic')
+    mqtt.publish('provatopic','ciao sono l\'app Flask di Billi')
+    print("buenos dias!")
+@mqtt.on_message()
+def handle_message_mqtt(client,userdata,message):
+    data = dict(
+        topic=message.topic,
+        payload=message.payload.decode()
+    )
+    print('Received message on topic: {topic} with payload: {payload}'.format(**data))
 @app.route("/") #percorsi url locali
 @app.route('/login',methods = ['GET','POST'])
 #le risposte saranno sempre stringhe
@@ -25,22 +45,28 @@ def login():
         password = request.form['password']
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM accounts WHERE username =? AND password=?',(username,password))
-
         connection.commit()
         account = cursor.fetchall()
         if account:
             session['loggedin'] = True
             session['username'] = account[0][1]
             session['color'] = account[0][3]
-            session['microcontr']= Microcontrollere.(,...,...)
-
+            #richiesta post a un AI fittizia, per ora messa a commento
+            #URL = "http://127.0.0.1:8000/query"
+            #PARAMS = {'age': 25}
+            #r = requests.post(url=URL, params=PARAMS)
+            #print(r.text)
+            #session['microcontr']= Microcontrollere.(,...,...)
+            mqtt.publish('provatopic',session['username']+" ha loggato!")
+            mqtt.subscribe(session['username']+'movimento')
             msg='Logged in!'
-            return render_template('index.html',color=session['color'],username=session['username'])
+            return render_template('index.html',color=session['color'],username=session['username'],pippo=1)
         else:
             msg = 'Incorrect username / password !'
     return render_template('login.html',msg=msg)
 @app.route('/logout',methods = ['GET','POST'])
 def logout():
+    mqtt.unsubscribe(session['username']+'movimento')
     session.pop('loggedin', None)
     session.pop('username', None)
     return redirect(url_for('login'))
@@ -55,7 +81,6 @@ def register():
         CF=request.form['CF']
         Color=request.form['color']
         Birthday=request.form['birthday']
-        # "CREATE TABLE 'accounts' (CF VARCHAR(16) PRIMARY KEY,username VARCHAR(20) NOT NULL,password VARCHAR(20) NOT NULL,color VARCHAR(20) NOT NULL,dateofbirth VARCHAR(20) NOT NULL);")
 
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM accounts WHERE username =?',(username,))
@@ -88,55 +113,24 @@ def register():
 def update():
     if request.method == 'POST':
         color=request.form['color']
-        #username=session['username']
         if color != session['color']:
             connection = sqlite3.connect('database.db')
             cursor=connection.cursor()
             cursor.execute('UPDATE accounts SET color=? WHERE username=?', (color, session['username']))
             connection.commit()
             session['color']=color
+            mqtt.publish('provatopic',session['username'] + " ha cambiato il colore del LED a " + session['color'])
     return render_template('index.html',color=session['color'],username=session['username'])
 
-
-class MQTTComm():
-    def __init__(self):
-        self.config = configparser.ConfigParser()
-        self.config.read('config.ini')
-        self.setupMQTT()
-
-
-    def setupMQTT(self):
-        self.clientMQTT = mqtt.Client()
-        self.clientMQTT.on_connect = self.on_connect
-        self.clientMQTT.on_message = self.on_message
-        self.clientMQTT.username_pw_set(self.config.get("MQTT", "BrokerUsername", fallback="admin"),
-                                        self.config.get("MQTT", "BrokerPassword", fallback="admin"))
-        print("connecting to MQTT broker...")
-        server = self.config.get("MQTT", "Server", fallback="localhost")
-        port = self.config.getint("MQTT", "Port", fallback=1883)
-        self.clientMQTT.connect(server, port, 60)
-        self.clientMQTT.loop_start()
-
-
-    def on_connect(self, client, userdata, flags, rc):
-        print("Connected with result code " + str(rc))
-        # Subscribing in on_connect() means that if we lose the connection and
-        # reconnect then subscriptions will be renewed.
-        self.clientMQTT.subscribe("mylight")
-
-    # The callback for when a PUBLISH message is received from the server.
-
-
-    def on_message(self, client, userdata, msg):
-        print(msg.topic + " " + str(msg.payload))
-        if msg.topic == 'mylight':
-            self.ser.write(msg.payload)
 
 def create_connection():
     conn=None
     try:
         conn = sqlite3.connect('database.db')
         conn.execute("CREATE TABLE 'accounts' (CF VARCHAR(16) UNIQUE,username VARCHAR(20) NOT NULL PRIMARY KEY,password VARCHAR(20) NOT NULL,color VARCHAR(20) NOT NULL,dateofbirth VARCHAR(20) NOT NULL);")
+        conn.execute("CREATE TABLE 'sessions' (ID_ROOM VARCHAR(16),username VARCHAR(20),active BOOLEAN, timestamp_begin VARCHAR(20), timestamp_end VARCHAR(20));")
+        conn.execute("CREATE TABLE 'rooms' (ID_ROOM INTEGER PRIMARY KEY, ID_BUILDING INTEGER);")
+        conn.execute("CREATE TABLE 'buildings' (ID_BUILDING INTEGER PRIMARY KEY);")
         print(sqlite3.version)
     except Error as e:
         print(e)
@@ -144,12 +138,17 @@ def create_connection():
         if conn:
             conn.close()
 if __name__ =="__main__":
-    port=8000
+    port=5000
     interface='0.0.0.0'
     #create_connection()
+
     app.run(host=interface, port=port)
+    #mqtt.init_app(app)
     #app.run() #ciclo bloccante che gestisce le richieste
 
-#comando flask run
-#servizio dns gratuito dns.net
-#associa temporaneamente un ip temporaneo
+
+
+
+
+#tabella sessioni
+#timestamp username edificio stanza expired
