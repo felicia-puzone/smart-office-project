@@ -3,8 +3,6 @@ class UserSession {
   late int id_edificio;
   late int id_room;
   late String username;
-  late String gender;
-  late String occupation;
   late String room_color;
   late String room_brightness;
   late String room_temperature;
@@ -14,8 +12,6 @@ class UserSession {
     required this.id_edificio,
     required this.id_room,
     required this.username,
-    required this.gender,
-    required this.occupation,
     required this.room_color,
     required this.room_brightness,
     required this.room_temperature,
@@ -27,8 +23,6 @@ class UserSession {
       id_edificio: json['id_edificio'],
       id_room: json['id_room'],
       username: json['username'],
-      occupation: json['occupation'],
-      gender: json['gender'],
       room_color: json['room_color'],
       room_brightness: json['room_brightness'],
       room_temperature: json['room_temperature'],

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:loginuicolors/edificio.dart';
 import 'register.dart';
 import 'main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'home.dart';
 import 'userSession.dart';
+import 'edificio.dart';
 
 //////////////// REQUEST
 final userTextController = TextEditingController();
@@ -17,7 +19,7 @@ Future<String> fetchUserSession() async {
   String pwd = pwdTextController.text;
 
   final response = await http.post(
-    Uri.parse('http://35.170.9.95:5000/loginapp'),
+    Uri.parse('http://192.168.180.91:5000/loginapp'),
     headers: <String, String>{
       'Content-Type': 'application/x-www-form-urlencoded',
       'Content-ID': 'LOGIN-APP'
@@ -30,7 +32,7 @@ Future<String> fetchUserSession() async {
     // then parse the JSON.
     userSession = UserSession.fromJson(jsonDecode(response.body));
 
-    return response.body;
+    return userSession.username;
   } else {
     // If the server did not return a 200 OK response,
     // then throw an exception.
@@ -52,7 +54,6 @@ class _UserSessionResponseState extends State<UserSessionResponse> {
   @override
   void initState() {
     super.initState();
-    provaResponse = fetchUserSession();
   }
 
   @override
@@ -85,6 +86,56 @@ class _UserSessionResponseState extends State<UserSessionResponse> {
 }
 
 /////////////////////////////////////////////////
+///
+///
+///
+
+class EdificiResponse extends StatefulWidget {
+  const EdificiResponse({super.key});
+
+  @override
+  State<EdificiResponse> createState() => _EdificiResponseState();
+}
+
+class _EdificiResponseState extends State<EdificiResponse> {
+  //late Future<UserSession> futureUserSession;
+  late Future<String> edificiResponse;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Risposta'),
+        ),
+        body: SingleChildScrollView(
+          child: FutureBuilder<String>(
+            future: edificiResponse,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                /*return Text(snapshot.data!.name +
+                ' ' +
+                snapshot.data!.email +
+                ' ' +
+                snapshot.data!.gender); */
+                return Text(snapshot.data!);
+              } else if (snapshot.hasError) {
+                return Text('${snapshot.error}');
+              }
+
+              // By default, show a loading spinner.
+              return const CircularProgressIndicator();
+            },
+          ),
+        ));
+  }
+}
+
+const List<String> list = <String>['One', 'Two', 'Three', 'Four'];
 
 class MyLogin extends StatefulWidget {
   const MyLogin({Key? key}) : super(key: key);
@@ -94,12 +145,38 @@ class MyLogin extends StatefulWidget {
 }
 
 class _MyLoginState extends State<MyLogin> {
+  String dropdownValue = list.first;
+  late Future<Edificio> futureEfici;
+
+  @override
+  void initState() {
+    print('INIT CALLED');
+    super.initState();
+  }
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     userTextController.dispose();
     pwdTextController.dispose();
     super.dispose();
+  }
+
+  //Fetch Edifici at init state
+
+  Future<Edificio> fetchEdifici() async {
+    final response =
+        await http.get(Uri.parse('http://192.168.180.91:5000/loginapp'));
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      return Edificio.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
   }
 
   @override
@@ -161,6 +238,42 @@ class _MyLoginState extends State<MyLogin> {
                             height: 40,
                           ),
                           Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                    child: Container(
+                                        padding: EdgeInsets.only(
+                                            top: 20, bottom: 20),
+                                        child: DropdownButton<String>(
+                                          value: dropdownValue,
+                                          icon:
+                                              const Icon(Icons.arrow_downward),
+                                          elevation: 20,
+                                          hint: (Text("Seleziona un edificio")),
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                          ),
+                                          underline: Container(
+                                            height: 2,
+                                            color: Colors.cyan,
+                                          ),
+                                          onChanged: (String? value) {
+                                            // This is called when the user selects an item.
+                                            setState(() {
+                                              dropdownValue = value!;
+                                            });
+                                          },
+                                          items: list
+                                              .map<DropdownMenuItem<String>>(
+                                                  (String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                        )))
+                              ]),
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
@@ -178,7 +291,7 @@ class _MyLoginState extends State<MyLogin> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  UserSessionResponse()));
+                                                  EdificiResponse()));
                                     },
                                     icon: Icon(
                                       Icons.arrow_forward,
