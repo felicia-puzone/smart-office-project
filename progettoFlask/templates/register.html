@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title> Register </title>  
+        <title> Dashboard schifosa</title>  
     </head>
     <body></br></br></br></br></br>
         <div align="center">
@@ -18,13 +18,16 @@
                     <input id="username" name="username" type="text" placeholder="Username" class="textbox" required/></br></br>
                     <input id="password" name="password" type="password" placeholder="Password" class="textbox" required/></br></br>
 		    <input type="date" id="birthday" name="birthday" required/> </br></br>
-		    <select id="sesso" name="sesso">
+		    <select id="sesso" name="sex">
  			 <option value="1">Maschio</option>
   			 <option value="2">Femmina</option>
   			 <option value="3">Altro</option>
 		    </select>
-                    <input type="color" id="color" name="color" value="#f6b73c" required/> </br></br>
-		    
+		    <select id="profession" name="profession" required>
+			{% for job in jobs %}
+      				<option value={{job.id}}>{{job.name}}</option>
+  			{% endfor %}
+		    </select>
 		    <input type="submit" class="btn" value="Sign Up"></br>
                 </form>
             </h2>
