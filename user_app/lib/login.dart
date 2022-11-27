@@ -162,22 +162,6 @@ class _MyLoginState extends State<MyLogin> {
     super.dispose();
   }
 
-  //Fetch Edifici at init state
-
-  Future<Edificio> fetchEdifici() async {
-    final response =
-        await http.get(Uri.parse('http://192.168.180.91:5000/loginapp'));
-
-    if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      return Edificio.fromJson(jsonDecode(response.body));
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load album');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
