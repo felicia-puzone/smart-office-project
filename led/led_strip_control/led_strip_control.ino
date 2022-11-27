@@ -14,18 +14,17 @@
 #define LED_OFF 0
 
 //COLOR CODES context:byte
+
+#define NO_COLOR 0
 #define RED 1
 #define ORANGE 2
 #define YELLOW 3
 #define GREEN 4
-#define BLUE 5
-#define VIOLET 6
-#define MAGENTA 7
-
-//BLINKING MODE context:byte
-#define PLAIN 1
-#define BLINKING 2
-
+#define AQUA 5
+#define BLUE 6
+#define VIOLET 7
+#define MAGENTA 8
+#define NYAN_CAT 9
 
 #define PIN_NEO_PIXEL  6   // Arduino pin that connects to NeoPixel
 #define NUM_PIXELS     62  // The number of LEDs (pixels) on NeoPixel
@@ -50,9 +49,7 @@ void setup() {
 
 void loop() {
 
-        changeStripColor(GREEN);
-
-  //Serial.write(4);
+  changeStripColor(RED);
 
   if(status==1)
     strip.clear();
@@ -66,16 +63,44 @@ void loop() {
       Serial.write(serial_buf[i]);
 
     switch (serial_buf[0]) {
-    case RED:
-      changeStripColor(RED);
+    case NO_COLOR:
+      strip.clear();
       status=0;
       break;
-    case BLUE:
+    case RED:
       changeStripColor(BLUE);
       status=0;
       break;
-    case GREEN:
+    case ORANGE:
       changeStripColor(GREEN);
+      status=0;
+      break;
+          case YELLOW:
+      changeStripColor(RED);
+      status=0;
+      break;
+          case GREEN:
+      changeStripColor(RED);
+      status=0;
+      break;
+          case AQUA:
+      changeStripColor(RED);
+      status=0;
+      break;
+          case BLUE:
+      changeStripColor(RED);
+      status=0;
+      break;
+          case VIOLET:
+      changeStripColor(RED);
+      status=0;
+      break;
+          case MAGENTA:
+      changeStripColor(RED);
+      status=0;
+      break;
+          case NYAN_CAT:
+      changeStripColor(RED);
       status=0;
       break;
     }
@@ -86,13 +111,34 @@ void changeStripColor(int color)
 {
   for(int i=0; i<strip.numPixels(); i++) { // For each pixel in strip...
   switch (color) {
-  case RED:
+  case NO_COLOR:
     strip.setPixelColor(i, strip.Color(255,   0,   0));         //  Set pixel's color (in RAM)
     break;
-  case BLUE:
+  case RED:
     strip.setPixelColor(i, strip.Color(  0,   0, 255));
     break;
+  case ORANGE:
+    strip.setPixelColor(i, strip.Color(  0,   255, 0));
+    break;
+  case YELLOW:
+    strip.setPixelColor(i, strip.Color(  0,   255, 0));
+    break;
   case GREEN:
+    strip.setPixelColor(i, strip.Color(  0,   255, 0));
+    break;
+  case AQUA:
+    strip.setPixelColor(i, strip.Color(  0,   255, 0));
+    break;
+  case BLUE:
+    strip.setPixelColor(i, strip.Color(  0,   255, 0));
+    break;
+  case VIOLET:
+    strip.setPixelColor(i, strip.Color(  0,   255, 0));
+    break;
+  case MAGENTA:
+    strip.setPixelColor(i, strip.Color(  0,   255, 0));
+    break;
+  case NYAN_CAT:
     strip.setPixelColor(i, strip.Color(  0,   255, 0));
     break;
   default:
