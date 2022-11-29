@@ -14,21 +14,12 @@
             <h2 class="word">
                 <form action="{{ url_for('register') }}" method="post">
                   <div class="msg">{{ msg }}</div>
-                    <input id="CF" name="CF" type="text" placeholder="Il tuo codice fiscale" class="textbox" required/></br></br>				
-                    <input id="username" name="username" type="text" placeholder="Username" class="textbox" required/></br></br>
-                    <input id="password" name="password" type="password" placeholder="Password" class="textbox" required/></br></br>
-		    <input type="date" id="birthday" name="birthday" required/> </br></br>
-		    <select id="sesso" name="sex">
- 			 <option value="1">Maschio</option>
-  			 <option value="2">Femmina</option>
-  			 <option value="3">Altro</option>
-		    </select>
-		    <select id="profession" name="profession" required>
-			{% for job in jobs %}
-      				<option value={{job.id}}>{{job.name}}</option>
+		    <select id="building" name="building" value=1 required>
+			{% for job in jobs%}
+      				<option value={{job.id_profession}}>{{job.name}}</option>
   			{% endfor %}
 		    </select>
-		    <input type="submit" class="btn" value="Sign Up"></br>
+		    <input type="submit" class="btn" value="Occupa"></br>
                 </form>
             </h2>
             <p class="bottom">Hai già un account?  <a class="bottom" href="{{url_for('login')}}">Accedi qui</a></p>

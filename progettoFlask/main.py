@@ -1,31 +1,29 @@
 import datetime
 import re
-from re import Pattern
-
 import requests as requests
 from flask import Flask, request, render_template, session, redirect, url_for, jsonify
+from models import db,digitalTwinFeed,accounts,sessions,sessionStates,rooms,professions,histories,buildings
 from flask_mqtt import Mqtt
 from flask_cors import CORS
 import paho.mqtt.client as mqtt
 from firebase import firebase
 from flask_socketio import emit, SocketIO
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 appname="IOT main"
 app = Flask(appname)
 app.secret_key = 'secretkey'
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-app.config['MQTT_BROKER_URL'] = 'ilvero.davidepalma.it'  # use the free broker from HIVEMQ
+app.config['MQTT_BROKER_URL'] = 'broker.hivemq.com'#'ilvero.davidepalma.it'  # use the free broker from HIVEMQ
 app.config['MQTT_BROKER_PORT'] = 1883  # default port for non-tls connection
-app.config['MQTT_USERNAME'] ='uni'  # set the username here if you need authentication for the broker
-app.config['MQTT_PASSWORD'] = 'more'#   set the password here if the broker demands authentication
+#app.config['MQTT_USERNAME'] ='uni'  # set the username here if you need authentication for the broker
+#app.config['MQTT_PASSWORD'] = 'more'#   set the password here if the broker demands authentication
 app.config['MQTT_KEEPALIVE'] = 5  # set the time interval for sending a ping to the broker to 5 seconds
 app.config['MQTT_TLS_ENABLED'] = False  # set TLS to disabled for testing purposes
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = "random string"
-mqtt=Mqtt(app)
-db = SQLAlchemy(app)
+mqtt=Mqtt()
+
 socketio = SocketIO(app, cors_allowed_origins="*")
 fb_app = firebase.FirebaseApplication('https://smartoffice-4eb51-default-rtdb.europe-west1.firebasedatabase.app/', None)
 maintance=False
@@ -51,65 +49,80 @@ def handle_message_mqtt(client,userdata,message):
         print("ho ricevuto dati dalla stanza:"+str(identifiers[1]))
         print(sensor[4])
         values=re.findall(r'\d+',data['payload'])
-        updateDigitalTwin(identifiers[1],sensor[4],values[0])
+        updateDigitalTwinSensors(identifiers[1],sensor[4],values[0])
     #with app.test_request_context('/'):
      #   socketio.emit('Cambia valore', message.topic,broadcast=True)
 
 
 @app.route("/") #percorsi url locali
-@app.route('/login',methods = ['GET','POST'])
-#le risposte saranno sempre stringhe
-#TODO integrare  per android con il formato che vuole Felicia
-#TODO testing con app o POSTMAN
-def login():
-    msg=''
+def homepage():
+    return render_template('login.html',msg='')
+@app.route("/signup",  methods = ['GET'])
+def signUp():
     content=request.headers.get("Content-ID")
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+    jobs = fetchJobs()
+    if content=="REGISTER-APP":
+        jobs = buildJsonList(jobs)
+        return jsonify(jobs=jobs)
+    else:
+        return render_template('register.html',msg='',jobs=jobs)
+@app.route("/dashboard",methods = ['GET'])
+def dashboard():
+    digitalTwins=db.session.query(digitalTwinFeed).all()
+    return render_template('dashboard.html', digitalTwins=digitalTwins)
+
+
+@app.route('/login',methods = ['POST'])
+def login():
+    if 'username' in request.form and 'password' in request.form:
         username = request.form['username']
         password = request.form['password']
         account = checkCredentials(username, password)
-        if account:#loggato
+        msg = ''
+        content = request.headers.get("Content-ID")
+        if account is not None :#loggato
             session['loggedin'] = True
-            session['username'] = username
             session['id_user'] = account.id
+            session['username'] = username
             id_room = tryToGetAssignedRoom(session['id_user'])
-            if id_room != -1:#sessione attiva
-                digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
-                if content != "LOGIN-APP":
-                    return render_template('index.html', digitalTwin=digitalTwin)
-                else:
-                    return jsonify(loggedin=True, outcome="Active",digitalTwin=digitalTwin.serialize())
-            else:#nessuna sessione attiva
-                if content != "LOGIN-APP":
-                    return render_template('select.html', buildings=buildJsonList(getFreeBuildings()), msg=msg)
-                else:
-                    return jsonify(loggedin=True, outcome="Login", buildings=buildJsonList(getFreeBuildings()))
+            if id_room != -1:
+                if content == "LOGIN-APP":
+                    content = "HOME-APP"
+                return renderHome(id_room,content)
+            else:
+                if content == "LOGIN-APP":
+                    content="SELECTION-APP"
+                return renderSelection(content)
         else:
             msg = 'Incorrect username / password !'
+    else:
+        msg='Riempire i campi!'
     if content!="LOGIN-APP":
         return render_template('login.html',msg=msg)
     else:
-        return jsonify(loggedin=False)
+        return jsonify(logged_in=False)
+
+
+
+
 #TODO testing
-@app.route('/logout',methods = ['GET','POST'])
+@app.route('/logout',methods = ['POST'])
 def logout():
     content=request.headers.get("Content-ID")
     session.pop('loggedin', None)
-    session.pop('username', None)
     session.pop('id_user',None)
+    session.pop('username', None)
     if content == "Logout-APP":
         return jsonify(loggedout=True)
     else:
-        return redirect(url_for('login'))
-
-#richieste che gestiscono la registrazione
-#TODO registrazione tramite APP, serve sapere il formato che Felicia vuole
+        return render_template('login.html',msg='')
+#TODO testare la registrazione
 @app.route("/register", methods = ['GET','POST'])
 def register():
     msg = ''
-    #content_id=request.headers['Content-ID']
-    content_id="sasso"
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+    signedUp=False
+    content=request.headers.get("Content-ID")
+    if 'username' in request.form and 'password' in request.form:
         username = request.form['username']
         password = request.form['password']
         birthday=request.form['birthday']
@@ -129,133 +142,99 @@ def register():
             db.session.add(account)
             db.session.commit()
             msg = 'Ti sei registrato con successo!'
-    elif request.method == 'POST':
+            signedUp=True
+    else:
         msg = 'Riempire i campi obbligatori!'
-    jobs=fetchJobs()
-    if content_id=="REGISTER-APP":
-        jobs = buildJsonList(jobs)
-        return jsonify(signedUp=True,msg=msg,buildings=jobs)
-    return render_template('register.html',msg=msg,jobs=jobs)
+    if content=="REGISTER-APP":
+        return jsonify(signedUp=signedUp,msg=msg)
+    else:
+        return redirect(url_for('signup'))
+#TODO testing
+#TODO questa route serve anche per l'app
+
+
+
+
+
+
+#TODO richiesta POST per far vedere i palazzi liberi
+@app.route("/roomListing", methods=['POST'])
+def listRooms():
+    content = request.headers.get("Content-ID")
+    if content != "SELECTION-APP":
+        return render_template('select.html', buildings=buildJsonList(getFreeBuildings()), msg='')
+    else:
+        return jsonify(loggedin=True, outcome="Login", buildings=buildJsonList(getFreeBuildings()))
+
+
+######################################################################################################################
+#Fine route che ritornano una view
 
 #TODO testing APP android e preparazione dati index
+#TODO renderlo impervio agli exceptions
 @app.route("/update",  methods = ['POST'])
 def update():
     content=request.headers.get("Content-ID")
-    id_user = 0
-    color = 0
-    brightness = 0
-    temperature = 0
     if content == "UPDATE-APP":
-        data=request.json()
+        data=request.get_json(silent=True)
         id_user=data['id_utente']
         color=data['color_val']
         brightness=data['brightness_val']
         temperature=data['temp_val']
+        digitalTwin=updateDigitalTwinActuators(id_user,color,brightness,temperature)
+        return jsonify(changes=True,digitalTwin=digitalTwin.serializedActuators())
     else:
-        id_user = request.form['id_utente']
-        color = request.form['color_val']
-        brightness = request.form['brightness_val']
-        temperature = request.form['temp_val']
-    if id_user != 0:
-        actualSession=db.session.query(sessionStates).filter_by(id_user=id_user,active=True)
-        IdRoomOfActualSession=actualSession.id_room
-        IdBuildingOfActualRoom=db.session.query(rooms).filter_by(id=IdRoomOfActualSession).id_building
-        IdSessionOfActualSession = actualSession.id_session
-        timestamp=datetime.now()
-        digitalTwin=db.session.query(digitalTwinFeed).filter_by(id_room=IdBuildingOfActualRoom).first()
-        if digitalTwin.temperature_actuactor!=temperature:
-            #digitalTwin.temperature_actuactor=temperature
-            #db.session.add(histories(IdSessionOfActualSession,"temperature",temperature,timestamp))
-            registerAction("temperature",temperature,IdSessionOfActualSession,timestamp,IdRoomOfActualSession,IdBuildingOfActualRoom,digitalTwin)
-            #mqtt.publish('smartoffice/building_' + str(IdBuildingOfActualRoom) + '/room_1/actuactors/temperature', temperature)
-        if digitalTwin.led_actuactor!=color:
-            #digitalTwin.led_actuactor=color
-            #db.session.add(histories(IdSessionOfActualSession,"color",color,timestamp))
-            registerAction("color", color, IdSessionOfActualSession, timestamp,IdRoomOfActualSession,IdBuildingOfActualRoom,digitalTwin)
-            #mqtt.publish('smartoffice/building_' + str(IdBuildingOfActualRoom) + '/room_1/actuactors/color', color)
-        if digitalTwin.led_brightness !=brightness:
-            #digitalTwin.led_brightness == brightness
-            registerAction("brightness", brightness, IdSessionOfActualSession, timestamp,IdRoomOfActualSession,IdBuildingOfActualRoom,digitalTwin)
-            #db.session.add(histories(IdSessionOfActualSession,"brightness",brightness,timestamp))
-            #mqtt.publish('smartoffice/building_' + str(IdBuildingOfActualRoom) + '/room_1/actuactors/brightness', brightness)
-        #db.session.commit()
-        if content == "UPDATE-APP":
-            return jsonify(changes=True)
-        else:
-            return render_template('index.html',digitalTwin=digitalTwin)
-    return 0
+        id_user = session['id_user']
+        color = int(request.form['color'])
+        brightness = int(request.form['brightness'])
+        temperature = int(request.form['temperature'])
+        digitalTwin=updateDigitalTwinActuators(id_user, color, brightness, temperature)
+        return render_template('index.html',digitalTwin=digitalTwin,username=session['username'])
 
 #TODO da testare e adattare al formato che vuole Felicia
 #TODO pagina di prenotazione per il browser
+#TODO rendere questa fase impervia agli exception perchè è una fase delicata
+#TODO codice da snellire
+#TODO caso 1, l'utente ha appena loggato e sceglie un edificio vuoto
+#TODO caso 2 l'utente ha appena loggato e sceglie un edificio pieno
+#TODO caso 3 l'utente ha appena loggato e ha già una stanza assegnata
 @app.route("/selectRoom",methods = ['POST'])
 def occupyRoom():
     content=request.headers.get("Content-ID")
-    if request.method == 'POST':
+    id_room=-1
+    if content == "SELECT-APP":
+        #prendo dati dal json
+        data = request.get_json(silent=True)
+        id_user = data['id_utente']
+        building = data['building_id']
+        id_room = tryToAssignRoom(id_user, building)
+        return handleRoomAssignment(id_room, content, building)
+    else:
+        #prendo dati dal form e sessione
         building = request.form['building']
         id_room = tryToAssignRoom(session['id_user'], building)
-        #ragioniamo: la select si può fare solo se loggati quindi va be
-        if id_room == -1:
-            if content=="SELECT-APP":
-                return jsonify(outcome="Full",buildings=buildJsonList(getFreeBuildings()))
-            else:
-                msg = 'non ci sono stanze disponibili nell\'edificio ' + str(building)
-                return render_template('select.html', buildings=buildJsonList(getFreeBuildings()), msg=msg)
-        elif id_room == -2:
-            actualSession = db.session.query(sessionStates).filter_by(id_user=session['id_user'],active=True).first().id_session
-            room = db.session.query(sessions).filter_by(id=actualSession).first().id_room
-            building = db.session.query(rooms).filter_by(id=room).first().id_building
-            session['id_room'] = room
-            session['id_building'] = building
-            session['actualSession'] = actualSession
-            digitalTwin=db.session.query(digitalTwinFeed).filter_by(id_room=room).first()
-            #TODO ricavare dati da mandare
-            #TODO mettere dei try catch per evitare bug
-            #TODO server flask locale come failsafe
-            dictToSend = {'user_age':0,'user_sex':0,'user_task':0,'ext_temp':0,'ext_humidity':0,'ext_light':0}
-            res = requests.post('http://localhost:5001/tests', json=dictToSend)
-            print ('response from server:', res.text)
-            dictFromServer = res.json()
-            led_color=dictFromServer['user_color']
-            brightness=dictFromServer['user_light']
-            temperature=dictFromServer['user_temp']
-            timestamp=datetime.utcnow()
-            registerAction('color',led_color,actualSession,timestamp,room,building,digitalTwin)
-            registerAction('brightness', brightness, actualSession, timestamp, room, building,digitalTwin)
-            registerAction('temperature', temperature, actualSession, timestamp, room, building,digitalTwin)
-            if content=="SELECT-APP":
-                return jsonify(outcome="Active",digitalTwin=digitalTwin.serialize())
-            else:
-                return render_template('index.html', digitalTwin=digitalTwin)
-        else:
-            actualSession = db.session.query(sessionStates).filter_by(id_user=session['id_user'],active=True).first().id_session
-            session['id_room'] = id_room
-            session['id_building'] = building
-            session['actualSession'] = actualSession
-            digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
-            if content=="SELECT-APP":
-                return jsonify(outcome="Success",digitalTwin=digitalTwin.serialize())
-            else:
-                return render_template('index.html', digitalTwin=digitalTwin)
-    return 0
+        return handleRoomAssignment(id_room,content,building)
 
 #TODO testing
+#TODO coprire i casi dove può dare errore
 @app.route("/freeRoom",methods=['POST'])
 def freeRoom():
     content=request.headers.get("Content-ID")
-    idSession=db.session.query(sessionStates).filter_by(id_session=session['id_user'])
     session.pop('id_room', None)
     session.pop('id_building', None)
-    tryToFreeRoom(idSession)
-    if content=="FREEROOM-APP":
+    if content == "FREEROOM-APP":
+        data = request.get_json(silent=True)
+        id_user = data['id_utente']
+        idSession = db.session.query(sessionStates) .filter_by(id_user=id_user,active=True).first().id_session
+        tryToFreeRoom(idSession)
         return jsonify(outcome="Freed")
     else:
+        idSession=db.session.query(sessionStates).filter_by(id_user=session['id_user'],active=True).first().id_session
+        tryToFreeRoom(idSession)
         return render_template('select.html', buildings=buildJsonList(getFreeBuildings()), msg='')
 
 
-@app.route("/dashboard",methods = ['GET','POST'])
-def dashboard():
-    digitalTwins=db.session.query(digitalTwinFeed).all()
-    return render_template('dashboard.html', digitalTwins=digitalTwins)
+
 
 #TODO websocket per dashboard a tempo real
 ########################################################################
@@ -266,113 +245,29 @@ values = {
 @app.route('/provawebsocket')
 def prova():
     return render_template('websocket_test.html', **values)
-
 @socketio.on('connect')
 def test_connect():
     emit('after connect',  {'data':'Lets dance'})
     emit('Cambia valore', 'Hola')
-
 @socketio.on('Slider value changed')
 def value_changed(message):
     values[message['who']] = message['data']
     emit('update value', message, broadcast=True)
-
 ###############################################################################
-class accounts(db.Model):
-    id = db.Column('ID_USER', db.Integer, primary_key = True)
-    username=db.Column(db.String(100),unique= True)
-    password = db.Column(db.String(20))
-    profession = db.Column(db.Integer,nullable=False)
-    sex = db.Column(db.Integer)
-    dateOfBirth=db.Column(db.DateTime(timezone=True), nullable=False,  default=datetime.utcnow)
-    def __init__(self,username,password,profession,sex,dateOfBirth):
-        self.sex = sex
-        self.profession = profession
-        self.password = password
-        self.username = username
-       #q self.id = id
-        self.dateOfBirth = dateOfBirth
-class sessions(db.Model):
-    id = db.Column('ID_SESSION', db.Integer, primary_key = True)
-    timestamp_begin = db.Column('timestamp_begin',db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
-    timestamp_end = db.Column('timestamp_end',db.DateTime(timezone=True), nullable=True, default=datetime.utcnow)
-    def __init__(self,timestamp_begin):
-        self.timestamp_begin = timestamp_begin
 
-class sessionStates(db.Model):
-    id_session = db.Column('ID_SESSION', db.Integer, primary_key = True)
-    id_user = db.Column('ID_USER', db.Integer)
-    id_room = db.Column('ID_ROOM', db.Integer)
-    active = db.Column(db.Boolean)
-    def __init__(self, id_user,id_room):
-        self.active = True
-        self.id_room = id_room
-        self.id_user = id_user
-class rooms(db.Model):
-    id_room = db.Column('ID_ROOM', db.Integer, primary_key=True)
-    id_building = db.Column('ID_BUILDING', db.Integer)
 
-    def __init__(self, id_building):
-        self.id_building = id_building
-class buildings(db.Model):
-    id_building = db.Column('ID_BUILDING', db.Integer, primary_key=True)
-    city = db.Column(db.String(100),unique= True)
-    def __init__(self,city):
-        self.city = city
-    def serialize(self):
-        return {"id_building": self.id_building,
-                "city": self.city}
-class histories(db.Model):
-    id_session=db.Column('ID_SESSION', db.Integer, primary_key = True)
-    type_of_action= db.Column(db.String(20))
-    value= db.Column(db.String(20))
-    db.Column(db.DateTime(timezone=True), nullable=True, default=datetime.utcnow)
-    def __init__(self, id_session,type_of_action,value,timestamp):
-        self.timestamp = timestamp
-        self.value = value
-        self.type_of_action = type_of_action
-        self.id_session = id_session
-class professions(db.Model):
-    id_profession=db.Column('ID_PROFESSION', db.Integer, primary_key=True)
-    name= db.Column(db.String(20))
-    category= db.Column(db.String(20))
 
-    def __init__(self,name,category):
-        self.category = category
-        self.name = name
-    def serialize(self):
-        return {"id_profession": self.id_building,
-                "name":self.name,
-                "category": self.category}
-class digitalTwinFeed(db.Model):
-    id_room=db.Column('ID_ROOM', db.Integer, primary_key = True)
-    temperature_sensor=db.Column(db.Integer)
-    humidity_sensor=db.Column(db.Integer)
-    noise_sensor=db.Column(db.Integer)
-    light_sensor=db.Column(db.Integer)
-    led_actuactor=db.Column(db.Integer)
-    temperature_actuactor=db.Column(db.Integer)
-    led_brightness=db.Column(db.Integer)
-    healthy= db.Column(db.Boolean)
-    def __init__(self,id_room,temperature_sensor,humidity_sensor,noise_sensor,light_sensor,led_actuactor,temperature_actuactor,led_brightness,healthy):
-        self.healthy = healthy
-        self.led_brightness = led_brightness
-        self.temperature_actuactor = temperature_actuactor
-        self.led_actuactor = led_actuactor
-        self.light_sensor = light_sensor
-        self.noise_sensor = noise_sensor
-        self.temperature_sensor = temperature_sensor
-        self.id_room = id_room
-        self.humidity_sensor=humidity_sensor
-    def serialize(self):
-        return {"id_room": self.id_room,
-                "temperature_sensor":self.temperature_sensor,
-                "light_sensor":self.light_sensor,
-                "led_actuactor" : self.led_actuactor,
-                "temperature_actuactor" : self.temperature_actuactor,
-                "led_brightness" : self.led_brightness,
-                "healthy" : self.healthy,
-                "noise_sensor": self.noise_sensor}
+
+def redirectWithParams(route,method,header):
+    if method == "POST":
+        redir = redirect(url_for(route, code=307))
+        redir.headers['Content-ID'] = header
+    else:
+        redir = redirect(url_for(route))
+        redir.headers['Content-ID'] = header
+    return redir
+
+
 #testato
 def StartListening():
     with app.app_context():
@@ -385,7 +280,7 @@ def StartListening():
 
 
 #testato
-def updateDigitalTwin(id_room,sensor,value):
+def updateDigitalTwinSensors(id_room,sensor,value):
     with app.app_context():
         digitalTwin=db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
         if sensor == "light":
@@ -396,7 +291,127 @@ def updateDigitalTwin(id_room,sensor,value):
             digitalTwin.temperature_sensor=value
         db.session.commit()
     return 0
+
+
 #TODO testing
+def updateDigitalTwinActuators(id_user, color, brightness, temperature):
+    actualSession=db.session.query(sessionStates).filter_by(id_user=id_user,active=True).first()
+    IdRoomOfActualSession=actualSession.id_room
+    IdBuildingOfActualRoom=db.session.query(rooms).filter_by(id_room=IdRoomOfActualSession).first().id_building
+    IdSessionOfActualSession = actualSession.id_session
+    timestamp=datetime.utcnow()
+    digitalTwin=db.session.query(digitalTwinFeed).filter_by(id_room=IdRoomOfActualSession).first()
+    if digitalTwin.temperature_actuator!=temperature:
+        registerAction("temperature",temperature,IdSessionOfActualSession,timestamp,IdRoomOfActualSession,IdBuildingOfActualRoom,digitalTwin)
+    if digitalTwin.led_actuator!=color:
+        registerAction("color", color, IdSessionOfActualSession, timestamp,IdRoomOfActualSession,IdBuildingOfActualRoom,digitalTwin)
+    if digitalTwin.led_brightness !=brightness:
+        registerAction("brightness", brightness, IdSessionOfActualSession, timestamp,IdRoomOfActualSession,IdBuildingOfActualRoom,digitalTwin)
+    db.session.commit()
+    return digitalTwin
+
+#TODO testing
+def handleRoomAssignment(id_room,content,building):
+    if id_room == -1: #stanza non disponibile
+        if content=="SELECT-APP":
+            return jsonify(outcome="Full",buildings=buildJsonList(getFreeBuildings()))
+        else:
+            msg = 'non ci sono stanze disponibili nell\'edificio ' + str(building)
+            return render_template('select.html', buildings=buildJsonList(getFreeBuildings()), msg=msg)
+    elif id_room == -2: #stanza esistente
+        sessionState=db.session.query(sessionStates).filter_by(id_user=session['id_user'],active=True).first()
+        actualSession = sessionState.id_session
+        room = sessionState.id_room
+        building = db.session.query(rooms).filter_by(id_room=room).first().id_building
+        session['id_room'] = room
+        session['id_building'] = building
+        session['actualSession'] = actualSession
+        digitalTwin=db.session.query(digitalTwinFeed).filter_by(id_room=room).first()
+        if fetchLastSetting(actualSession,digitalTwin) == -1:
+            prepareRoom(session['id_user'], actualSession, digitalTwin, session['id_building'])
+        if content=="SELECT-APP":
+            return jsonify(outcome="Active",digitalTwin=digitalTwin.serialize())
+        else:
+            return render_template('index.html', digitalTwin=digitalTwin)
+    else:#stanza assegnata
+        actualSession = db.session.query(sessionStates).filter_by(id_user=session['id_user'],active=True).first().id_session
+        session['id_room'] = id_room
+        session['id_building'] = building
+        session['actualSession'] = actualSession
+        digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
+        prepareRoom(session['id_user'],actualSession,digitalTwin,session['id_building'])
+        if content=="SELECT-APP":
+            return jsonify(outcome="Success",digitalTwin=digitalTwin.serialize())
+        else:
+            return render_template('index.html', digitalTwin=digitalTwin,session=session['username'])
+
+#TODO testing
+def prepareRoom(id_user,id_session,digitalTwin,id_building):
+    data = getAIdata(id_user, digitalTwin)
+    led_color = data['user_color']
+    brightness = data['user_light']
+    temperature = data['user_temp']
+    timestamp = datetime.utcnow()
+    digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=digitalTwin.id_room).first()
+    registerAction('color', led_color, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
+    registerAction('brightness', brightness, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
+    registerAction('temperature', temperature, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
+    return 0
+
+#tested
+def getAIdata(id_user,digitalTwin):
+    account = db.session.query(accounts).filter_by(id=id_user).first()
+    job = db.session.query(professions).filter_by(id_profession=account.profession).first()
+    dataToSend = {'user_age': calculateUserAge(account.dateOfBirth), 'user_sex': account.sex, 'user_task': job.name,
+                  'ext_temp': digitalTwin.temperature_sensor, 'ext_humidity': digitalTwin.humidity_sensor,
+                  'ext_light': digitalTwin.light_sensor}
+    try:
+        res = requests.post('http://localhost:5001/AI', json=dataToSend)
+        print('response from server:', res.text)
+        dataFromServer = res.json()
+    except requests.exceptions.RequestException as e:
+        print("c'è stato un errore! Prenderò i dati dall'AI locale!")
+        try:
+            res = requests.post('http://localhost:5001/AI', json=dataToSend)
+            print('response from server:', res.text)
+            dataFromServer = res.json()
+        except requests.exceptions.RequestException as e:
+            print("c'è stato un errore! Prenderò dati di Default!")
+            dataFromServer = {'user_temp':25,'user_color':3,'user_light':4}
+    return dataFromServer
+
+
+#TODO testing e caso dove il db è vuoto
+#Se il db è vuoto chiediamo i dati all'AI per sicurezza
+def fetchLastSetting(id_session,digitalTwin):
+    historyColor = db.session.query(histories).filter_by(id_session=id_session,type_of_action="color").order_by(histories.timestamp).first()
+    historyBrightness=db.session.query(histories).filter_by(id_session=id_session,type_of_action="brightness").order_by(histories.timestamp).first()
+    historyTemperature=db.session.query(histories).filter_by(id_session=id_session,type_of_action="temperature").order_by(histories.timestamp).first()
+    if historyBrightness is not None and historyColor is not None and historyTemperature is not None:
+        digitalTwin.led_actuator=historyColor.value
+        digitalTwin.led_brightness=historyBrightness.value
+        digitalTwin.temperature_actuator=historyTemperature.value
+        db.session.commit()
+    else:
+        return -1
+    return 0
+#tested
+def renderHome(id_room,content):
+    digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
+    if content != "HOME-APP":
+        return render_template('index.html', digitalTwin=digitalTwin, username=session['username'])
+    else:
+        return jsonify(logged_in=True, outcome="Active", digitalTwin={"led_actuator": 0,"temperature_actuator": 0,
+                "led_brightness": 0},id=session['id_user'],id_edificio=0,id_room=0,username=session['username'])
+def renderSelection(content):
+    if content != "SELECTION-APP":
+        return render_template('select.html', buildings=buildJsonList(getFreeBuildings()), msg='')
+    else:
+        #return jsonify(loggedin=True, outcome="Login", buildings=buildJsonList(getFreeBuildings()))
+        return jsonify(logged_in=True, outcome="Active", digitalTwin={"led_actuator": 0, "temperature_actuator": 0,
+                                                                      "led_brightness": 0}, id=session['id_user'],
+                       id_edificio=0, id_room=0, username=session['username'])
+#tested
 def calculateUserAge(born):
     today = datetime.today()
     return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
@@ -425,6 +440,8 @@ def tryToAssignRoom(idUser,building):
 def tryToGetAssignedRoom(id_user):
     actualSessions = db.session.query(sessionStates).filter_by(id_user=id_user, active=True).first()
     if actualSessions:
+        session["id_room"] = actualSessions.id_room
+        session["building"] = db.session.query(rooms).filter_by(id_room=actualSessions.id_room).first().id_building
         return actualSessions.id_room
     else:
         return -1  #sessione non esistente
@@ -442,52 +459,63 @@ def tryToFreeRoom(ID_SESSION): #testing
 
 #TODO testing
 def buildSessionData(ID_SESSION,ID_ROOM,timestamp_begin,timestamp_end):
-    ID_BUILDING=db.session.query(rooms).filter_by(id_room=ID_ROOM).id_building
+    ID_BUILDING=db.session.query(rooms).filter_by(id_room=ID_ROOM).one().id_building
     data={"session_id":ID_SESSION}
-    user = db.session.query(accounts).filter(id=db.session.query(sessionStates).filter(id_session=ID_SESSION).id_user)
-    job = db.session.query(professions).filter(id=user.profession).name
-    age=calculateUserAge(user.birthday)
-    data = appendDataToJson(data,['user_id','user_age','user_sex','user_task','room_id','building_id','date','session_open_time','session_close_time'],[user.user_id,age,user.sex,job,ID_ROOM,
-    ID_BUILDING,timestamp_begin.strftime("%Y/%m/%d"),timestamp_begin.strftime("%H::%M::%S"),timestamp_end.strftime("%H::%M::%S")])
+    user = db.session.query(accounts).filter_by(id=db.session.query(sessionStates).filter_by(id_session=ID_SESSION).one().id_user).one()
+    job = db.session.query(professions).filter_by(id_profession=user.profession).one().name
+    age=calculateUserAge(user.dateOfBirth)
+    new_data = {'user_id':user.id,'user_age':age,'user_sex':user.sex,'user_task':job,'room_id':ID_ROOM,'building_id':ID_BUILDING,'date':timestamp_begin.strftime("%Y/%m/%d"),
+           'session_open_time':timestamp_begin.strftime("%H:%M:%S"),'session_close_time':timestamp_end.strftime("%H:%M:%S")}
+    data ={**data, **new_data}
     digitalTwin=db.session.query(digitalTwinFeed).filter_by(id_room=ID_ROOM).first()
-    data = appendDataToJson(data,['ext_temp','ext_humidity','ext_light'],[digitalTwin.temperature_sensor,digitalTwin.humity_sensor,digitalTwin.light_sensor])
+    new_data={'ext_temp':digitalTwin.temperature_sensor,'ext_humidity':digitalTwin.humidity_sensor,'ext_light':digitalTwin.light_sensor}
+    data = {**data, **new_data}
     preValentTemperature = DataHistoryAccountFetch(ID_SESSION,"temperature")
     preValentColor = DataHistoryAccountFetch(ID_SESSION, "color")
     preValentBrightness = DataHistoryAccountFetch(ID_SESSION, "brightness")
-    data = appendDataToJson(data, ['user_temp', 'ext_color', 'user_light'], [preValentTemperature,preValentColor,preValentBrightness])
-    data = appendDataToJson(data, ['user_temp', 'ext_color', 'user_light'],[preValentTemperature, preValentColor, preValentBrightness])
+    new_data={'user_temp':preValentTemperature, 'ext_color':preValentColor, 'user_light':preValentBrightness}
+    data = {**data, **new_data}
     return data
 
 #TODO testing
 def DataHistoryAccountFetch(id_session,type):
-    #def __init__(self, id_session, type_of_action, value, timestamp):
     maxDuration=0
     maxValue=0
-    timestamp=db.session.query(sessions).filter_by(id_session=id_session).one().timestamp_begin
+    timestamp_end = db.session.query(sessions).filter_by(id=id_session).one().timestamp_end
     actions=db.session.query(histories).filter_by(id_session=id_session,type_of_action=type).all()
     for action in actions:
-        duration=minutes_between(action.timestamp,timestamp)
-        if duration >= maxDuration:
-            maxDuration=duration
-            maxValue=action.value
-        timestamp=action.timestamp
+        if actions.index(action) == (len(actions) -1):
+            duration=seconds_between(timestamp_end,action.timestamp)
+            print("The actuator "+type+" had the value:" +str(action.value)+" for "+str(duration)+" seconds!")
+            if duration >= maxDuration:
+                maxDuration=duration
+                maxValue=action.value
+        else:
+            duration=seconds_between(actions[actions.index(action) + 1].timestamp,action.timestamp)
+            print("The actuator "+type+" had the value:" +str(action.value)+" for "+str(duration)+" seconds!")
+            if duration >= maxDuration:
+                maxDuration=duration
+                maxValue=action.value
+    print("The actuator " + type + " had the value:" + str(maxValue) + " for the most time! " + str(maxDuration) + "seconds!")
     return maxValue
-#TODO testing
-def minutes_between(d1, d2):
-    return abs((d2 - d1).minutes)
-#TODO testing
+#tested
+def seconds_between(d1, d2):
+    return abs((d2 - d1).total_seconds())
+
+#tested
 def feedAIData(data):
     fb_app.post('/sessionHistory',data)
     return 0
 
-#TODO testing
+#tested
 def registerAction(type, value,session_id,timestamp,id_room,id_building,digitalTwin):
     db.session.add(histories(session_id, type, value, timestamp))
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_'+str(id_room)+'/actuactors/'+type, value)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_'+str(id_room)+'/actuators/'+type, value)
+    print('smartoffice/building_' + str(id_building) + '/room_'+str(id_room)+'/actuators/'+type)
     if type=="temperature":
-        digitalTwin.temperature_actuactor = value
+        digitalTwin.temperature_actuator = value
     elif type=="color":
-        digitalTwin.led_actuactor = value
+        digitalTwin.led_actuator = value
     elif type=="brightness":
         digitalTwin.led_brightness = value
     db.session.commit()
@@ -495,17 +523,18 @@ def registerAction(type, value,session_id,timestamp,id_room,id_building,digitalT
 
 #testato
 def checkCredentials(username, password):#testing
-    return db.session.query(accounts).filter_by(username=username,password=password)
+    account =db.session.query(accounts).filter_by(username=username,password=password).first()
+    return account
 
 #testato
 def getBuildings():
     return buildings.query.all()
 
-#TODO testing
+#tested
 def getFreeBuildings():
     activeSessionStates = db.session.query(sessionStates.id_room).filter_by(active=True)
     freeRoomsBuildings = db.session.query(rooms.id_building).filter(rooms.id_room.notin_(activeSessionStates))
-    freeBuildings=db.session.query(buildings).filter(buildings.id_room.notin_(freeRoomsBuildings))
+    freeBuildings=db.session.query(buildings).filter(buildings.id_building.in_(freeRoomsBuildings))
     return freeBuildings
 #TODO testing
 def fetchJobs():
@@ -528,20 +557,23 @@ def roomHealthCheck():
 def botTelegramAlert():
     return 0
 
+
+
+
 def createAndPopulateDb():
     with app.app_context():
        db.create_all()
-       db.session.add(accounts(username="BArfaoui",password="18121996",profession=8,sex=1,dateOfBirth=datetime.now().date()))
+       db.session.add(accounts(username="BArfaoui",password="18121996",profession=8,sex=1,dateOfBirth=datetime.utcnow().date()))
        db.session.add(accounts(username="PFelica", password="99669966", profession=8, sex=2,
-                               dateOfBirth=datetime.now().date()))
+                               dateOfBirth=datetime.utcnow().date()))
        db.session.add(accounts(username="Vincenzo", password="66996699", profession=8, sex=1,
-                               dateOfBirth=datetime.now().date()))
+                               dateOfBirth=datetime.utcnow().date()))
        db.session.add(accounts(username="HLoredana", password="EmiliaBestWaifu", profession=10,  sex=2,
-                               dateOfBirth=datetime.now().date()))
+                               dateOfBirth=datetime.utcnow().date()))
        db.session.add(accounts(username="IValeria",  password="DarthVal", profession=12,sex=2,
-                               dateOfBirth=datetime.now().date()))
+                               dateOfBirth=datetime.utcnow().date()))
        db.session.add(accounts(username="Nicolò", password="11223344", profession=1, sex=3,
-                               dateOfBirth=datetime.now().date()))
+                               dateOfBirth=datetime.strptime("2000-12-1","%Y-%m-%d")))
        db.session.add(buildings(city="Modena"))
        db.session.add(buildings(city="Roma"))
        db.session.add(buildings(city="Napoli"))
@@ -615,17 +647,49 @@ def createAndPopulateDb():
 
 if __name__ =="__main__":
     #with app.app_context():
-     #   createAndPopulateDb()
+        #createAndPopulateDb()
+        #DataHistoryAccountFetch(3,"temperature")
+        #digitalTwin=db.session.query(digitalTwinFeed).filter_by(id_room=1).first()
+        #getAIdata(1, digitalTwin)
+    db.init_app(app)
+    mqtt.init_app(app)
     port=5000
     interface='0.0.0.0'
     StartListening()
     app.run(host=interface, port=port)
 
-#TODO mettere a posto l'anno di nascita(Testing)
-#TODO mettere a posto il login(Testing)
-#TODO fare l'occupazione della stanza(Testing)
-#TODO fare lo sgombero della stanza con scritttura al server firebase(Testing)
-#TODO aggiornamento dei dati del digital twin da MQTT (Testing...)
-#TODO richiesta dati all'ai (ai fittizia al momento da testare, e impostare un catch in caso di errore)
-#TODO richieste da parte del client per la modifica del colore(Testing)
-#TODO impostare try catch per richieste HTTP
+#DONE mettere a posto l'anno di nascita(Tested)
+#DONE mettere a posto il login(Tested)
+#TODO occupazione della stanza(Testing)
+#DONE fare lo sgombero della stanza con scritttura al server firebase(Done)
+#DONE testare il collasso della cronologia e controllare lo sgombero della stanza
+#DONE aggiornamento dei dati del digital twin da MQTT (Testato con il microcontrollore di Felicia)
+#DONE richiesta dati all'ai (try-catch impostati)
+#DONE richieste da parte del client per la modifica del colore(Tested)
+#TODO impostare l'indirizzo per l'AI
+#TODO impostare i dati di default nel caso l'AI e l'AI fittizia schiattino
+#TODO testare la preparazione della stanza
+#TODO aggiornare la registrazione
+#TODO testare il login
+#TODO snellire il codice
+#TODO commentare
+#TODO snellire il codice dell'interpretazione dei dati mqtt
+#TODO fornire i dati che vuole Felicia
+#TODO impostare un error handler, che reindirizza alla pagina di login/index/selezione
+#TODO separare le route get da quelle post, per snellire il codice (Non causa codice ripetuto)
+#TODO dati sessione {id_user,logged_in(non so se serve),id_sessione,id_stanza,id_building}
+#TODO dati che servono per l'app android in base alla route
+#TODO fixare i timestamp
+#TODO testare l'update snellito
+#TODO aggiungere controlli nel caso di errore nella scrittura nel db
+#TODO gestione della sessione web->Session app->tramite json
+#TODO geodecodificazione
+#TODO Content-ID dell'header LOGIN-APP,REGISTER-APP,SELECT-APP
+
+#REPORT(Testing Login):
+#Mostra gli edifici liberi correttamente
+#Se una sessione è attiva lo porta in output
+#Login funzionante
+
+#REPORT (SelectRoom)
+

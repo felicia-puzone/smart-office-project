@@ -8,10 +8,99 @@
         <div align="center">
           <div align="center" class="border">
              <div class="header">
-                <h1 class="word">Benvenuto {{username}}  topolino:{{pippo}}</h1>
+                <h1 class="word">Benvenuto {{username}}</h1>
 		<h1 class="word">Dati utente</h1>
+		<p>Stanza occupata:{{digitalTwin.id_room}}</p>
 		<form action="{{ url_for('update') }}" method="post">
-			<input type="color" id="color" name="color" value="{{color}}"></br></br>
+			<p>Colore luce:</p>
+			<select id="color" name="color"  required>
+			{% if digitalTwin.led_actuator == 1 %}
+			<option value=1 selected>Rosso</option>
+			{%else%}
+			 <option value=1>Rosso</option>
+			{% endif %}
+
+			{%  if digitalTwin.led_actuator == 2 %}
+			<option value=2 selected>Arancione</option>
+			{%else%}
+			<option value=2>Arancione</option>
+			{% endif %}
+			{%  if digitalTwin.led_actuator == 3%}
+			<option value=3 selected>Giallo</option>
+			{%else%}
+			<option value=3>Giallo</option>
+			{% endif %}
+
+			{%  if digitalTwin.led_actuator == 4%}
+			<option value=4 selected>Verde</option>
+			{%else%}
+			<option value=4>Verde</option>
+			{% endif %}
+
+			{%  if digitalTwin.led_actuator == 5%}
+			<option value=5 selected>Acqua</option>
+			{%else%}
+			<option value=5>Acqua</option>
+			{% endif %}
+
+			{%  if digitalTwin.led_actuator == 6%}
+			<option value=6 selected>Blu</option>
+			{%else%}
+			<option value=6>Blu</option>
+			{% endif %}
+
+			{%  if digitalTwin.led_actuator == 7%}
+			<option value=7 selected>Viola</option>
+			{%else%}
+			<option value=7>Viola</option>
+			{% endif %}
+
+			{%  if digitalTwin.led_actuator == 8%}
+			<option value=8 selected>Fucsia</option>
+			{%else%}
+			<option value=8>Fucsia</option>
+			{% endif %}
+			{%  if digitalTwin.led_actuator == 9%}
+			<option value=9 selected>RGB</option>
+			{%else%}
+			<option value=9>RGB</option>
+			{% endif %}
+
+
+
+
+			</select>
+			</br></br>
+			<p>Intensità luce:</p>
+			<select id="brightness" name="brightness"  required>
+			{% if digitalTwin.led_brightness == 0 %}
+			<option value=0 selected>Spenta</option>
+			{%else%}
+			<option value=0>Spenta</option>
+			{% endif %}
+
+			{%  if digitalTwin.led_brightness == 1 %}
+			<option value=1 selected>Bassa</option>
+			{%else%}			
+			<option value=1>Bassa</option>
+			{% endif %}
+
+			{%  if digitalTwin.led_brightness == 2%}
+			<option value=2 selected>Media</option>
+			{%else%}
+			<option value=2>Media</option>
+			{% endif %}
+
+			{%  if digitalTwin.led_brightness == 3%}
+				<option value=3 selected>Forte</option>
+			{%else%}
+				<option value=3>Forte</option>
+			{% endif %}
+
+			</select>
+			</br></br>
+			<p>Riscaldamento:</p>
+			<input type="number" min="18" max="30" id="temperature" name="temperature" value={{digitalTwin.temperature_actuator}} required /><br></br>
 			<input type="submit" class="btn" value="update"></br></br>
 		</form>
              </div></br></br></br>
@@ -19,6 +108,10 @@
                 <form action="{{ url_for('logout') }}" method="post">
                   <div>logout</div>
                     <input type="submit" class="btn" value="Logout"></br></br>
+                </form>
+		<form action="{{ url_for('freeRoom') }}" method="post">
+                  <div>logout</div>
+                    <input type="submit" class="btn" value="freeroom"></br></br>
                 </form>
             </h2>
           </div>
