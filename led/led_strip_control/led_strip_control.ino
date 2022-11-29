@@ -1,7 +1,15 @@
 #include <Adafruit_NeoPixel.h>
+#include <LiquidCrystal.h>
+ 
 #ifdef __AVR__
 #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
 #endif
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+unsigned long startMillis = 0;
+unsigned long currentMillis;
+const unsigned long period = 5000;
 
 //Office ID context:byte
 #define OFFICE_ID 6
@@ -37,6 +45,8 @@ byte serial_buf[BUFFER_SIZE];
 
 int status =1;
 
+unsigned int light_sensor_read;
+
 
 void setup() {
 
@@ -44,10 +54,40 @@ void setup() {
   strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
   strip.show();            // Turn OFF all pixels ASAP
   strip.setBrightness(50); // Set BRIGHTNESS to about 1/5 (max = 255)
-  
+  lcd.begin(16, 2);
+  // Init LCD
+  lcd.clear();
+  lcd.setCursor(0, 1);
+  lcd.print("init");
+
+  //////////////////////
 }
 
 void loop() {
+
+/******** SENSORI ***********/
+  //LETTURA SENSORE LUCE
+
+  currentMillis = millis();  //get the current time
+  if (currentMillis - startMillis >= period)  //test whether the period has elapsed
+  {
+  light_sensor_read = analogRead(A0);  
+
+  Serial.write(255);
+  Serial.write(light_sensor_read);
+  Serial.write(254); // /xfe
+
+  startMillis = currentMillis;  
+}
+
+/****************************/
+
+
+/******* ATTUATORI ********/
+
+////// TEMPERATURA
+
+///// LED
 
   changeStripColor(RED);
 
@@ -57,6 +97,13 @@ void loop() {
   if (Serial.available() > 0) {
     // read the incoming bytes:
     int rlen = Serial.readBytesUntil(255, serial_buf, BUFFER_SIZE);
+
+    if(serial_buf[0]==2){
+
+      lcd.clear();
+      lcd.setCursor(0, 1);
+      lcd.print(serial_buf[1]);
+    }
 
     // prints the received data [to see them on Realterm]
     for(int i = 0; i < rlen; i++)
@@ -146,5 +193,7 @@ void changeStripColor(int color)
   }
 }
   strip.show();  
+
+
 }
 

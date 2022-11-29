@@ -5,6 +5,8 @@ import configparser
 
 import paho.mqtt.client as mqtt
 
+id_temp_actuator = 2
+
 """
 This bridge receives data from the cloud and sends them to actuators through serial port.
 
@@ -67,11 +69,24 @@ class Bridge():
 		# Subscribing in on_connect() means that if we lose the connection and
 		# reconnect then subscriptions will be renewed.
 		self.clientMQTT.subscribe("led_messages")
+		self.clientMQTT.subscribe("smartoffice/building_1/room_1/actuators/temperature")
 
 
 	# The callback for when a PUBLISH message is received from the server.
 	def on_message(self, client, userdata, msg):
 		print(msg.topic + " " + str(msg.payload))
+  
+		if msg.topic=='smartoffice/building_1/room_1/actuators/temperature':
+			temperature = int(msg.payload.decode("utf-8"))
+			print('{}{}'.format("Temperature: ", temperature))
+   
+			command = bytearray()
+			command.append(id_temp_actuator)
+			command.append(temperature)
+			command.append(255) #ending byte
+   
+			self.ser.write(command)
+  
 		if msg.topic=='led_messages':
 			print('{}{}'.format("Le payload", msg.payload))
    
@@ -85,11 +100,48 @@ class Bridge():
 
 			case b'{\n  "msg": "GREEN"\n}':
 				self.ser.write (b'\x04\xff')
+    
+	def loop(self):
+		# infinite loop for serial managing
+		#
+		while (True):
+			#look for a byte from serial
+			if not self.ser is None:
+
+				if self.ser.in_waiting>0:
+					# data available from the serial port
+					lastchar=self.ser.read(1)
+
+					if lastchar==b'\xfe': #EOL
+						print("\nValue received from light sensor!")
+						print(int.from_bytes(self.inbuffer[1], byteorder='little'))
+						self.clientMQTT.publish('smartoffice/building_1/room_1/sensors/light/', '{}:{}'.format('value', int.from_bytes(self.inbuffer[1], byteorder='little')))
+           				#self.useData()
+						self.inbuffer =[]
+					else:
+						# append
+						self.inbuffer.append (lastchar)
+
+	def useData(self):
+		# I have received a packet from the serial port. I can use it
+		if len(self.inbuffer)<3:   # at least header, size, footer
+			return False
+		# split parts
+		if self.inbuffer[0] != b'\xff':
+			return False
+
+		numval = int.from_bytes(self.inbuffer[1], byteorder='little')
+
+		for i in range (numval):
+			val = int.from_bytes(self.inbuffer[i+2], byteorder='little')
+			strval = "Sensor %d: %d " % (i, val)
+			print(strval)
+			self.clientMQTT.publish('smartoffice/building_1/room_1/sensors/light/',  self.inbuffer[1])
 
    
 if __name__ == '__main__':
     print("Bridge Started")
     br=Bridge()
-    while(True): pass
+    br.loop()
     
 
