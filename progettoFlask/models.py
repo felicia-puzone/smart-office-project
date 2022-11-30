@@ -64,7 +64,7 @@ class professions(db.Model):
         self.category = category
         self.name = name
     def serialize(self):
-        return {"id_profession": self.id_building,
+        return {"id_profession": self.id_profession,
                 "name":self.name,
                 "category": self.category}
 class digitalTwinFeed(db.Model):
@@ -100,3 +100,89 @@ class digitalTwinFeed(db.Model):
         return {"led_actuator": self.led_actuator,
                 "temperature_actuator": self.temperature_actuator,
                 "led_brightness": self.led_brightness}
+
+
+def createAndPopulateDb():
+       db.create_all()
+       db.session.add(accounts(username="BArfaoui",password="18121996",profession=8,sex=1,dateOfBirth=datetime.utcnow().date()))
+       db.session.add(accounts(username="PFelica", password="99669966", profession=8, sex=2,
+                               dateOfBirth=datetime.utcnow().date()))
+       db.session.add(accounts(username="Vincenzo", password="66996699", profession=8, sex=1,
+                               dateOfBirth=datetime.utcnow().date()))
+       db.session.add(accounts(username="HLoredana", password="EmiliaBestWaifu", profession=10,  sex=2,
+                               dateOfBirth=datetime.utcnow().date()))
+       db.session.add(accounts(username="IValeria",  password="DarthVal", profession=12,sex=2,
+                               dateOfBirth=datetime.utcnow().date()))
+       db.session.add(accounts(username="Nicolò", password="11223344", profession=1, sex=3,
+                               dateOfBirth=datetime.strptime("2000-12-1","%Y-%m-%d")))
+       db.session.add(buildings(city="Modena"))
+       db.session.add(buildings(city="Roma"))
+       db.session.add(buildings(city="Napoli"))
+       db.session.add(buildings(city="Bologna"))
+       db.session.add(buildings(city="Milano"))
+       db.session.add(buildings(city="Genova"))
+       db.session.add(rooms(id_building=1))
+       db.session.add(rooms(id_building=1))
+       db.session.add(rooms(id_building=1))
+       db.session.add(rooms(id_building=1))
+       db.session.add(rooms(id_building=1))
+       db.session.add(rooms(id_building=2))
+       db.session.add(rooms(id_building=2))
+       db.session.add(rooms(id_building=2))
+       db.session.add(rooms(id_building=2))
+       db.session.add(rooms(id_building=2))
+       db.session.add(rooms(id_building=2))
+       db.session.add(rooms(id_building=3))
+       db.session.add(rooms(id_building=3))
+       db.session.add(rooms(id_building=3))
+       db.session.add(rooms(id_building=3))
+       db.session.add(rooms(id_building=3))
+       db.session.add(rooms(id_building=3))
+       db.session.add(rooms(id_building=4))
+       db.session.add(rooms(id_building=4))
+       db.session.add(rooms(id_building=4))
+       db.session.add(rooms(id_building=4))
+       db.session.add(rooms(id_building=5))
+       db.session.add(rooms(id_building=5))
+       db.session.add(rooms(id_building=5))
+       db.session.add(digitalTwinFeed(1,0,0,0,0,0,0,0,True))
+       db.session.add(digitalTwinFeed(2, 0,0, 0, 0, 0, 0, 0, True))
+       db.session.add(digitalTwinFeed(3, 0,0, 0, 0, 0, 0, 0, True))
+       db.session.add(digitalTwinFeed(4, 0,0, 0, 0, 0, 0, 0, True))
+       db.session.add(digitalTwinFeed(5,0,0,0,0,0,0,0,True))
+       db.session.add(digitalTwinFeed(6, 0, 0,0, 0, 0, 0, 0, True))
+       db.session.add(digitalTwinFeed(7, 0, 0, 0,0, 0, 0, 0, True))
+       db.session.add(digitalTwinFeed(8, 0, 0, 0,0,0, 0, 0, True))
+       db.session.add(digitalTwinFeed(9,0,0,0,0,0,0,0,True))
+       db.session.add(digitalTwinFeed(10, 0, 0, 0, 0,0, 0, 0, True))
+       db.session.add(digitalTwinFeed(11, 0, 0, 0, 0,0, 0, 0, True))
+       db.session.add(digitalTwinFeed(12, 0, 0, 0, 0, 0,0, 0, True))
+       db.session.add(digitalTwinFeed(13,0,0,0,0,0,0,0,True))
+       db.session.add(digitalTwinFeed(14, 0, 0, 0,0, 0, 0, 0, True))
+       db.session.add(digitalTwinFeed(15, 0, 0, 0,0, 0, 0, 0, True))
+       db.session.add(digitalTwinFeed(16, 0, 0, 0,0, 0, 0, 0, True))
+       db.session.add(digitalTwinFeed(17,0,0,0,0,0,0,0,True))
+       db.session.add(digitalTwinFeed(18, 0, 0, 0, 0,0, 0, 0, True))
+       db.session.add(digitalTwinFeed(19, 0, 0, 0, 0,0, 0, 0, True))
+       db.session.add(digitalTwinFeed(20, 0, 0, 0, 0,0, 0, 0, True))
+       db.session.add(digitalTwinFeed(21,0,0,0,0,0,0,0,True))
+       db.session.add(digitalTwinFeed(22, 0, 0, 0, 0,0, 0, 0, True))
+       db.session.add(digitalTwinFeed(23, 0, 0, 0, 0, 0,0, 0, True))
+       db.session.add(digitalTwinFeed(24, 0, 0, 0, 0, 0,0, 0, True))
+       db.session.add(professions(name="Streamer", category=0))
+       db.session.add(professions(name="Blogger", category=0))
+       db.session.add(professions(name="Televendite", category=0))
+       db.session.add(professions(name="Professore/Istruttore",category=1))
+       db.session.add(professions(name="Seminarista",category=1))
+       db.session.add(professions(name="Snake oil seller", category=1))
+       db.session.add(professions(name="Assistenza telefonica", category=2))
+       db.session.add(professions(name="Programmatore", category=2))
+       db.session.add(professions(name="Contabile", category=2))
+       db.session.add(professions(name="Manager", category=2))
+       db.session.add(professions(name="Elettricista", category=3))
+       db.session.add(professions(name="Sistemista", category=3))
+       db.session.add(professions(name="Colf/Badante", category=4))
+       db.session.add(professions(name="Babysitter", category=4))
+       db.session.add(professions(name="Operatore CAF/CISL", category=5))
+       db.session.add(professions(name="Operatore NASPI", category=5))
+       db.session.commit()
