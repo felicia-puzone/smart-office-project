@@ -1,0 +1,2 @@
+Fotoresistenza: 10 kohm
+DISPLAY: (Cerca il tutorial)

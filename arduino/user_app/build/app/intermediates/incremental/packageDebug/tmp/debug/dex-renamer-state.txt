@@ -1,0 +1,4 @@
+#Thu Nov 10 17:01:57 CET 2022
+base.0=C\:\\Users\\felic\\Desktop\\iot-projectino\\user_app\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
