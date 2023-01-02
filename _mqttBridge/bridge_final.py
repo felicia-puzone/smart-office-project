@@ -106,12 +106,18 @@ class Bridge():
 		if self.inbuffer[0] != b'\xff':
 			return False
 		
-		numval = int.from_bytes(self.inbuffer[1], byteorder="little")
+		sensor_id = int.from_bytes(self.inbuffer[1], byteorder="little")
+		sensor_name = ''
+		match sensor_id:
+			case 1: sensor_name = 'light_sensor'
+			case 2: sensor_name = 'humidity_sensor'
+   
+		numval = int.from_bytes(self.inbuffer[2], byteorder="little")
 		data = b''
 		for i in range (numval):
       
 			#val.append(int.from_bytes(self.inbuffer[i+2], byteorder='little'))
-			data += self.inbuffer[i+2]
+			data += self.inbuffer[i+3]
    
 			#strval = "Sensor %d: %d " % (i, val)
 			#print(strval)
@@ -119,7 +125,7 @@ class Bridge():
 		val = int.from_bytes(data, byteorder='big')
 
 		
-		self.clientMQTT.publish('sensor/{:d}'.format(2),'{:d}'.format(val))
+		self.clientMQTT.publish('smartoffice/building_%s/room_%s/sensors/%s' % (self.building_id, self.room_id, sensor_name),'{:d}'.format(val))
 
 
 

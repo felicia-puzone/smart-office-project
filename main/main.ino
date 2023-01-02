@@ -51,6 +51,10 @@ uint8_t distance_read;
 #define PIN_NEO_PIXEL 8  // Arduino pin that connects to NeoPixel
 #define NUM_PIXELS 62    // The number of LEDs (pixels) on NeoPixel
 
+#define LIGHT_SENSOR_ID 1
+#define HUMIDITY_SENSOR_ID 2
+
+
 Adafruit_NeoPixel strip(NUM_PIXELS, PIN_NEO_PIXEL, NEO_GRB + NEO_KHZ800);
 
 //SERIAL READ BUFFER
@@ -178,6 +182,7 @@ void loop() {
       //Serial.println(light_sensor_read);
 
       Serial.write(255);
+      Serial.write(LIGHT_SENSOR_ID); //Sensor_id
       Serial.write(2); //Data size
       Serial.write(light_sensor_high);
       Serial.write(light_sensor_low);
