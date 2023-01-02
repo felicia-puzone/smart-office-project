@@ -1,0 +1,9 @@
+flask
+flask_sqlalchemy
+flask_mqtt
+flask_cors
+firebase
+python_jwt
+gcloud
+PyCryptodome
+flask_socketio
