@@ -14,6 +14,10 @@ class Bridge():
 		self.config.read('config.ini')
 		self.setupSerial()
 		self.setupMQTT()
+  
+		self.building_id = '22'
+		self.room_id = '9'
+		
 
 	def setupSerial(self):
 		# open serial port
@@ -87,6 +91,7 @@ class Bridge():
 
 					if lastchar==b'\xfe': #EOL
 						print("\nValue received")
+						print(self.inbuffer)
 						self.useData()
 						self.inbuffer =[]
 					else:
@@ -95,19 +100,26 @@ class Bridge():
 
 	def useData(self):
 		# I have received a packet from the serial port. I can use it
-		if len(self.inbuffer)<3:   # at least header, size, footer
+		if len(self.inbuffer)<2:   # at least header, size, footer
 			return False
 		# split parts
 		if self.inbuffer[0] != b'\xff':
 			return False
-
-		numval = int.from_bytes(self.inbuffer[1], byteorder='little')
-
+		
+		numval = int.from_bytes(self.inbuffer[1], byteorder="little")
+		data = b''
 		for i in range (numval):
-			val = int.from_bytes(self.inbuffer[i+2], byteorder='little')
-			strval = "Sensor %d: %d " % (i, val)
-			print(strval)
-			self.clientMQTT.publish('sensor/{:d}'.format(i),'{:d}'.format(val))
+      
+			#val.append(int.from_bytes(self.inbuffer[i+2], byteorder='little'))
+			data += self.inbuffer[i+2]
+   
+			#strval = "Sensor %d: %d " % (i, val)
+			#print(strval)
+   
+		val = int.from_bytes(data, byteorder='big')
+
+		
+		self.clientMQTT.publish('sensor/{:d}'.format(2),'{:d}'.format(val))
 
 
 
