@@ -38,7 +38,10 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^0.13.5
   flutter_emoji: ^2.4.0
+<<<<<<< HEAD
   mqtt_client: ^9.7.4
+=======
+>>>>>>> billy-code
 
 dev_dependencies:
   flutter_test:
