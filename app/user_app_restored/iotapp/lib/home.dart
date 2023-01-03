@@ -29,7 +29,7 @@ Future<UserSession?> fetchUserSession() async {
 
 //inserisci un try-catch su timeout exception
   final response = await http.post(
-    Uri.parse('http://127.0.0.1:5000/login'),
+    Uri.parse('http://192.168.1.240:5000/login'),
     headers: <String, String>{
       'Content-Type': 'application/x-www-form-urlencoded',
       'Content-ID': 'LOGIN-APP'
