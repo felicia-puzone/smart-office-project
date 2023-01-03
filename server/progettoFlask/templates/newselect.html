@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Flask Leaflet Website</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/universal.css') }}" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+  crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+  crossorigin=""></script>
+</head>
+
+<body>
+  <div id="map"></div>
+  <form action="{{ url_for('logout') }}" method="post">
+    <div>logout</div>
+      <input type="submit" class="btn" value="Logout"></br></br>
+  </form>
+  <script src="{{ url_for('static', filename='js/universal.js') }}" /></script>
+  <script>
+
+    {% for building in buildings %}
+      	var popupContent1 = '<form action={{url_for("occupyRoom") }} method=post><p>{{ building.route + building.number }}</p><button type=submit name=building id=building value={{ building.id_building }}>Prenota</button></form>';
+        popup1 = new L.Popup();
+        popup1.setLatLng([{{building.lat }}, {{ building.lon }}]);
+        popup1.setContent(popupContent1);
+        popup1.offset = new L.Point(0, 20);
+      L.marker([{{ building.lat }}, {{ building.lon }}]).addTo(map)
+      .bindPopup(popup1)
+      .openPopup();
+    {% endfor %}
+	 //var target = L.latLng('47.50737', '19.04611');
+
+// Set map's center to target with zoom 14.
+      map.setView(target, 9);
+  </script>
+</body>
+
+</html>
