@@ -28,6 +28,28 @@ class UpdateReq {
       };
 }
 
+//TEMPORANEA
+Future<String?> UpdateRoom(UpdateReq request) async {
+  final response = await http.post(
+    Uri.parse('http://192.168.1.240:5000/update'),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Content-ID': 'UPDATE-APP'
+    },
+    body: jsonEncode(request.toJson()),
+  );
+
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to send UPDATE');
+  }
+}
+
 Future<String?> changeActuatorRequest(UpdateReq request) async {
   final response = await http.post(
     Uri.parse('http://192.168.1.240:5000/update'),
