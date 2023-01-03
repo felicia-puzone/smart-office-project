@@ -13,3 +13,15 @@ def buildJsonList(list):
     for element in list:
         new_list.append(element.serialize())
     return new_list
+
+def translateLEDValue(value):
+    if value == "RED":
+        return 1
+    elif value == "BLUE":
+        return 2
+
+def createABuildingtupleList(query):
+    new_list = []
+    for element in query:
+        new_list.append((str(element.city)+ " " + str(element.route) +" " +str(element.number),element.id_building))
+    return new_list

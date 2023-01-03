@@ -105,14 +105,15 @@
 		</form>
              </div></br></br></br>
             <h2 class="word">
+		<form action="{{ url_for('freeRoom') }}" method="post">
+                  <div>Libera la stanza</div>
+                    <input type="submit" class="btn" value="freeroom"></br></br>
+                </form>
                 <form action="{{ url_for('logout') }}" method="post">
                   <div>logout</div>
                     <input type="submit" class="btn" value="Logout"></br></br>
                 </form>
-		<form action="{{ url_for('freeRoom') }}" method="post">
-                  <div>logout</div>
-                    <input type="submit" class="btn" value="freeroom"></br></br>
-                </form>
+		
             </h2>
           </div>
         </div>
