@@ -6,7 +6,7 @@ class UserSession {
   late bool logged_in;
   late String? outcome;
 
-  late DigitalTwin? digitalTwin;
+  //late DigitalTwin? digitalTwin;
 
   //List<Building> edificiList;
 
@@ -17,19 +17,19 @@ class UserSession {
     this.username,
     required this.logged_in,
     this.outcome,
-    this.digitalTwin,
     //required this.edificiList
   });
 
   factory UserSession.fromJson(dynamic json) {
     return UserSession(
-        id: json['id'],
-        id_edificio: json['id_edificio'],
-        id_room: json['id_room'],
-        username: json['username'],
-        logged_in: json['logged_in'],
-        outcome: json['outcome'],
-        digitalTwin: DigitalTwin?.fromJson(json['digitalTwin']));
+      id: json['id'],
+      id_edificio: json['id_edificio'],
+      id_room: json['id_room'],
+      username: json['username'],
+      logged_in: json['logged_in'],
+      outcome: json['outcome'],
+      //    digitalTwin: DigitalTwin?.fromJson(json['digitalTwin']
+    );
   }
 
   @override
@@ -46,6 +46,7 @@ class DigitalTwin {
   DigitalTwin({this.room_color, this.room_brightness, this.room_temperature});
 
   factory DigitalTwin.fromJson(dynamic json) {
+    json = json['digitalTwin'];
     return DigitalTwin(
         room_color: json?['led_actuator'],
         room_brightness: json?['led_brightness'],
@@ -54,12 +55,26 @@ class DigitalTwin {
 }
 
 class Building {
-  late int? id_building;
-  late String? address;
+  late int idBuilding;
+  late String city;
+  late String route;
+  late String lat;
+  late String lon;
+  late String number;
 
-  Building({required this.id_building, required this.address});
+  Building(
+      {required this.idBuilding,
+      required this.route,
+      required this.lat,
+      required this.lon,
+      required this.number});
 
   factory Building.fromJson(dynamic json) {
-    return Building(id_building: json['id_building'], address: json['city']);
+    return Building(
+        idBuilding: json['id_building'],
+        route: json['city'],
+        lat: json['lat'],
+        lon: json['lon'],
+        number: json['number']);
   }
 }

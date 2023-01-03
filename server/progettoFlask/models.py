@@ -82,7 +82,9 @@ class buildings(db.Model):
         return {"id_building": self.id_building,
                 "city": db.session.query(zones).filter_by(id_zone=self.id_zone).first().city,
                 "lat":self.lat,
-                "lon":self.lon,"route":self.route,"number":self.number}
+                "lon":self.lon,
+                "route":self.route,
+                "number":self.number}
 #TODO testing
 class zones(db.Model):
     id_zone= db.Column(db.Integer, primary_key=True,autoincrement=True,nullable=True)

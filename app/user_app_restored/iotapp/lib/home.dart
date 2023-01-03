@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'userSession.dart';
 import 'login.dart';
+import 'rooms_map.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_emoji/flutter_emoji.dart';
@@ -12,6 +13,9 @@ import 'change_values.dart';
 
 class GlobalValues {
   static UserSession? userSession;
+  static late DigitalTwin digitalTwin;
+  static late List<dynamic> listBuildings;
+  //lista building
 }
 
 final MqttServerClient client =
@@ -25,7 +29,7 @@ Future<UserSession?> fetchUserSession() async {
 
 //inserisci un try-catch su timeout exception
   final response = await http.post(
-    Uri.parse('http://192.168.1.240:5000/login'),
+    Uri.parse('http://127.0.0.1:5000/login'),
     headers: <String, String>{
       'Content-Type': 'application/x-www-form-urlencoded',
       'Content-ID': 'LOGIN-APP'
@@ -37,6 +41,9 @@ Future<UserSession?> fetchUserSession() async {
     // If the server did return a 200 OK response,
     // then parse the JSON.
     GlobalValues.userSession = UserSession.fromJson(jsonDecode(response.body));
+    GlobalValues.digitalTwin = DigitalTwin.fromJson(jsonDecode(response.body));
+
+    GlobalValues.listBuildings = jsonDecode(response.body)['buildings'];
 
     return GlobalValues.userSession;
   } else {
@@ -500,7 +507,13 @@ class _UserHomeState extends State<UserHome> {
                                             ),
                                             backgroundColor:
                                                 Colors.orangeAccent),
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Mappa()));
+                                        },
                                         child: const Text('LASCIA STANZA')),
                                   ))
                                 ])
