@@ -23,11 +23,13 @@ const unsigned long period = 5000;
 const int buttonPin = 9;  
 int buttonState = 0; //to check the state of the button
 
+const int soundSensorPin = 13;
+
 uint8_t distance_read;
 
 
 #define ID_SENSOR_LIGHT 1
-#define ID_SENSOR_HUMIDITY 2
+#define ID_SENSOR_NOISE 2
 
 //Office ID context:byte
 #define OFFICE_ID 6
@@ -65,6 +67,7 @@ int logged = 0;
 int initialized = 0;
 
 unsigned int light_sensor_read;
+unsigned int sensorData;
 
 static const uint8_t PROGMEM
   smile_bmp[] = { B00111100,
@@ -81,6 +84,8 @@ void setup() {
 
   Serial.begin(9600);
   pinMode(buttonPin, INPUT);
+  pinMode(soundSensorPin, INPUT);
+
 
   strip.begin();            // INITIALIZE NeoPixel strip object (REQUIRED)
   strip.show();             // Turn OFF all pixels ASAP
@@ -182,9 +187,15 @@ void loop() {
       Serial.write(lowByte(light_sensor_read));
       Serial.write(254);  // /xfe
 
-      //Noise Sensor Retrieve
+      //LETTURA SENSORE RUMORE 
 
-      //...
+      soundSensorData = digitalRead(soundSensorPin);
+
+      Serial.write(255);
+      Serial.write(ID_SENSOR_NOISE); 
+      Serial.write(1); //data size
+      Serial.write(soundSensorData);
+      Serial.write(254);  // /xfe
 
       startMillis = currentMillis;
     }
