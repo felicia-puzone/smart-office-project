@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -6,6 +8,25 @@ import 'package:iotapp/home.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
+
+Future<String> sendOccupationRequest(id_building, id_user) async {
+  final response = await http.post(
+    Uri.parse('http://192.168.1.240:5000/selectRoom'),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Content-ID': 'SELECT-APP'
+    },
+    body: (jsonEncode({"id_utente": id_user, "building_id": id_building})),
+  );
+
+  if (response.statusCode == 200) {
+    return "Stanza occupata con successo";
+  } else {
+    return ('Occupazione non riuscita. Errore: ' +
+        response.statusCode.toString());
+  }
+}
 
 class BuildingMarker extends StatefulWidget {
   final int? idRoom;
@@ -66,7 +87,8 @@ class _BuildingMarkerState extends State<BuildingMarker> {
                                   fontSize: 20,
                                 ),
                                 backgroundColor: Colors.orangeAccent),
-                            onPressed: () => Navigator.pop(context, 'Prenota'),
+                            onPressed: () => sendOccupationRequest(
+                                GlobalValues.userSession!.id, widget.idRoom),
                             /*prenotazione*/
                             child: const Text('Prenota'),
                           ))),
