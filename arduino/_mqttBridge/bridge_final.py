@@ -110,7 +110,7 @@ class Bridge():
 		sensor_name = ''
 		match sensor_id:
 			case 1: sensor_name = 'light_sensor'
-			case 2: sensor_name = 'humidity_sensor'
+			case 2: sensor_name = 'noise_sensor'
    
 		numval = int.from_bytes(self.inbuffer[2], byteorder="little")
 		data = b''

@@ -67,7 +67,7 @@ int logged = 0;
 int initialized = 0;
 
 unsigned int light_sensor_read;
-unsigned int sensorData;
+unsigned int soundSensorData;
 
 static const uint8_t PROGMEM
   smile_bmp[] = { B00111100,
@@ -187,7 +187,7 @@ void loop() {
       Serial.write(lowByte(light_sensor_read));
       Serial.write(254);  // /xfe
 
-      //LETTURA SENSORE RUMORE 
+    //LETTURA SENSORE RUMORE 
 
       soundSensorData = digitalRead(soundSensorPin);
 
