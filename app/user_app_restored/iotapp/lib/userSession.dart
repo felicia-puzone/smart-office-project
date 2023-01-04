@@ -69,6 +69,30 @@ class Building {
       required this.lon,
       required this.number});
 
+  int get getidBuilding {
+    return idBuilding;
+  }
+
+  String get getCity {
+    return city;
+  }
+
+  String get getRoute {
+    return route;
+  }
+
+  double get getLat {
+    return double.parse(lat);
+  }
+
+  double get getLon {
+    return double.parse(lon);
+  }
+
+  String get getNumber {
+    return number;
+  }
+
   factory Building.fromJson(dynamic json) {
     return Building(
         idBuilding: json['id_building'],

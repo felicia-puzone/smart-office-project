@@ -2,9 +2,105 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:iotapp/home.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
+
+class BuildingMarker extends StatefulWidget {
+  final int? idRoom;
+  final String city;
+  final String number;
+  final String route;
+
+  BuildingMarker({
+    super.key,
+    required this.idRoom,
+    required this.city,
+    required this.number,
+    required this.route,
+  });
+
+  @override
+  State<BuildingMarker> createState() => _BuildingMarkerState();
+}
+
+class _BuildingMarkerState extends State<BuildingMarker> {
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      height: 10,
+      width: 10,
+      duration: const Duration(milliseconds: 2),
+      curve: Curves.easeIn,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: Container(
+                  child: Text('Nome edificio'), alignment: Alignment.center),
+              content: Container(
+                  height: 70,
+                  child: Column(
+                    children: [
+                      Text(widget.city +
+                          ' ' +
+                          widget.route +
+                          ', ' +
+                          widget.number),
+                      Text('Numero stanze disponibili: ' + '..')
+                    ],
+                  )),
+              actions: <Widget>[
+                Row(children: [
+                  Expanded(
+                      child: Container(
+                          height: 50,
+                          //padding: EdgeInsets.only(top: 35, bottom: 35),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                textStyle: const TextStyle(
+                                  color: Color(0xff4c505b),
+                                  fontSize: 20,
+                                ),
+                                backgroundColor: Colors.orangeAccent),
+                            onPressed: () => Navigator.pop(context, 'Prenota'),
+                            /*prenotazione*/
+                            child: const Text('Prenota'),
+                          ))),
+                ]),
+                Row(
+                  children: [
+                    Expanded(
+                        child: Container(
+                            height: 50,
+                            //padding: EdgeInsets.only(top: 35, bottom: 35),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  textStyle: const TextStyle(
+                                    color: Color(0xff4c505b),
+                                    fontSize: 20,
+                                  ),
+                                  backgroundColor: Colors.grey),
+                              onPressed: () => Navigator.pop(context),
+                              /*prenotazione*/
+                              child: const Text('Annulla'),
+                            )))
+                  ],
+                ),
+              ],
+            ),
+          ),
+          child: ClipRRect(
+            child: Image.asset('assets/marker.png', width: 20, height: 20),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class Mappa extends StatefulWidget {
   const Mappa({super.key});
@@ -15,9 +111,13 @@ class Mappa extends StatefulWidget {
 
 class _MappaState extends State<Mappa> {
   late Future<Position> _initPosition;
+  late List<Marker> _markers;
+
   @override
   void initState() {
     _initPosition = getLocation();
+
+    _markers = initMarkers();
   }
 
   @override
@@ -46,6 +146,7 @@ class _MappaState extends State<Mappa> {
                       userAgentPackageName: 'com.example.app',
                     ),
                     CurrentLocationLayer(),
+                    MarkerLayer(markers: _markers),
                   ],
                 );
               } else
@@ -65,4 +166,21 @@ Future<Position> getLocation() async {
       desiredAccuracy: LocationAccuracy.low);
   print(position);
   return position;
+}
+
+List<Marker> initMarkers() {
+  List<Marker> markers = [];
+
+  GlobalValues.listBuildings.forEach((building) {
+    markers.add(Marker(
+        point: LatLng(
+            double.parse(building['lat']), double.parse(building['lon'])),
+        builder: (context) => BuildingMarker(
+            idRoom: building['id_building'],
+            city: building['city'],
+            number: building['number'],
+            route: building['route'])));
+  });
+
+  return markers;
 }
