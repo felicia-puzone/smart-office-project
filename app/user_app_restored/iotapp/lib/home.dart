@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'userSession.dart';
-import 'login.dart';
+import 'models.dart';
+import 'controller.dart';
 import 'rooms_map.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -11,47 +11,10 @@ import 'dart:async';
 import 'dart:io';
 import 'change_values.dart';
 
-class GlobalValues {
-  static UserSession? userSession;
-  static late DigitalTwin digitalTwin;
-  static late List<dynamic> listBuildings;
-  //lista building
-}
-
 final MqttServerClient client =
     MqttServerClient('broker.hivemq.com', 'iot-app');
 
 ValueNotifier<String> lightSensorValue = ValueNotifier<String>('0');
-
-Future<UserSession?> fetchUserSession() async {
-  String user = userTextController.text;
-  String pwd = pwdTextController.text;
-
-//inserisci un try-catch su timeout exception
-  final response = await http.post(
-    Uri.parse('http://192.168.1.240:5000/login'),
-    headers: <String, String>{
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Content-ID': 'LOGIN-APP'
-    },
-    body: ('username=$user&password=$pwd'),
-  );
-
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    GlobalValues.userSession = UserSession.fromJson(jsonDecode(response.body));
-    GlobalValues.digitalTwin = DigitalTwin.fromJson(jsonDecode(response.body));
-
-    GlobalValues.listBuildings = jsonDecode(response.body)['buildings'];
-
-    return GlobalValues.userSession;
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load UserSession');
-  }
-}
 
 Future<int> mqttConnect() async {
   /// Set logging on if needed, defaults to off
@@ -192,7 +155,6 @@ class _UserHomeState extends State<UserHome> {
   void initState() {
     super.initState();
 
-    futureUserSession = fetchUserSession();
     mqttObject = mqttConnect();
   }
 
@@ -204,138 +166,250 @@ class _UserHomeState extends State<UserHome> {
               image: AssetImage('assets/register.png'), fit: BoxFit.cover),
         ),
         child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: FutureBuilder<UserSession?>(
-            future: futureUserSession,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.logged_in == true) {
-                  return Container(
-                      child: SingleChildScrollView(
-                          child: Center(
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                        const SizedBox(
-                          height: 90,
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(left: 35, right: 35),
+            backgroundColor: Colors.transparent,
+            body: Container(
+                child: SingleChildScrollView(
+                    child: Center(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                  const SizedBox(
+                    height: 90,
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(left: 35, right: 35),
+                    child: Column(children: [
+                      Container(
+                          child: Text(
+                            'Benvenuto ' +
+                                GlobalValues.userSession!.username.toString() +
+                                '! 🖖',
+                            style: const TextStyle(
+                                color: Colors.black, fontSize: 27),
+                          ),
+                          decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(5)),
+                          padding: const EdgeInsets.all(8.0)),
+                      const SizedBox(
+                        height: 55,
+                      ),
+
+                      //METEO E LUOGO
+
+                      Container(
+                          padding: const EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                              color: Colors.orange,
+                              borderRadius: BorderRadius.circular(5)),
                           child: Column(children: [
-                            Container(
-                                child: Text(
-                                  'Benvenuto ' +
-                                      GlobalValues.userSession!.username
-                                          .toString() +
-                                      '! 🖖',
-                                  style: const TextStyle(
-                                      color: Colors.black, fontSize: 27),
-                                ),
-                                decoration: BoxDecoration(
-                                    color: Colors.grey.shade100,
-                                    borderRadius: BorderRadius.circular(5)),
-                                padding: const EdgeInsets.all(8.0)),
-                            const SizedBox(
-                              height: 55,
-                            ),
-
-                            //METEO E LUOGO
-
-                            Container(
-                                padding: const EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                    color: Colors.orange,
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: Column(children: [
-                                  Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Meteo',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w700),
-                                        ),
-                                        Icon(Icons.sunny),
-                                        Text(
-                                          '0',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w700),
-                                        )
-                                      ]),
-                                  const Divider(
-                                    height: 20,
-                                    thickness: 2,
-                                    color: Colors.black,
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Meteo',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700),
                                   ),
-                                  Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Luogo',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w700),
-                                        ),
-                                        Icon(Icons.pin_drop_sharp),
-                                        Text(
-                                          '0',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w700),
-                                        )
-                                      ])
-                                ])),
-
-                            const SizedBox(
-                              height: 55,
+                                  Icon(Icons.sunny),
+                                  Text(
+                                    '0',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700),
+                                  )
+                                ]),
+                            const Divider(
+                              height: 20,
+                              thickness: 2,
+                              color: Colors.black,
                             ),
-                            //Sensore luce
-                            Container(
-                                padding: const EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                    color: Colors.grey.shade100,
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: Row(
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Luogo',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  Icon(Icons.pin_drop_sharp),
+                                  Text(
+                                    '0',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700),
+                                  )
+                                ])
+                          ])),
+
+                      const SizedBox(
+                        height: 55,
+                      ),
+                      //Sensore luce
+                      Container(
+                          padding: const EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Luminosità rilevata',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                                ValueListenableBuilder(
+                                  valueListenable: lightSensorValue,
+                                  builder: (context, value, child) {
+                                    return Text(value.toString(),
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w700));
+                                  },
+                                ),
+                              ])),
+
+                      const SizedBox(
+                        height: 30,
+                      ),
+
+                      //Umidità
+                      Container(
+                          padding: const EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Umidità rilevata',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                                Text(
+                                  '0',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700),
+                                )
+                              ])),
+
+                      const SizedBox(
+                        height: 30,
+                      ),
+
+                      //Led
+                      Container(
+                        padding: const EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Colore luce',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                    Text(
+                                      'None',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                  ]),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      textStyle: const TextStyle(
+                                        color: Color(0xff4c505b),
+                                        fontSize: 20,
+                                      ),
+                                      backgroundColor: Colors.orangeAccent),
+                                  onPressed: () {},
+                                  child: const Icon(Icons.edit))
+                            ]),
+                      ),
+
+                      const SizedBox(
+                        height: 30,
+                      ),
+
+                      //LED intensity
+                      Container(
+                          padding: const EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        'Luminosità rilevata',
+                                        'Intensità luce',
                                         style: TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.w700),
                                       ),
-                                      ValueListenableBuilder(
-                                        valueListenable: lightSensorValue,
-                                        builder: (context, value, child) {
-                                          return Text(value.toString(),
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w700));
-                                        },
-                                      ),
-                                    ])),
+                                      Text(
+                                        'None',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w700),
+                                      )
+                                    ]),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        textStyle: const TextStyle(
+                                          color: Color(0xff4c505b),
+                                          fontSize: 20,
+                                        ),
+                                        backgroundColor: Colors.orangeAccent),
+                                    onPressed: () {},
+                                    child: const Icon(Icons.edit))
+                              ])),
 
-                            const SizedBox(
-                              height: 30,
-                            ),
+                      const SizedBox(
+                        height: 30,
+                      ),
 
-                            //Umidità
-                            Container(
-                                padding: const EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                    color: Colors.grey.shade100,
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: Row(
+                      //Temperatura
+                      Container(
+                          padding: const EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        'Umidità rilevata',
+                                        'Temperatura',
                                         style: TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.w700),
@@ -346,206 +420,54 @@ class _UserHomeState extends State<UserHome> {
                                             fontSize: 20,
                                             fontWeight: FontWeight.w700),
                                       )
-                                    ])),
+                                    ]),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        textStyle: const TextStyle(
+                                          color: Color(0xff4c505b),
+                                          fontSize: 20,
+                                        ),
+                                        backgroundColor: Colors.orangeAccent),
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ColorChanger(
+                                                      client: client)));
+                                    },
+                                    child: const Icon(Icons.edit))
+                              ])),
 
-                            const SizedBox(
-                              height: 30,
-                            ),
-
-                            //Led
-                            Container(
-                              padding: const EdgeInsets.all(10.0),
-                              decoration: BoxDecoration(
-                                  color: Colors.grey.shade100,
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Colore luce',
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w700),
-                                          ),
-                                          Text(
-                                            'None',
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w700),
-                                          ),
-                                        ]),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            textStyle: const TextStyle(
-                                              color: Color(0xff4c505b),
-                                              fontSize: 20,
-                                            ),
-                                            backgroundColor:
-                                                Colors.orangeAccent),
-                                        onPressed: () {},
-                                        child: const Icon(Icons.edit))
-                                  ]),
-                            ),
-
-                            const SizedBox(
-                              height: 30,
-                            ),
-
-                            //LED intensity
-                            Container(
-                                padding: const EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                    color: Colors.grey.shade100,
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Intensità luce',
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w700),
-                                            ),
-                                            Text(
-                                              'None',
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w700),
-                                            )
-                                          ]),
-                                      const SizedBox(
-                                        height: 5,
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                                child: Container(
+                              padding: EdgeInsets.only(top: 35, bottom: 35),
+                              height: 150,
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      textStyle: const TextStyle(
+                                        color: Color(0xff4c505b),
+                                        fontSize: 20,
                                       ),
-                                      ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              textStyle: const TextStyle(
-                                                color: Color(0xff4c505b),
-                                                fontSize: 20,
-                                              ),
-                                              backgroundColor:
-                                                  Colors.orangeAccent),
-                                          onPressed: () {},
-                                          child: const Icon(Icons.edit))
-                                    ])),
-
-                            const SizedBox(
-                              height: 30,
-                            ),
-
-                            //Temperatura
-                            Container(
-                                padding: const EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                    color: Colors.grey.shade100,
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Temperatura',
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w700),
-                                            ),
-                                            Text(
-                                              '0',
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w700),
-                                            )
-                                          ]),
-                                      const SizedBox(
-                                        height: 5,
-                                      ),
-                                      ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              textStyle: const TextStyle(
-                                                color: Color(0xff4c505b),
-                                                fontSize: 20,
-                                              ),
-                                              backgroundColor:
-                                                  Colors.orangeAccent),
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ColorChanger(
-                                                            client: client)));
-                                          },
-                                          child: const Icon(Icons.edit))
-                                    ])),
-
-                            Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                      child: Container(
-                                    padding:
-                                        EdgeInsets.only(top: 35, bottom: 35),
-                                    height: 150,
-                                    child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            textStyle: const TextStyle(
-                                              color: Color(0xff4c505b),
-                                              fontSize: 20,
-                                            ),
-                                            backgroundColor:
-                                                Colors.orangeAccent),
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Mappa()));
-                                        },
-                                        child: const Text('LASCIA STANZA')),
-                                  ))
-                                ])
-                          ]),
-                        ),
-                      ]))));
-                }
-
-                ////////////////////////
-                ///////////////////////
-
-                else if (snapshot.data!.logged_in == false) {
-                  return AlertDialog(
-                    title: const Text('Login Fallito'),
-                    alignment: Alignment.center,
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, 'OK'),
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  );
-                }
-              } else if (snapshot.hasError) {
-                return Text('${snapshot.error}');
-              }
-
-              // By default, show a loading spinner.
-              return const CircularProgressIndicator();
-            },
-          ),
-        ));
+                                      backgroundColor: Colors.orangeAccent),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Mappa()));
+                                  },
+                                  child: const Text('LASCIA STANZA')),
+                            ))
+                          ])
+                    ]),
+                  ),
+                ]))))));
   }
 }
 

@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'register.dart';
-import 'main.dart';
+import 'controller.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'home.dart';
-import 'userSession.dart';
-import 'edificio.dart';
+import 'models.dart';
+import 'package:iotapp/rooms_map.dart';
 
-//////////////// REQUEST
 final userTextController = TextEditingController();
 final pwdTextController = TextEditingController();
-
 
 class MyLogin extends StatefulWidget {
   const MyLogin({Key? key}) : super(key: key);
@@ -20,8 +18,8 @@ class MyLogin extends StatefulWidget {
 }
 
 class _MyLoginState extends State<MyLogin> {
+  late Future<String> futureUserSession;
 
-  
   @override
   void initState() {
     print('INIT CALLED');
@@ -107,21 +105,37 @@ class _MyLoginState extends State<MyLogin> {
                                 backgroundColor: Color(0xff4c505b),
                                 child: IconButton(
                                     color: Colors.white,
-                                    onPressed: () {
-                                      
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  UserHome()));
+                                    onPressed: () async {
+                                      String result = await fetchUserSession(
+                                          userTextController.text,
+                                          pwdTextController.text);
+                                      if (result == 'LOGIN-OK') {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const Mappa()));
+                                      } else {
+                                        AlertDialog(
+                                          title: const Text('Login Fallito'),
+                                          alignment: Alignment.center,
+                                          actions: <Widget>[
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, 'OK'),
+                                              child: const Text('OK'),
+                                            ),
+                                          ],
+                                        );
+                                      }
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.arrow_forward,
                                     )),
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 40,
                           ),
                           Row(

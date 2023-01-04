@@ -5,28 +5,22 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:iotapp/home.dart';
+import 'package:iotapp/login.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'controller.dart';
 
-Future<String> sendOccupationRequest(id_building, id_user) async {
-  final response = await http.post(
-    Uri.parse('http://192.168.1.240:5000/selectRoom'),
-    headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Content-ID': 'SELECT-APP'
+final snackBar = SnackBar(
+  content: const Text('Logged out!'),
+  action: SnackBarAction(
+    label: 'Undo',
+    onPressed: () {
+      // Some code to undo the change.
     },
-    body: (jsonEncode({"id_utente": id_user, "building_id": id_building})),
-  );
-
-  if (response.statusCode == 200) {
-    return "Stanza occupata con successo";
-  } else {
-    return ('Occupazione non riuscita. Errore: ' +
-        response.statusCode.toString());
-  }
-}
+  ),
+);
 
 class BuildingMarker extends StatefulWidget {
   final int? idRoom;
@@ -87,8 +81,15 @@ class _BuildingMarkerState extends State<BuildingMarker> {
                                   fontSize: 20,
                                 ),
                                 backgroundColor: Colors.orangeAccent),
-                            onPressed: () => sendOccupationRequest(
-                                GlobalValues.userSession!.id, widget.idRoom),
+                            onPressed: () async {
+                              sendOccupationRequest(
+                                  GlobalValues.userSession!.id, widget.idRoom);
+
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const UserHome()));
+                            },
                             /*prenotazione*/
                             child: const Text('Prenota'),
                           ))),
@@ -145,6 +146,48 @@ class _MappaState extends State<Mappa> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+            title:
+                Text("Benvenuto " + GlobalValues.userSession!.username + "!")),
+        drawer: Drawer(
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text('Menu'),
+              ),
+              ListTile(
+                title: const Text('Logout'),
+                onTap: () async {
+                  String result = await logout();
+                  if (result == 'LOGIN-OK') {
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const MyLogin()));
+                  } else {
+                    AlertDialog(
+                      title: const Text('Errore'),
+                      alignment: Alignment.center,
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'OK'),
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    );
+                  }
+                  const CircularProgressIndicator();
+                },
+              ),
+            ],
+          ),
+        ),
         body: FutureBuilder<Position>(
             future: _initPosition,
             builder: (context, snapshot) {
@@ -172,7 +215,7 @@ class _MappaState extends State<Mappa> {
                   ],
                 );
               } else
-                return Text("C'è qualquadra che non cosa");
+                return CircularProgressIndicator();
             }));
   }
 }
