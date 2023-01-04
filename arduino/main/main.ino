@@ -25,6 +25,10 @@ int buttonState = 0; //to check the state of the button
 
 uint8_t distance_read;
 
+
+#define ID_SENSOR_LIGHT 1
+#define ID_SENSOR_HUMIDITY 2
+
 //Office ID context:byte
 #define OFFICE_ID 6
 
@@ -168,10 +172,14 @@ void loop() {
 
       //Light Sensor Retrieve
       light_sensor_read = analogRead(A0);
+
       // Serial.println(light_sensor_read);
 
       Serial.write(255);
-      Serial.write(light_sensor_read);
+      Serial.write(ID_SENSOR_LIGHT); 
+      Serial.write(2); //data size
+      Serial.write(highByte(light_sensor_read));
+      Serial.write(lowByte(light_sensor_read));
       Serial.write(254);  // /xfe
 
       //Noise Sensor Retrieve
