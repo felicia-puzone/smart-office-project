@@ -15,6 +15,7 @@ final MqttServerClient client =
     MqttServerClient('broker.hivemq.com', 'iot-app');
 
 ValueNotifier<String> lightSensorValue = ValueNotifier<String>('0');
+ValueNotifier<String> noiseSensorValue = ValueNotifier<String>('0');
 
 Future<int> mqttConnect() async {
   /// Set logging on if needed, defaults to off
@@ -79,16 +80,27 @@ Future<int> mqttConnect() async {
 
   /// Ok, lets try a subscription
   print('EXAMPLE::Subscribing to the test/lol topic');
-  const topic =
+  const topicLightSensor =
       'smartoffice/building_22/room_9/sensors/light_sensor'; // Not a wildcard topic
-  client.subscribe(topic, MqttQos.atMostOnce);
+  const topicNoiseSensor =
+      'smartoffice/building_22/room_9/sensors/noise_sensor';
+  client.subscribe(topicLightSensor, MqttQos.atMostOnce);
+  client.subscribe(topicNoiseSensor, MqttQos.atMostOnce);
 
   /// The client has a change notifier object(see the Observable class) which we then listen to to get
   /// notifications of published updates to each subscribed topic.
   client.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
     final recMess = c![0].payload as MqttPublishMessage;
-    lightSensorValue.value =
-        MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+
+    if (c[0].topic == topicNoiseSensor) if (MqttPublishPayload
+            .bytesToStringAsString(recMess.payload.message) ==
+        '1')
+      noiseSensorValue.value = 'ALTO';
+    else
+      noiseSensorValue.value = 'NORMALE';
+    if (c[0].topic == topicLightSensor)
+      lightSensorValue.value =
+          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
     /// The above may seem a little convoluted for users only interested in the
     /// payload, some users however may be interested in the received publish message,
@@ -289,17 +301,20 @@ class _UserHomeState extends State<UserHome> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Umidità rilevata',
+                                  'Rumore rilevato',
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w700),
                                 ),
-                                Text(
-                                  '0',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700),
-                                )
+                                ValueListenableBuilder(
+                                  valueListenable: noiseSensorValue,
+                                  builder: (context, value, child) {
+                                    return Text(value.toString(),
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w700));
+                                  },
+                                ),
                               ])),
 
                       const SizedBox(
