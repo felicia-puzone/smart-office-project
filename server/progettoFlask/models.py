@@ -1,22 +1,43 @@
 from flask_admin.contrib import sqla
+from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+import datetime
 
+from itsdangerous import URLSafeTimedSerializer
 from werkzeug.routing import ValidationError
+from werkzeug.security import generate_password_hash, check_password_hash
 
 import geolog
 from geolog import getMarker,getMarkerByType
+serializer_secret = "my_secret_key"
+serializer = URLSafeTimedSerializer(serializer_secret)
 db = SQLAlchemy()
 
-
-# Customized Post model admin
-
-
-#class BuldingAdmin(sqla.ModelView):
-#class roomadmin
-#profession manager
-#
-
+class User(db.Model,UserMixin):
+    id = db.Column('ID_USER', db.Integer, primary_key = True)
+    username=db.Column(db.String(100),unique= True)
+    password = db.Column(db.String(150))
+    profession = db.Column(db.Integer,nullable=False)
+    sex = db.Column(db.Integer)
+    dateOfBirth=db.Column(db.DateTime(timezone=True), nullable=False,  default=datetime.datetime.utcnow)
+    def __init__(self,username,password,profession,sex,dateOfBirth):
+        self.sex = sex
+        self.profession = profession
+        self.password = generate_password_hash(password)
+        self.username = username
+        self.dateOfBirth = dateOfBirth
+    def get_username(self):
+        return self.username
+    def verify_password(self,pwd):
+        return check_password_hash(self.password,pwd)
+    def update_password(self,old_pwd,pwd):
+        if self.verify_password(old_pwd):
+            self.password = generate_password_hash(pwd)
+    def get_id(self):
+        return self.id
+    def get_auth_token(self, user, password):
+        data = [str(self.username), self.password]
+        return serializer.dumps(data, salt=serializer_secret)
 
 
 
@@ -29,8 +50,8 @@ db = SQLAlchemy()
 
 class sessions(db.Model):
     id = db.Column('ID_SESSION', db.Integer, primary_key = True)
-    timestamp_begin = db.Column('timestamp_begin',db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
-    timestamp_end = db.Column('timestamp_end',db.DateTime(timezone=True), nullable=True, default=datetime.utcnow)
+    timestamp_begin = db.Column('timestamp_begin',db.DateTime(timezone=True), nullable=False, default=datetime.datetime.utcnow)
+    timestamp_end = db.Column('timestamp_end',db.DateTime(timezone=True), nullable=True, default=datetime.datetime.utcnow)
     def __init__(self,timestamp_begin):
         self.timestamp_begin = timestamp_begin
 
@@ -49,6 +70,9 @@ class rooms(db.Model):
 
     def __init__(self, id_building):
         self.id_building = id_building
+
+    def set_building(self,building):
+        self.id_building=building
 
 #TODO testing
 class buildings(db.Model):
@@ -134,6 +158,8 @@ class digitalTwinFeed(db.Model):
     temperature_actuator=db.Column(db.Integer)
     led_brightness=db.Column(db.Integer)
     healthy= db.Column(db.Boolean)
+    #door=db.Column(db.Boolean)
+    #pending
     def __init__(self,id_room,temperature_sensor=0,humidity_sensor=0,noise_sensor=0,light_sensor=0,led_actuator=0,temperature_actuator=0,led_brightness=0,healthy=False):
         self.healthy = healthy
         self.led_brightness = led_brightness
@@ -144,6 +170,11 @@ class digitalTwinFeed(db.Model):
         self.temperature_sensor = temperature_sensor
         self.id_room = id_room
         self.humidity_sensor=humidity_sensor
+     #   self.door="CLOSED"
+    #def close_door(self):
+     #   self.door = "CLOSED"
+    #def open_door(self):
+     #   self.door ="OPEN"
     def serialize(self):
         return {"id_room": self.id_room,
                 "temperature_sensor":self.temperature_sensor,
@@ -161,10 +192,10 @@ class digitalTwinFeed(db.Model):
 
 #TODO testing
 class sensorFeeds(db.Model):
-    id_room = db.Column('ID_ROOM', db.Integer, primary_key=True)
-    type_of_sensor= db.Column(db.String(20))
-    value= db.Column(db.String(20))
-    timestamp = db.Column(db.DateTime(timezone=True), nullable=True, default=datetime.utcnow)
+    id_room = db.Column('ID_ROOM', db.Integer,primary_key=True)
+    type_of_sensor= db.Column(db.String(20),primary_key=True)
+    value= db.Column(db.String(20),primary_key=True)
+    timestamp = db.Column(db.DateTime(timezone=True), nullable=True, default=datetime.datetime.utcnow,primary_key=True)
     def __init__(self, id_room, type_of_sensor,value,timestamp):
         self.id_room = id_room
         self.type_of_sensor = type_of_sensor
@@ -177,18 +208,18 @@ class sensorFeeds(db.Model):
                 "timestamp":self.timestamp
                 }
 class actuatorFeeds(db.Model):
-    id = db.Column('ID', db.Integer, primary_key=True)
-    id_session=db.Column('ID_SESSION', db.Integer)
-    type_of_action= db.Column(db.String(20))
-    value= db.Column(db.String(20))
-    timestamp = db.Column(db.DateTime(timezone=True), nullable=True, default=datetime.utcnow)
+   # id = db.Column('ID', db.Integer, primary_key=True)
+    id_session=db.Column('ID_SESSION', db.Integer,primary_key=True)
+    type_of_action= db.Column(db.String(20),primary_key=True)
+    value= db.Column(db.String(20),primary_key=True)
+    timestamp = db.Column(db.DateTime(timezone=True), nullable=True, default=datetime.datetime.utcnow,primary_key=True)
     def __init__(self, id_session,type_of_action,value,timestamp):
         self.timestamp = timestamp
         self.value = value
         self.type_of_action = type_of_action
         self.id_session = id_session
     def serialize(self):
-        return {"id_room": self.id_room,
+        return {#"id_room": self.id_room,
                 "type_of_action":self.type_of_action,
                 "value":self.value,
                 "timestamp":self.timestamp
@@ -352,6 +383,8 @@ def createAndPopulateDb():
        db.session.add(professions(name="Operatore CAF/CISL", category=5))
        db.session.add(professions(name="Operatore NASPI", category=5))
        db.session.commit()
+
+
 
 
 #tested
