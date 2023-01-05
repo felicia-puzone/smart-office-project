@@ -36,8 +36,8 @@ from flask import Flask, jsonify, make_response, request
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
-import uuid
-import jwt
+
+
 
 
 
@@ -309,12 +309,12 @@ def handle_bad_request(e):
     else:
         return render_template('login.html',msg='')
 
-@login_manager.user_loader
-def load_user(user_id):
-    try:
-        return db.session.query(User).filter_by(id=user_id).first()
-    except:
-        return None
+#@login_manager.user_loader
+#def load_user(user_id):
+#    try:
+#        return db.session.query(User).filter_by(id=user_id).first()
+#    except:
+#        return None
 @login_manager.request_loader
 def load_user_from_request(request):
     #ifcontent = request.headers.get("Content-ID")
