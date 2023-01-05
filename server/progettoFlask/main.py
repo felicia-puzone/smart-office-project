@@ -318,7 +318,7 @@ def load_user(user_id):
 @login_manager.request_loader
 def load_user_from_request(request):
     #ifcontent = request.headers.get("Content-ID")
-    if request.args.get('Auth-token'):
+    if request.headers.get('Auth-token'):
         token = request.args.get('Auth-token')
         max_age = 1
         try:
