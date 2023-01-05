@@ -8,6 +8,7 @@ class GlobalValues {
   static UserSession? userSession;
   static late DigitalTwin digitalTwin;
   static late List<dynamic> listBuildings;
+  static late Credentials credentials = Credentials(username: '', password: '');
 
   //static late selectedBuildingData;
 }
@@ -28,6 +29,7 @@ Future<String> fetchUserSession(user, pwd) async {
     GlobalValues.userSession = UserSession.fromJson(jsonDecode(response.body));
     //GlobalValues.digitalTwin = DigitalTwin.fromJson(jsonDecode(response.body));
 
+    //inserisci null exception SE già loggato, non !!!
     GlobalValues.listBuildings = jsonDecode(response.body)['buildings'];
 
     return 'LOGIN-OK';
@@ -38,11 +40,20 @@ Future<String> fetchUserSession(user, pwd) async {
 
 //@selectRoom
 Future<String> sendOccupationRequest(id_building, id_user) async {
+  String username = GlobalValues.credentials.username;
+  String password = GlobalValues.credentials.password;
+
+  String basicAuth =
+      'Basic ' + base64.encode(utf8.encode('$username:$password'));
+  print(basicAuth);
+
   final response = await http.post(
     Uri.parse(IPSERVER + 'selectRoom'),
     headers: <String, String>{
       'Content-Type': 'application/json',
-      'Content-ID': 'SELECT-APP'
+      'Content-ID': 'SELECT-APP',
+      'Auth-token': basicAuth,
+      request.args.get('Auth-token')
     },
     body: (jsonEncode({"id_utente": id_user, "building_id": id_building})),
   );
@@ -72,14 +83,14 @@ Future<String> logout() async {
 }
 
 //@freeRoom
-Future<String> freeRoom(id_building, id_user) async {
+Future<String> freeRoom(id_user) async {
   final response = await http.post(
     Uri.parse(IPSERVER + 'freeRoom'),
     headers: <String, String>{
       'Content-Type': 'application/json',
       'Content-ID': 'FREEROOM-APP'
     },
-    body: (jsonEncode({"id_utente": id_user, "building_id": id_building})),
+    body: (jsonEncode({"id_utente": id_user})),
   );
 
   if (response.statusCode == 200) {
