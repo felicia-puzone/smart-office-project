@@ -31,6 +31,8 @@ Future<String> fetchUserSession(user, pwd) async {
 
     //inserisci null exception SE già loggato, non !!!
     GlobalValues.listBuildings = jsonDecode(response.body)['buildings'];
+    GlobalValues.credentials.authToken =
+        jsonDecode(response.body)['token'] ?? "";
 
     return 'LOGIN-OK';
   } else {
@@ -52,8 +54,7 @@ Future<String> sendOccupationRequest(id_building, id_user) async {
     headers: <String, String>{
       'Content-Type': 'application/json',
       'Content-ID': 'SELECT-APP',
-      'Auth-token': basicAuth,
-      request.args.get('Auth-token')
+      'Auth-token': GlobalValues.credentials.authToken,
     },
     body: (jsonEncode({"id_utente": id_user, "building_id": id_building})),
   );

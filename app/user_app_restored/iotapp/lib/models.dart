@@ -1,6 +1,7 @@
 class Credentials {
   late String username;
   late String password;
+  late String authToken;
 
   Credentials({required this.username, required this.password});
 }
