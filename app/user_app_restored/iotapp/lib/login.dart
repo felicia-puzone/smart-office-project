@@ -110,6 +110,11 @@ class _MyLoginState extends State<MyLogin> {
                                           userTextController.text,
                                           pwdTextController.text);
                                       if (result == 'LOGIN-OK') {
+                                        GlobalValues.credentials.username =
+                                            userTextController.text;
+                                        GlobalValues.credentials.password =
+                                            pwdTextController.text;
+
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(

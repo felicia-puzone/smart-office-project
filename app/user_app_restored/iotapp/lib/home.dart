@@ -471,7 +471,9 @@ class _UserHomeState extends State<UserHome> {
                                         fontSize: 20,
                                       ),
                                       backgroundColor: Colors.orangeAccent),
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    freeRoom(GlobalValues.userSession!.id);
+
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(

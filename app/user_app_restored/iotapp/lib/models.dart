@@ -1,3 +1,10 @@
+class Credentials {
+  late String username;
+  late String password;
+
+  Credentials({required this.username, required this.password});
+}
+
 class UserSession {
   late int? id;
   late int? id_edificio;
