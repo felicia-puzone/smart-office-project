@@ -164,7 +164,7 @@ class _MappaState extends State<Mappa> {
                 title: const Text('Logout'),
                 onTap: () async {
                   String result = await logout();
-                  if (result == 'LOGIN-OK') {
+                  if (result == 'REQUEST-OK') {
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     Navigator.push(
                         context,
@@ -172,7 +172,7 @@ class _MappaState extends State<Mappa> {
                             builder: (context) => const MyLogin()));
                   } else {
                     AlertDialog(
-                      title: const Text('Errore'),
+                      title: const Text('Errore Logout'),
                       alignment: Alignment.center,
                       actions: <Widget>[
                         TextButton(

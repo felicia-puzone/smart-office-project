@@ -7,7 +7,7 @@ const IPSERVER = 'http://192.168.1.240:5000/';
 class GlobalValues {
   static UserSession? userSession;
   static late DigitalTwin digitalTwin;
-  static late List<dynamic> listBuildings;
+  static late List<dynamic> listBuildings = [];
   static late Credentials credentials = Credentials(username: '', password: '');
 
   //static late selectedBuildingData;
@@ -30,11 +30,16 @@ Future<String> fetchUserSession(user, pwd) async {
     //GlobalValues.digitalTwin = DigitalTwin.fromJson(jsonDecode(response.body));
 
     //inserisci null exception SE già loggato, non !!!
-    GlobalValues.listBuildings = jsonDecode(response.body)['buildings'];
+
     GlobalValues.credentials.authToken =
         jsonDecode(response.body)['token'] ?? "";
 
-    return 'LOGIN-OK';
+    if (GlobalValues.userSession!.logged_in != true) {
+      GlobalValues.listBuildings = jsonDecode(response.body)['buildings'];
+      return "FIRST-LOGIN";
+    }
+
+    return 'LOGGED-ALREADY';
   } else {
     return 'FAILED-LOGIN';
   }
@@ -44,10 +49,6 @@ Future<String> fetchUserSession(user, pwd) async {
 Future<String> sendOccupationRequest(id_building, id_user) async {
   String username = GlobalValues.credentials.username;
   String password = GlobalValues.credentials.password;
-
-  String basicAuth =
-      'Basic ' + base64.encode(utf8.encode('$username:$password'));
-  print(basicAuth);
 
   final response = await http.post(
     Uri.parse(IPSERVER + 'selectRoom'),
@@ -72,12 +73,13 @@ Future<String> logout() async {
     Uri.parse(IPSERVER + 'logout'),
     headers: <String, String>{
       'Content-Type': 'application/json',
-      'Content-ID': 'Logout-APP'
+      'Content-ID': 'Logout-APP',
+      'Auth-token': GlobalValues.credentials.authToken,
     },
   );
 
   if (response.statusCode == 200) {
-    return "REQUEST-OK";
+    return 'REQUEST-OK';
   } else {
     return ('BAD-REQUEST');
   }
@@ -89,7 +91,8 @@ Future<String> freeRoom(id_user) async {
     Uri.parse(IPSERVER + 'freeRoom'),
     headers: <String, String>{
       'Content-Type': 'application/json',
-      'Content-ID': 'FREEROOM-APP'
+      'Content-ID': 'FREEROOM-APP',
+      'Auth-token': GlobalValues.credentials.authToken,
     },
     body: (jsonEncode({"id_utente": id_user})),
   );
@@ -125,7 +128,8 @@ Future<String> upateRoom(id_building, id_user) async {
     Uri.parse(IPSERVER + 'update'),
     headers: <String, String>{
       'Content-Type': 'application/json',
-      'Content-ID': 'SELECT-APP'
+      'Content-ID': 'SELECT-APP',
+      'Auth-token': GlobalValues.credentials.authToken,
     },
     body: (jsonEncode({"id_utente": id_user, "building_id": id_building})),
   );

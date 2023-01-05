@@ -320,13 +320,13 @@ def load_user_from_request(request):
     #ifcontent = request.headers.get("Content-ID")
     if request.headers.get('Auth-token'):
         token = request.headers.get('Auth-token')
-        max_age = 1
+        max_age = 1000
         try:
             data = serializer.loads(token, salt=serializer_secret, max_age=max_age)
             username = data[0]
             password_hash = data[1]
             #found_user = finduserindbbyuuid(username)
-            found_user = db.session(User).filer_by(username=username).first()
+            found_user = db.session.query(User).filter_by(username=username).first()
             #found_password = checkuserpasswordindbbyuuid(username)
             found_password=found_user.password
             if found_user and found_password == password_hash:

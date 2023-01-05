@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iotapp/login.dart';
 import 'models.dart';
 import 'controller.dart';
 import 'rooms_map.dart';
@@ -480,6 +481,31 @@ class _UserHomeState extends State<UserHome> {
                                             builder: (context) => Mappa()));
                                   },
                                   child: const Text('LASCIA STANZA')),
+                            ))
+                          ]),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                                child: Container(
+                              padding: EdgeInsets.only(top: 35, bottom: 35),
+                              height: 150,
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      textStyle: const TextStyle(
+                                        color: Color(0xff4c505b),
+                                        fontSize: 20,
+                                      ),
+                                      backgroundColor: Colors.orangeAccent),
+                                  onPressed: () async {
+                                    logout();
+
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => MyLogin()));
+                                  },
+                                  child: const Text('LOGOUT')),
                             ))
                           ])
                     ]),
