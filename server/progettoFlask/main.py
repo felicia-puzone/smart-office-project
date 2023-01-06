@@ -25,8 +25,9 @@ from flask_mqtt import Mqtt
 from flask_cors import CORS
 import paho.mqtt.client as mqtt
 from firebase import firebase
-from utilities import buildJsonList, calculateUserAge, createABuildingtupleList, createAProfessiontupleList, \
-    createSensorFeedCSV
+
+from modelviews import MyHomeView, ZoneAdmin, UserAdmin, JobAdmin
+from utilities import buildJsonList, calculateUserAge, createABuildingtupleList, createAProfessiontupleList, seconds_between
 from adafruitHandler import sendDataToAdafruitFeed
 from flask_admin import Admin, AdminIndexView
 from flask_admin import BaseView, expose
@@ -58,249 +59,21 @@ mqtt=Mqtt()
 fb_app = firebase.FirebaseApplication('https://smartoffice-4eb51-default-rtdb.europe-west1.firebasedatabase.app/', None)
 #admin = Admin(app, name='Dashboard')
 db.init_app(app)
+#with app.app_context():
+    #createAndPopulateDb()
 months = ('January','February','March','April','May','June',\
 'July','August','September','October','November','December')
 
 
-
-
-
-
-
-#account #grant permessi
-#gestione digitaltwin
-
-
-#with app.app_context():
- #   createAndPopulateDb()
-class MyView(BaseView):
-    @expose('/')
-    @login_required
-    def index(self):
-        return self.render('admin/index.html')
-class MyHomeView(AdminIndexView):
-    @expose('/')
-    @login_required
-    def index(self):
-        arg1 = 'Hello'
-        return self.render('admin/index.html')
-
-#TODO testing inserimento, eliminazione e modifica
-class ZoneAdmin(sqla.ModelView):
-    column_exclude_list = ['id_zone','lat','lon']
-    form_columns = (
-        'city',
-        'state',
-    )
-    def on_model_delete(self,zones):
-        buildingsToCheck = db.session.query(buildings).filter_by(id_zone=zones.id_zone).first()
-        if buildingsToCheck is not None:
-            raise ValidationError('Sono presenti strutture assegnate a questa Zona')
-    def is_accessible(self):
-        #print(current_user.is_authenticated)
-        return current_user.is_authenticated
-    def on_model_change(self, form, zones,is_created):
-        if geolog.isAddressValid(str(form.city.data)+","+str(form.state.data)):
-            marker=geolog.getMarkerByType(str(form.city.data)+','+str(form.state.data),"administrative")
-            zones.set_lat(marker["lat"])
-            zones.set_lon(marker["lon"])
-        else:
-            raise ValidationError('Indirizzo non valido')
-#creazione edifici
-
-#grant permessi admin
-#TODO gestione del digitaltwin per l'eliminazione delle stanze
-#all'eliminazione togliamo pure i digital twin
-#si blocca se ci sono sessioni attive
-#alla creazione non viene creato nessun digital twin
-#per la creazione possiamo assegnare una città già esistente o di poter inserire
-#una città nuova
-#modifica dell'indirizzo, con aggiornamento dei dati e controllo validità dell'indirizzo
-
-class BuildingAdmin(sqla.ModelView):
-    # Visible columns in the list view
-    column_exclude_list = ['id_zone', 'id_building', 'lat','lon']
-    form_excluded_columns = ('id_zone', 'id_building', 'lat','lon')
-    # set the form fields to use
-    #route = db.Column(db.String(100))
-    #number = db.Column(db.String(100))
-    #name = StringField('name')
-    #form_columns = (
-       # 'route',
-       # 'number',
-    #)
-    form_extra_fields = {
-        'City': StringField('City'),
-        #'Number of rooms':IntegerField('Number of rooms'),
-    }
-    #def on_form_prefill(self, form, id):
-
-    #aggiungere logica
-    #se sessioni attive non s'inserisce nienete
-    def on_model_delete(self, building):
-        activeSessionStates = db.session.query(sessionStates.id_room).filter_by(active=True)
-        activeRoom = db.session.query(rooms).filter_by(id_building=building.id_building and rooms.id_room.in_(activeSessionStates)).first()
-        #freeBuildings = db.session.query(buildings).filter(buildings.id_building.in_(freeRoomsBuildings))
-        if activeRoom is not None:
-            raise ValidationError('Sono presenti sessioni attive questo Edificio')
-
-    def is_accessible(self):
-        # print(current_user.is_authenticated)
-        return current_user.is_authenticated
-
-    def on_model_change(self, form, zones, is_created):
-        if geolog.isAddressValid(str(form.city.data) + "," + str(form.state.data)):
-            marker = geolog.getMarkerByType(str(form.city.data) + ',' + str(form.state.data), "administrative")
-            zones.set_lat(marker["lat"])
-            zones.set_lon(marker["lon"])
-        else:
-            raise ValidationError('Indirizzo non valido')
-
-#
-#class SuperUserAdmin(sqla.ModelView):
-
-#TODO cambio password, professione, data di nascita
-#grant permessi se si è admin
-#id = db.Column('ID_USER', db.Integer, primary_key = True)
-#    username=db.Column(db.String(100),unique= True)
-#    password = db.Column(db.String(150))
-#    profession = db.Column(db.Integer,nullable=False)
-#    sex = db.Column(db.Integer)
-#    dateOfBirth=db.Column(db.DateTime(timezone=True), nullable=False,  default=datetime.utcnow)
-# se non hai i permessi mostra solo l'edit
-#
-class MyForm(Form):
-    name = StringField('Name')
-    username= StringField('username')
-    password= PasswordField('password')
-    old_password=PasswordField('old password'),
-    sex= SelectField('sex', choices=[(0, 'M'), (1, 'F'), (2, 'Altro')])
-    profession= SelectField('Profession', choices=[])
-
-class UserAdmin(sqla.ModelView):
-    column_exclude_list = ['id_user']
-    form_columns = {
-        #'old_password': PasswordField('old password'),
-        'username':StringField('username'),
-        'password': PasswordField('password'),
-        'sex': SelectField('sex', choices=[(0, 'M'), (1, 'F'), (2, 'Altro')]),
-        'profession':SelectField('Profession', choices=[]),
-    }
-    #form_create_rules = [form_exclude_list('old_password')]
-    #form_edit_rules = ('old_password')
-    def on_form_prefill(self, form, id):
-        form = MyForm
-
-        #with app.app_context():
-            #jobs = db.session.query(professions)
-            #choices = createAProfessiontupleList(jobs)
-            #form.old_password= PasswordField('old password'),
-            #form.profession = SelectField(u'Profession', choices=choices)
-            #form.name.default = "obj['name']"
-            #form.name.process(None, form.name.data or unset_value)
-            #old_pw = PasswordField('old password')
-            #form.append(old_pw)
-        #return form
-
-    def scaffold_form(self):
-        form = super(UserAdmin, self).scaffold_form()
-        with app.app_context():
-            jobs = db.session.query(professions)
-            choices = createAProfessiontupleList(jobs)
-            form.profession = SelectField(u'Profession', choices=choices)
-            #form.old_password.
-        return form
-    def on_model_change(self, form, model, is_created):
-        #hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-        #account = db.session.query(User).filter_by(username=username, password=hashed_password).first()
-        username = form.username.data
-        password = form.password.data
-        #birthday = form.birthday.data
-        #sex = form.sex.data
-        #profession = form.profession.data
-        account = db.session.query(User).filter_by(username=username).first()
-        if account:
-            raise ValidationError('Username già assegnato')
-        elif not re.match(r'[A-Za-z0-9]+', username):
-            raise ValidationError('L\'username deve solo contenere lettere e numeri!')
-        elif len(password) < 8:
-            raise ValidationError('inserire almeno 8 caratteri nella password!')
-        elif not username or not password:
-            raise ValidationError('Riempire i campi obbligatori!')
-        if not is_created:
-           old_password = form.old_password.data
-           if old_password!="":
-              model.update_password(old_password,password)
-           #if checkCredentials(model.username,old_password):
-           #    model.set_password()
-
-        #controllo dei dati
-    #def on_model_delete(self, model):
-
-#TODO testing
-#creazione,eliminazione e edit
-class JobAdmin(sqla.ModelView):
-    column_exclude_list = ['id_profession']
-    form_columns = (
-        'name',
-        'category',)
-    form_extra_fields = {
-        'category': SelectField('Category', choices=[(0, 'Intrattenimento'),(1, 'Studio'),(2,'Ufficio'),(3, 'Manuale'),(4, 'Risorse umane'),(5, 'Altro')]),
-    }
-    def is_accessible(self):
-        return current_user.is_authenticated
-    def on_model_delete(self,job):
-        users = db.session.query(User).filter_by(profession=job.id_profession).first()
-        if users is not None:
-            raise ValidationError('Sono presenti utenti assegnati a questa professione')
-
-
-#TODO testing
-#TODO gestione del digitalTwin
-#inserimento,modifica ed eliminazione stanze
-#gestione del digital twin
-class RoomAdmin(sqla.ModelView):
-    form_excluded_columns = ('id_room','id_building')
-    def on_form_prefill(self, form, id):
-        with app.app_context():
-            buildingsForForm = db.session.query(buildings)
-            form.Buildings.choices = createABuildingtupleList(buildingsForForm)
-    def scaffold_form(self):
-        form = super(RoomAdmin, self).scaffold_form()
-        with app.app_context():
-            buildingsForForm = db.session.query(buildings)
-            choices=createABuildingtupleList(buildingsForForm)
-            form.Buildings = SelectField(u'Edificio',choices=choices)
-        return form
-    def on_model_delete(self, room):
-        activeSessionStates = db.session.query(sessionStates.id_room).filter_by(active=True,id_room=room.id_room)
-        if activeSessionStates is not None:
-            raise ValidationError('è presente una sessione attiva in questa stanza!')
-#        else:
-            #delete del digital twin
-    def is_accessible(self):
-        return current_user.is_authenticated
-    def on_model_change(self, form, room, is_created):
-        if not is_created:
-            activeSessionStates = db.session.query(sessionStates.id_room).filter_by(active=True, id_room=room.id_room)
-            if activeSessionStates is not None:
-                raise ValidationError('è presente una sessione attiva in questa stanza!')
-            else:
-                room.set_building(form.Buildings.data)
-        else:
-            room.set_building(form.Buildings.data)
-
-
 admin = Admin(app, name='Dashboard',index_view=MyHomeView())
-admin.add_view(MyView(name='My View', menu_icon_type='glyph', menu_icon_value='glyphicon-home'))
+#admin.add_view(MyView(name='My View', menu_icon_type='glyph', menu_icon_value='glyphicon-home'))
 admin.add_view(ZoneAdmin(zones, db.session,category='Models'))
-admin.add_view(BuildingAdmin(buildings, db.session,category='Models'))
-admin.add_view(RoomAdmin(rooms, db.session,category='Models'))
+#admin.add_view(BuildingAdmin(buildings, db.session,category='Models'))
+#admin.add_view(RoomAdmin(rooms, db.session,category='Models'))
 admin.add_view(JobAdmin(professions, db.session,category='Models'))
-
-
-
 admin.add_view(UserAdmin(User, db.session,category='Models'))
+
+
 @app.errorhandler(HTTPException)
 def handle_bad_request(e):
     print('bad request!', 400)
@@ -309,41 +82,31 @@ def handle_bad_request(e):
     else:
         return render_template('login.html',msg='')
 
-#@login_manager.user_loader
-#def load_user(user_id):
-#    try:
-#        return db.session.query(User).filter_by(id=user_id).first()
-#    except:
-#        return None
 @login_manager.request_loader
 def load_user_from_request(request):
-    #ifcontent = request.headers.get("Content-ID")
-    if request.headers.get('Auth-token'):
-        token = request.headers.get('Auth-token')
-        max_age = 1
-        try:
-            data = serializer.loads(token, salt=serializer_secret, max_age=max_age)
-            username = data[0]
-            password_hash = data[1]
-            #found_user = finduserindbbyuuid(username)
-            found_user = db.session(User).filer_by(username=username).first()
-            #found_password = checkuserpasswordindbbyuuid(username)
-            found_password=found_user.password
-            if found_user and found_password == password_hash:
-                #user_object = User(found_user, password_hash)
-                #if (user_object.password == password_hash):
-                    #return user_object
-                return found_user
-                #else:
-                 #   return None
-            else:
-                return None
-        except BadSignature as e:
-            pass
-    else:
+        if request.headers.get('Auth-token'):
+            token = request.headers.get('Auth-token')
+            return token_check(token)
+        else:
+            if session.get("Auth-token"):
+                token = session["Auth-token"]
+                return token_check(token)
+            return None
+
+def token_check(token):
+    max_age = 10000000
+    try:
+        data = serializer.loads(token, salt=serializer_secret, max_age=max_age)
+        username = data[0]
+        password_hash = data[1]
+        found_user = db.session.query(User).filter_by(username=username).first()
+        found_password = found_user.password
+        if found_user and found_password == password_hash:
+            return found_user
+        else:
+            return None
+    except BadSignature as e:
         return None
-
-
 
 
 #tested
@@ -389,26 +152,24 @@ def homepage():
     else:
         return render_template('login.html',msg='')
 
+@app.route("/professions",methods=['POST'])
+def fetchprofessions():
+    return buildJsonList(fetchJobs())
 #/Login
 #Metodi accettati POST
 #Si
 @app.route('/login',methods = ['POST'])
 def login():
+    content = request.headers.get("Content-ID")
+    msg=''
     if 'username' in request.form and 'password' in request.form:
         username = request.form['username']
         password = request.form['password']
         account = db.session.query(User).filter_by(username=username).first()
-        msg = ''
-        content = request.headers.get("Content-ID")
-        if account and account.verify_password(password) :#loggato
-            #session['loggedin'] = True
-            #session['id_user'] = account.id
-            #session['username'] = username
-            #session.permanent = True
+        if account and account.verify_password(password) :
             login_user(account)
             token=account.get_auth_token(username,account.password)
-            print(str(current_user.get_id()))
-            return handleLoggedinUser(content,token)
+            return handleAuthenticatedUserResponse(content,token)
         else:
             msg = 'Incorrect username / password !'
     else:
@@ -424,16 +185,11 @@ def login():
 @login_required
 def logout():
     content=request.headers.get("Content-ID")
-    #session["__invalidate__"] = True
     logout_user()
-    #session.pop('loggedin', None)
-    #session.pop('id_user',None)
-    #session.pop('username', None)
-    #session.pop('id_building',None)
-    #session.pop('id_room',None)
     if content == "Logout-APP":
         return jsonify(loggedout=True)
     else:
+        session.pop("Auth-token")
         return render_template('login.html',msg='')
 #testato
 @app.route("/register", methods = ['GET','POST'])
@@ -450,8 +206,11 @@ def register():
             sex = request.form['sex']
             profession=request.form['profession']
             account=db.session.query(User).filter_by(username=username).first()
+            job = db.session.query(professions).filter_by(id_profession=profession).first()
             if account:
                 msg = 'Utente esistente!'
+            if job is None:
+                msg = 'Professione non esistente!'
             elif not re.match(r'[A-Za-z0-9]+',username):
                 msg='L\'username deve solo contenere lettere e numeri!'
             elif len(password)<8:
@@ -460,7 +219,7 @@ def register():
                 msg='Riempire i campi obbligatori!'
             else:
                 #hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
-                account = User(username=username,password=password,profession=profession,sex=sex,dateOfBirth=datetime.datetime.strptime(birthday,"%Y-%m-%d"))
+                account = User(username=username,password=password,profession=job.name,sex=sex,dateOfBirth=datetime.datetime.strptime(birthday,"%Y-%m-%d"))
                 db.session.add(account)
                 db.session.commit()
                 msg = 'Ti sei registrato con successo!'
@@ -479,16 +238,14 @@ def register():
         else:
             return render_template('register.html', msg=msg, jobs=jobs)
 ######################################################################################################################
-#Fine route che ritornano una view
-
 #testato
-@login_required
+
 @app.route("/update",  methods = ['POST'])
+@login_required
 def update():
     content=request.headers.get("Content-ID")
     if content == "UPDATE-APP":
         data=request.get_json(silent=True)
-        #id_user=data['id_utente']
         id_user = current_user.get_id()
         color=data['color_val']
         brightness=data['brightness_val']
@@ -507,21 +264,15 @@ def update():
 
 @app.route("/selectRoom",methods = ['POST'])
 @login_required
-#@token_required
 def occupyRoom():
-    #handleViewPermission(False)
     content=request.headers.get("Content-ID")
     #id_room=-1
     id_user=0
     building=0
     if content == "SELECT-APP":
-        #prendo dati dal json
         data = request.get_json(silent=True)
-        #id_user = data['id_utente']
         id_user = current_user.get_id()
         building = data['building_id']
-        #id_room = tryToAssignRoom(id_user, building)
-        #return handleRoomAssignment(id_user,id_room, content, building)
     else:
         #prendo dati dal form e sessione
         building = request.form['building']
@@ -537,11 +288,8 @@ def occupyRoom():
 @login_required
 def freeRoom():
     content=request.headers.get("Content-ID")
-    #session.pop('id_room', None)
-    #session.pop('id_building', None)
     if content == "FREEROOM-APP":
-        data = request.get_json(silent=True)
-        #id_user = data['id_utente']
+        #data = request.get_json(silent=True)
         id_user=current_user.get_id()
         tryToFreeRoom(id_user)
         return jsonify(outcome="Freed")
@@ -592,54 +340,6 @@ def modify():
         return handleLoggedinUser("")
     return "ciao"
 
-@login_required
-@app.route("/exportBuildingCSV",methods=["POST"])
-def exportBuildingCSV():
-    #month_begin= request.form['month_begin']
-    #month_end =  request.form['month_end']
-    #year_begin = request.form['year_begin']
-    #year_end =  request.form['year_end']
-    #begin = datetime.strptime(str(year_begin)+"-"+str(month_begin)+"-1", "%Y-%m-%d")
-    #end = datetime.strptime(str(year_end)+"-"+str(month_end)+"-1", "%Y-%m-%d")
-    #id_building = request.form['id_building']
-    #createActuatorFeedCSV()
-    #createSessionsCSV
-    #id_rooms = db.session.query(rooms).filter_by(id_building=id_building)
-    #sensor_feed = db.session.query(sensorFeeds).filter(sensorFeeds.timestamp < begin and sensorFeeds.timestamp > end)
-    #for room in id_rooms:
-
-        #createSensorFeedCSV(sensor_feed,timestamp)
-    #atetime.strptime(birthday, "%Y-%m-%d")
-    #ID ROOM
-    #date begin
-    #date end
-    return 0
-@login_required
-@app.route("/exportRoomCSV", methods=["POST"])
-def exportRoomCSV():
-    id_room = request.form['id_room']
-    start_date = datetime.datetime.strptime(str(2023)+"-"+str(1)+"-1", "%Y-%m-%d")
-    end_date = datetime.datetime.utcnow()
-    current_date = start_date
-    id_building = db.session.query(rooms).filter_by(id_room=id_room).first().id_building
-    building =db.session.query(buildings).filter_by(id_building=id_building).first()
-    zone=db.session.query(zones).filter_by(id_zone=building.id_zone).first()
-    session_states = db.session.query(sessionStates).filter_by(id_room=id_room)
-    jobs = fetchJobs()
-    #query, date, users, sessionsStates, jobs
-    #createActuatorFeedCSV()
-    while current_date <= end_date:
-        path = pathlib.Path("CSV_DATA/"+str(zone.state) + "/" + str(zone.city) + "/edificio_"+str(building.id_building)+"[" + str(building.route) + "" + str(building.number) + "]/stanza_" + str(id_room)+"/"+months[current_date.month-1])
-        path.mkdir(parents=True, exist_ok=True)
-        sensor_feed = db.session.query(sensorFeeds).filter_by(id_room=id_room).filter(extract('day', sensorFeeds.timestamp)==current_date.day).\
-        filter(extract('month', sensorFeeds.timestamp)==current_date.month).filter(extract('year', sensorFeeds.timestamp)==current_date.year)#and id_room==id_room)
-        createSensorFeedCSV(path,sensor_feed,current_date)
-        actuator_feed = db.session.query(actuatorFeeds).filter(extract('day', sensorFeeds.timestamp)==current_date.day).\
-        filter(extract('month', sensorFeeds.timestamp)==current_date.month).filter(extract('year', sensorFeeds.timestamp)==current_date.year). \
-        filter(actuatorFeeds.id_session.in_(session_states))
-       # createActuatorFeedCSV(actuator_feed,current_date,session_states,jobs)
-        current_date += datetime.timedelta(days=1)
-    return "ciao"
 
 
 
@@ -666,7 +366,7 @@ def roomHealthCheck():
 def botTelegramAlert():
     return 0
 #################################################################################
-#TODO
+
 
 #handle totale
 
@@ -674,19 +374,38 @@ def botTelegramAlert():
 #fa return 0 se passa i check
 #per mobile controlliamo solo che è loggato e magari ripariamo i dati di sessione
 #i dati di sessione utilizzati sono id_user loggedin, id_room e id_buidling non sono usati
-
-
 #TODO testing
-def handleLoggedinUser(content,token=None):
+def handleLoggedinUser(content):
     id_room = tryToGetAssignedRoom(current_user.get_id())
-    if id_room != -1:
+    if id_room != -1:  # stanza già assegnata
+        if content != "":
+            return renderHomeApp(id_room)
+        else:
+            return renderHomeWeb(id_room)
+    else:  # nessuna stanza assegnata
+        if content != "":
+            return renderSelectionApp()
+        else:
+            return renderSelectionWeb()
+
+def handleAuthenticatedUserResponse(content,token):
+    id_room = tryToGetAssignedRoom(current_user.get_id())
+    if id_room != -1:  # stanza già assegnata
         if content == "LOGIN-APP":
-            content = "HOME-APP"
-        return renderHome(id_room, content,token)
-    else:
+            return renderHomeAppOnAuth(id_room, token)
+        else:
+            session["Auth-token"] = token
+            return renderHomeWeb(id_room)
+    else:  # nessuna stanza assegnata
         if content == "LOGIN-APP":
-            content = "SELECTION-APP"
-        return renderSelection(content,token)
+            return renderSelectionAppOnAuth(token)
+        else:
+            session["Auth-token"] = token
+            return renderSelectionWeb()
+
+
+
+
 #TODO testing
 def handleViewPermission(id_user):
     admin=db.session.query(admins).filter_by(id=id_user).first()
@@ -694,19 +413,6 @@ def handleViewPermission(id_user):
         return False
     else:
         return True
-    #if admin == True:
-            ##handle che manda al redirect
-            #if hasPermission(session.get('id_user')) == False:
-                #non ha i permessi ma è loggato, evitiamo codice duplicato
-             #   return handleLoggedinUser("") #stesso meccanismo del login
-        #else: #ha i permessi ma è loggato passaggio inutile perchè esce dall'if e ritorna 0
-    #else:
-        #manda alla pagina del login
-        #return render_template('login.html', msg='')
-    #return 0
-#diamo per scontato che è loggato
-#se ha i permessi mostriamo la pagina
-#se non ha i permessi lo reindirizziamo alla pagina adatta
 #TODO
 def hasPermission(id_user):
     return False
@@ -757,8 +463,6 @@ def prepareRoom(id_user,id_session,digitalTwin,id_building):
     brightness = data['user_light']
     temperature = data['user_temp']
     timestamp = datetime.datetime.utcnow()
-    #ew
-    #digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=digitalTwin.id_room).first()
     mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(digitalTwin.id_room) + '/status_request', 1)
     registerAction('color', led_color, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
     registerAction('brightness', brightness, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
@@ -767,7 +471,7 @@ def prepareRoom(id_user,id_session,digitalTwin,id_building):
 #tested
 def getAIdata(id_user,digitalTwin):
     account = db.session.query(User).filter_by(id=id_user).first()
-    job = db.session.query(professions).filter_by(id_profession=account.profession).first()
+    job = db.session.query(professions).filter_by(name=account.profession).first()
     dataToSend = {'user_age': calculateUserAge(account.dateOfBirth), 'user_sex': account.sex, 'user_task': job.name,
                   'ext_temp': digitalTwin.temperature_sensor, 'ext_humidity': digitalTwin.humidity_sensor,
                   'ext_light': digitalTwin.light_sensor}
@@ -785,22 +489,38 @@ def getAIdata(id_user,digitalTwin):
             print("c'è stato un errore! Prenderò dati di Default!")
             dataFromServer = {'user_temp':21,'user_color':9,'user_light':1}
     return dataFromServer
-#tested
-def renderHome(id_room,content,token=None):
+
+
+
+def renderHomeWeb(id_room):
     digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
-    if content != "HOME-APP" and content!= "SELECT-APP":
-        return render_template('index.html', digitalTwin=digitalTwin, username=current_user.get_username())
-    else:
-        return jsonify(token=token,logged_in=True, outcome="Active", digitalTwin=digitalTwin.serializedActuators(),id=current_user.get_id(),id_edificio=0,id_room=0,username=current_user.get_username())
-def renderSelection(content,token=None):
-    if content != "SELECTION-APP":
-        return render_template('newselect.html', buildings=buildJsonList(getFreeBuildings()), msg='')
-    else:
-        #return jsonify(loggedin=True, outcome="Login", buildings=buildJsonList(getFreeBuildings()))
-        return jsonify(token=token,logged_in=True, outcome="Login", digitalTwin={"led_actuator": 0, "temperature_actuator": 0,
-                                                                      "led_brightness": 0}, id=current_user.get_id(),
-                       id_edificio=0, id_room=0, username=current_user.get_username(),buildings=buildJsonList(getFreeBuildings()))
-#tested
+    return render_template('index.html', digitalTwin=digitalTwin, username=current_user.get_username())
+
+def renderHomeApp(id_room):
+    digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
+    return jsonify(logged_in=True, outcome="Active", digitalTwin=digitalTwin.serializedActuators(),
+                   id=current_user.get_id(), id_edificio=0, id_room=0, username=current_user.get_username())
+
+def renderSelectionWeb():
+    return render_template('newselect.html', buildings=buildJsonList(getFreeBuildings()), msg='')
+
+def renderSelectionApp():
+    return jsonify(logged_in=True, outcome="Login",
+                   digitalTwin={"led_actuator": 0, "temperature_actuator": 0,
+                                "led_brightness": 0}, id=current_user.get_id(),
+                   id_edificio=0, id_room=0, username=current_user.get_username(),
+                   buildings=buildJsonList(getFreeBuildings()))
+def renderHomeAppOnAuth(id_room,token):
+    digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
+    return jsonify(token=token, logged_in=True, outcome="Active", digitalTwin=digitalTwin.serializedActuators(),
+                   id=current_user.get_id(), id_edificio=0, id_room=0, username=current_user.get_username())
+
+def renderSelectionAppOnAuth(token):
+    return jsonify(token=token, logged_in=True, outcome="Login",
+                   digitalTwin={"led_actuator": 0, "temperature_actuator": 0,
+                                "led_brightness": 0}, id=current_user.get_id(),
+                   id_edificio=0, id_room=0, username=current_user.get_username(),
+                   buildings=buildJsonList(getFreeBuildings()))
 
 
 #TODO testing
@@ -839,15 +559,17 @@ def handleRoomAssignment(id_user,content,building):
             msg = 'non ci sono stanze disponibili nell\'edificio ' + str(building)
             return render_template('newselect.html', buildings=buildJsonList(getFreeBuildings()), msg=msg)
     elif data["outcome"] == -2: #stanza esistente
-        #session['id_room'] = data["session_state"].id_room
-        #session['id_building'] = building
-        return renderHome(data["session_state"].id_room,content)
+        if content=="SELECT-APP":
+            return renderHomeApp(data["session_state"].id_room)
+        else:
+            return renderHomeWeb(data["session_state"].id_room)
     else:#stanza assegnata
-        #session['id_room'] = data["session_state"].id_room
-        #session['id_building'] = building
         digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=data["session_state"].id_room).first()
         prepareRoom(id_user,data["session_state"].id_session,digitalTwin,building)
-        return renderHome(data["session_state"].id_room,content)
+        if content=="SELECT-APP":
+            return renderHomeApp(data["session_state"].id_room)
+        else:
+            return renderHomeWeb(data["session_state"].id_room)
 #tested
 def tryToGetAssignedRoom(id_user):
     actualSessions = db.session.query(sessionStates).filter_by(id_user=id_user, active=True).first()
@@ -886,7 +608,7 @@ def buildSessionData(user,room,active_session):
     preValentColor = DataHistoryAccountFetch(active_session.id, "color")
     preValentBrightness = DataHistoryAccountFetch(active_session.id, "brightness")
     digitalTwin=db.session.query(digitalTwinFeed).filter_by(id_room=room.id_room).first()
-    job = db.session.query(professions).filter_by(id_profession=user.profession).one().name
+    job = db.session.query(professions).filter_by(name=user.profession).one().name
     age=calculateUserAge(user.dateOfBirth)
     data = {'user_age':age,'user_sex':user.sex,'user_task':job,'room_id':room.id_room,'building_id':room.id_building,
             'date':active_session.timestamp_begin.strftime("%Y/%m/%d"),
@@ -896,7 +618,7 @@ def buildSessionData(user,room,active_session):
             'user_temp': preValentTemperature, 'user_color': preValentColor, 'user_light': preValentBrightness}
     return data
 
-#Testato
+#Testat0o
 def DataHistoryAccountFetch(id_session,type):
     maxDuration=0
     maxValue=0
@@ -917,9 +639,7 @@ def DataHistoryAccountFetch(id_session,type):
                 maxValue=action.value
     print("The actuator " + type + " had the value:" + str(maxValue) + " for the most time! " + str(maxDuration) + "seconds!")
     return maxValue
-#tested
-def seconds_between(d1, d2):
-    return abs((d2 - d1).total_seconds())
+
 
 #tested
 def feedAIData(data):
@@ -941,15 +661,7 @@ def registerAction(type, value,session_id,timestamp,id_room,id_building,digitalT
     return 0
 
 
-#Deprecated
-#testato
-#def checkCredentials(username, password):#testing
-#    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-#    account =db.session.query(User).filter_by(username=username,password=hashed_password).first()
-#    return account
-#testato
-#health check del microcontrollore
-#vede se è sincronizzato con il digital twin oppure se ha problemi tecnici
+
 
 @app.after_request
 def remove_if_invalid(response):
@@ -963,7 +675,7 @@ if __name__ =="__main__":
     #db.init_app(app)
     mqtt.init_app(app)
 
-    #with app.app_context():
+#    with app.app_context():
         #sensorFeedToCovert = db.session.query(sensorFeeds)
        # createRoomCSV(sensorFeedToCovert,"sensors",datetime.today(),"")
         #hashed_password = bcrypt.hashpw("18121996".encode("utf-8"), bcrypt.gensalt())
@@ -1006,6 +718,14 @@ if __name__ =="__main__":
     #TODO dashboard che mostra i dati di adafruit
     #TODO modifica dati edificio,indirizzo, numero stanze(da testare), impostazione di risparmio energetico, treshold degli attuatori
     #TODO fare le view necessarie 1.lista edifici 2. view gestione (con bottone eliminazione) 3. view modifica dati
+
+#TODO testing modelview
+    #TODO testing grant permessi
+    #TODO testing creazione,modifica,eliminazione jobs
+    #TODO testing creazione,elimazione zone
+    #TODO gestione stanze
+    #TODO gestione edifici
+
 #DONE testare Flask-login con credenziali e meccaniche di logout
     #DONE testare le redirect (al momento fa redirect alla home per quando non si è loggati)
     #DONE encrypt della registrazione/login
