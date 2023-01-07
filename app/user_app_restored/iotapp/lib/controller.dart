@@ -123,12 +123,12 @@ Future<String> registerUser(id_building, id_user) async {
 }
 
 //@update
-Future<String> upateRoom(id_building, id_user) async {
+Future<String> updateRoom(id_building, id_user) async {
   final response = await http.post(
     Uri.parse(IPSERVER + 'update'),
     headers: <String, String>{
       'Content-Type': 'application/json',
-      'Content-ID': 'SELECT-APP',
+      'Content-ID': 'UPDATE-APP',
       'Auth-token': GlobalValues.credentials.authToken,
     },
     body: (jsonEncode({"id_utente": id_user, "building_id": id_building})),
