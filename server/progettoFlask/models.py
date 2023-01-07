@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 import datetime
 
 from itsdangerous import URLSafeTimedSerializer
+from sqlalchemy import ForeignKey
 from werkzeug.routing import ValidationError
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -12,20 +13,37 @@ from geolog import getMarker,getMarkerByType
 serializer_secret = "my_secret_key"
 serializer = URLSafeTimedSerializer(serializer_secret)
 db = SQLAlchemy()
+class professions(db.Model):
+    id_profession=db.Column('ID_PROFESSION', db.Integer,primary_key=True,autoincrement=True)
+    name= db.Column(db.String(20),unique=True)
+    category= db.Column(db.String(20))
 
+    def __init__(self,name,category):
+        self.category = category
+        self.name = name
+    def serialize(self):
+        return {"id_profession": self.id_profession,
+                "name":self.name,
+                "category": self.category}
+    def __str__(self):
+        return self.name
 class User(db.Model,UserMixin):
     id = db.Column('ID_USER', db.Integer, primary_key = True)
     username=db.Column(db.String(100),unique= True)
     password = db.Column(db.String(150))
-    profession = db.Column(db.Integer,nullable=False)
+    profession = db.Column(db.String,ForeignKey(professions.name),nullable=False)
     sex = db.Column(db.Integer)
     dateOfBirth=db.Column(db.DateTime(timezone=True), nullable=False,  default=datetime.datetime.utcnow)
+    admin=db.Column(db.Boolean)
+    super_user=db.Column(db.Boolean)
     def __init__(self,username,password,profession,sex,dateOfBirth):
         self.sex = sex
         self.profession = profession
         self.password = generate_password_hash(password)
         self.username = username
         self.dateOfBirth = dateOfBirth
+        self.admin=False
+        self.super_user=False
     def get_username(self):
         return self.username
     def verify_password(self,pwd):
@@ -38,7 +56,10 @@ class User(db.Model,UserMixin):
     def get_auth_token(self, user, password):
         data = [str(self.username), self.password]
         return serializer.dumps(data, salt=serializer_secret)
-
+    def is_admin(self):
+        return self.admin
+    def is_super(self):
+        return self.super_user
 
 
 
@@ -138,18 +159,7 @@ class zones(db.Model):
   #  def __init__(self,id_building,id_zone):
    #     self.id_zone=id_zone
    #     self.id_building=id_building
-class professions(db.Model):
-    id_profession=db.Column('ID_PROFESSION', db.Integer, primary_key=True)
-    name= db.Column(db.String(20))
-    category= db.Column(db.String(20))
 
-    def __init__(self,name,category):
-        self.category = category
-        self.name = name
-    def serialize(self):
-        return {"id_profession": self.id_profession,
-                "name":self.name,
-                "category": self.category}
 class digitalTwinFeed(db.Model):
     id_room=db.Column('ID_ROOM', db.Integer, primary_key = True)
     temperature_sensor=db.Column(db.Integer)
@@ -303,6 +313,12 @@ def deleteBuilding(id_building):
     return False
 def createAndPopulateDb():
        db.create_all()
+       user = User(username="Admin",password="Admin",profession="Administrator",sex=3,dateOfBirth=datetime.datetime.utcnow().date())
+       user.super_user = True
+       user.admin = True
+       db.session.add(user)
+       db.session.add(User(username="BArfaoui", password="password", profession="Administrator", sex=1,
+                          dateOfBirth=datetime.datetime.utcnow().date()))
        #db.session.add(User(username="BArfaoui",password="18121996",profession=8,sex=1,dateOfBirth=datetime.utcnow().date()))
        #db.session.add(User(username="PFelica", password="99669966", profession=8, sex=2,
         #                       dateOfBirth=datetime.utcnow().date()))
@@ -368,6 +384,7 @@ def createAndPopulateDb():
        db.session.add(digitalTwinFeed(22, 0, 0, 0, 0,0, 0, 0, True))
        db.session.add(digitalTwinFeed(23, 0, 0, 0, 0, 0,0, 0, True))
        db.session.add(digitalTwinFeed(24, 0, 0, 0, 0, 0,0, 0, True))
+       db.session.add(professions(name="Administrator", category=5))
        db.session.add(professions(name="Streamer", category=0))
        db.session.add(professions(name="Blogger", category=0))
        db.session.add(professions(name="Televendite", category=0))
@@ -414,7 +431,9 @@ def getBuildings():
 
 #testato
 def fetchJobs():
-    return professions.query.all()
+    return db.session.query(professions).filter(professions.name != "Administrator").all()
+
+
 
 #Formato Indirizzo Città,Via/Viale+Via+Numero,Stato
 
