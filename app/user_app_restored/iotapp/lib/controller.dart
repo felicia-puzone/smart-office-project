@@ -34,12 +34,12 @@ Future<String> fetchUserSession(user, pwd) async {
     GlobalValues.credentials.authToken =
         jsonDecode(response.body)['token'] ?? "";
 
-    if (GlobalValues.userSession!.logged_in != true) {
+    try {
       GlobalValues.listBuildings = jsonDecode(response.body)['buildings'];
       return "FIRST-LOGIN";
+    } catch (e) {
+      return 'LOGGED-ALREADY';
     }
-
-    return 'LOGGED-ALREADY';
   } else {
     return 'FAILED-LOGIN';
   }
