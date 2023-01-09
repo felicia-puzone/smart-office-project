@@ -46,9 +46,9 @@ class UserSession {
 }
 
 class DigitalTwin {
-  late String room_color;
-  late String room_brightness;
-  late String room_temperature;
+  var room_color;
+  var room_brightness;
+  var room_temperature;
 
   DigitalTwin(
       {required this.room_color,

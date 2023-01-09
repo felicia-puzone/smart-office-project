@@ -6,7 +6,8 @@ const IPSERVER = 'http://192.168.1.240:5000/';
 
 class GlobalValues {
   static UserSession? userSession;
-  static late DigitalTwin digitalTwin;
+  static late DigitalTwin digitalTwin =
+      DigitalTwin(room_color: '', room_brightness: '', room_temperature: '');
   static late List<dynamic> listBuildings = [];
   static late Credentials credentials = Credentials(username: '', password: '');
 
@@ -34,18 +35,24 @@ Future<String> fetchUserSession(user, pwd) async {
     GlobalValues.credentials.authToken =
         jsonDecode(response.body)['token'] ?? "";
 
+    GlobalValues.digitalTwin = DigitalTwin.fromJson(jsonDecode(response.body));
+
     try {
       GlobalValues.listBuildings = jsonDecode(response.body)['buildings'];
     } catch (e) {}
 
-    return 'LOGIN-OK';
+    if (GlobalValues.listBuildings.isNotEmpty) {
+      return 'FIRST-LOGIN';
+    }
+
+    return 'LOGGED-ALREADY';
   } else {
     return 'FAILED-LOGIN';
   }
 }
 
 //@selectRoom
-Future<String> sendOccupationRequest(id_building, id_user) async {
+Future<String> sendOccupationRequest(id_building) async {
   String username = GlobalValues.credentials.username;
   String password = GlobalValues.credentials.password;
 
@@ -56,7 +63,7 @@ Future<String> sendOccupationRequest(id_building, id_user) async {
       'Content-ID': 'SELECT-APP',
       'Auth-token': GlobalValues.credentials.authToken,
     },
-    body: (jsonEncode({"id_utente": id_user, "building_id": id_building})),
+    body: (jsonEncode({"building_id": id_building})),
   );
 
   if (response.statusCode == 200) {

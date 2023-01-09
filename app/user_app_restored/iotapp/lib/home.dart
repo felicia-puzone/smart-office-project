@@ -345,11 +345,16 @@ class _UserHomeState extends State<UserHome> {
                                           fontSize: 20,
                                           fontWeight: FontWeight.w700),
                                     ),
-                                    Text(
-                                      'None',
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700),
+                                    ValueListenableBuilder(
+                                      valueListenable: digitalTwinValue,
+                                      builder: (context, value, child) {
+                                        return Text(
+                                            digitalTwinValue.value.room_color
+                                                .toString(),
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w700));
+                                      },
                                     ),
                                   ]),
                               const SizedBox(
@@ -362,7 +367,13 @@ class _UserHomeState extends State<UserHome> {
                                         fontSize: 20,
                                       ),
                                       backgroundColor: Colors.orangeAccent),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ColorChanger(client: client)));
+                                  },
                                   child: const Icon(Icons.edit))
                             ]),
                       ),
@@ -451,14 +462,7 @@ class _UserHomeState extends State<UserHome> {
                                           fontSize: 20,
                                         ),
                                         backgroundColor: Colors.orangeAccent),
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ColorChanger(
-                                                      client: client)));
-                                    },
+                                    onPressed: () {},
                                     child: const Icon(Icons.edit))
                               ])),
 

@@ -23,6 +23,7 @@ class _MyLoginState extends State<MyLogin> {
   @override
   void initState() {
     print('INIT CALLED');
+
     super.initState();
   }
 
@@ -109,7 +110,13 @@ class _MyLoginState extends State<MyLogin> {
                                       String result = await fetchUserSession(
                                           userTextController.text,
                                           pwdTextController.text);
-                                      if (result == 'LOGIN-OK') {
+                                      if (result == 'FIRST-LOGIN') {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const Mappa()));
+                                      } else if (result == 'LOGGED-ALREADY') {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
