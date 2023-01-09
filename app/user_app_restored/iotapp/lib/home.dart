@@ -168,7 +168,11 @@ class _UserHomeState extends State<UserHome> {
   void initState() {
     super.initState();
 
-    mqttObject = mqttConnect();
+    try {
+      mqttConnect();
+    } catch (e) {
+      print('ERROREEEE: $e');
+    }
   }
 
   @override

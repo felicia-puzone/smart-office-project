@@ -36,10 +36,9 @@ Future<String> fetchUserSession(user, pwd) async {
 
     try {
       GlobalValues.listBuildings = jsonDecode(response.body)['buildings'];
-      return "FIRST-LOGIN";
-    } catch (e) {
-      return 'LOGGED-ALREADY';
-    }
+    } catch (e) {}
+
+    return 'LOGIN-OK';
   } else {
     return 'FAILED-LOGIN';
   }
@@ -128,7 +127,7 @@ Future<String> updateRoom(id_building, id_user) async {
     Uri.parse(IPSERVER + 'update'),
     headers: <String, String>{
       'Content-Type': 'application/json',
-      'Content-ID': 'UPDATE-APP',
+      'Content-ID': 'SELECT-APP',
       'Auth-token': GlobalValues.credentials.authToken,
     },
     body: (jsonEncode({"id_utente": id_user, "building_id": id_building})),
@@ -157,3 +156,7 @@ Future<String> fetchJobs(List<dynamic> jobs) async {
     return ('BAD-REQUEST');
   }
 }
+
+
+
+////MQTT

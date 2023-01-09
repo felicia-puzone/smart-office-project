@@ -46,11 +46,14 @@ class UserSession {
 }
 
 class DigitalTwin {
-  late int? room_color;
-  late int? room_brightness;
-  late int? room_temperature;
+  late String room_color;
+  late String room_brightness;
+  late String room_temperature;
 
-  DigitalTwin({this.room_color, this.room_brightness, this.room_temperature});
+  DigitalTwin(
+      {required this.room_color,
+      required this.room_brightness,
+      required this.room_temperature});
 
   factory DigitalTwin.fromJson(dynamic json) {
     json = json['digitalTwin'];

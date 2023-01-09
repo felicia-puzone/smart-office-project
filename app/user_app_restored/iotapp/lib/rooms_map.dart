@@ -84,8 +84,7 @@ class _BuildingMarkerState extends State<BuildingMarker> {
                             onPressed: () async {
                               sendOccupationRequest(
                                   GlobalValues.userSession!.id, widget.idRoom);
-                              GlobalValues.userSession!.id_edificio =
-                                  widget.idRoom;
+
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(

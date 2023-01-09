@@ -5,10 +5,9 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
-import 'controller.dart';
 
 class UpdateReq {
-  final int? id_utente;
+  final String id_utente;
   final String color_val;
   final String brightness_val;
   final String temp_val;
@@ -56,8 +55,7 @@ Future<String?> changeActuatorRequest(UpdateReq request) async {
     Uri.parse('http://192.168.1.240:5000/update'),
     headers: <String, String>{
       'Content-Type': 'application/json',
-      'Content-ID': 'UPDATE-APP',
-      'Auth-token': GlobalValues.credentials.authToken,
+      'Content-ID': 'UPDATE-APP'
     },
     body: jsonEncode(request.toJson()),
   );
@@ -102,10 +100,7 @@ class _ColorChangerState extends State<ColorChanger> {
                         ElevatedButton.styleFrom(backgroundColor: Colors.red),
                     onPressed: () {
                       changeActuatorRequest(new UpdateReq(
-                          GlobalValues.userSession!.id,
-                          'color_val',
-                          'brightness_val',
-                          'temppp'));
+                          'idddd', 'color_val', 'brightness_val', 'temppp'));
                     },
                     child: const Text(' ')),
                 ElevatedButton(

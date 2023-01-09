@@ -109,23 +109,7 @@ class _MyLoginState extends State<MyLogin> {
                                       String result = await fetchUserSession(
                                           userTextController.text,
                                           pwdTextController.text);
-                                      if (result == 'FIRST-LOGIN') {
-                                        GlobalValues.credentials.username =
-                                            userTextController.text;
-                                        GlobalValues.credentials.password =
-                                            pwdTextController.text;
-
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const Mappa()));
-                                      } else if (result == 'LOGGED-ALREADY') {
-                                        GlobalValues.credentials.username =
-                                            userTextController.text;
-                                        GlobalValues.credentials.password =
-                                            pwdTextController.text;
-
+                                      if (result == 'LOGIN-OK') {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
