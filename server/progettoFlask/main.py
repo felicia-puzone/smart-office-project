@@ -28,7 +28,6 @@ from firebase import firebase
 
 from modelviews import MyHomeView, ZoneAdmin, UserAdmin, JobAdmin, BuildingAdmin, RoomAdmin
 from utilities import buildJsonList, calculateUserAge, createABuildingtupleList, createAProfessiontupleList, seconds_between
-from adafruitHandler import sendDataToAdafruitFeed
 from flask_admin import Admin, AdminIndexView
 from flask_admin import BaseView, expose
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required,UserMixin
@@ -143,7 +142,7 @@ def handle_message_mqtt(client,userdata,message):
         print(sensor[4])
         value=data.get('payload')
         updateDigitalTwinSensors(identifiers[1],sensor[4],value)
-        sendDataToAdafruitFeed(data.get)
+        #sendDataToAdafruitFeed(data.get)
 
 
 
@@ -748,15 +747,15 @@ if __name__ =="__main__":
     #db.init_app(app)
     mqtt.init_app(app)
 
-    with app.app_context():
+    #with app.app_context():
         #sensorFeedToCovert = db.session.query(sensorFeeds)
        # createRoomCSV(sensorFeedToCovert,"sensors",datetime.today(),"")
         #hashed_password = bcrypt.hashpw("18121996".encode("utf-8"), bcrypt.gensalt())
         #db.session.add(User(username="BArfaoui",password="password",profession=8,sex=1,dateOfBirth=datetime.datetime.utcnow().date()))
-        db.session.add(sensorFeeds(1,"light",1,datetime.datetime.utcnow()))
-        db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
-        db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
-        db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
+        #db.session.add(sensorFeeds(1,"light",1,datetime.datetime.utcnow()))
+        #db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
+        #db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
+        #db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
         #db.session.commit()
     #geolog.isAddressValid("ajejebrazov")
     geolog.geoMarker("Manzolino","Via Giovanni Acerbi","Italia")
@@ -800,6 +799,7 @@ if __name__ =="__main__":
     #TODO testare link per dashboard Zona, Palazzo e Stanza
     #TODO testare aggiungere un attributo "Available" a Palazzo e Stanza
     #TODO testare aggiornare getFreeBuildings
+    #TODO ISSUE guardo faccio grant dei permessi cambia professione (CASCADE)
 #TODO testing aggiornamento dati utente (include il compleanno utente)
 #TODO permessi di visione solo a admin e super user, delle view/pagine dashboard e admin
 #TODO rerouting degli admin oppure creare una estensione delle pagine normali
