@@ -117,7 +117,7 @@ class JobAdmin(sqla.ModelView):
 
 # inserimento edifici
 # se non ha stanze non viene mostrato in getfree buildings
-# TODO Inserimento (state,city,route,number) da calcolare(lat,lon,id_zone) da ingnorare(id_building)
+# TODO testing Inserimento (state,city,route,number) da calcolare(lat,lon,id_zone) da ingnorare(id_building)
 # TODO Eliminazione testing
 # TODO Modifica testing
 # DONE Permessi di visualizzazione
