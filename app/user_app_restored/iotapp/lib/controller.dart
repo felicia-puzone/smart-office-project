@@ -27,25 +27,37 @@ Future<String> fetchUserSession(user, pwd) async {
   );
 
   if (response.statusCode == 200) {
-    GlobalValues.userSession = UserSession.fromJson(jsonDecode(response.body));
-    //GlobalValues.digitalTwin = DigitalTwin.fromJson(jsonDecode(response.body));
+    if (jsonDecode(response.body)['logged_in'] == true) {
+      String outcome = jsonDecode(response.body)['outcome'];
 
-    //inserisci null exception SE già loggato, non !!!
+      GlobalValues.userSession =
+          UserSession.fromJson(jsonDecode(response.body));
 
-    GlobalValues.credentials.authToken =
-        jsonDecode(response.body)['token'] ?? "";
+      GlobalValues.credentials.authToken =
+          jsonDecode(response.body)['token'] ?? "";
 
-    GlobalValues.digitalTwin = DigitalTwin.fromJson(jsonDecode(response.body));
+      switch (outcome) {
+        case 'Login':
+          {
+            try {
+              GlobalValues.listBuildings =
+                  jsonDecode(response.body)['buildings'];
+            } catch (e) {}
+          }
+          return 'FIRST-LOGIN';
+        case 'Active':
+          {
+            GlobalValues.digitalTwin =
+                DigitalTwin.fromJson(jsonDecode(response.body));
 
-    try {
-      GlobalValues.listBuildings = jsonDecode(response.body)['buildings'];
-    } catch (e) {}
+            GlobalValues.userSession =
+                UserSession.fromJson(jsonDecode(response.body));
 
-    if (GlobalValues.listBuildings.isNotEmpty) {
-      return 'FIRST-LOGIN';
+            return 'LOGGED-ALREADY';
+          }
+      }
     }
-
-    return 'LOGGED-ALREADY';
+    return 'WRONG-CREDENTIALS';
   } else {
     return 'FAILED-LOGIN';
   }
@@ -92,7 +104,7 @@ Future<String> logout() async {
 }
 
 //@freeRoom
-Future<String> freeRoom(id_user) async {
+Future<String> freeRoom() async {
   final response = await http.post(
     Uri.parse(IPSERVER + 'freeRoom'),
     headers: <String, String>{
@@ -100,10 +112,13 @@ Future<String> freeRoom(id_user) async {
       'Content-ID': 'FREEROOM-APP',
       'Auth-token': GlobalValues.credentials.authToken,
     },
-    body: (jsonEncode({"id_utente": id_user})),
+    //body: (jsonEncode({"id_utente": id_user})),
   );
 
   if (response.statusCode == 200) {
+    try {
+      GlobalValues.listBuildings = jsonDecode(response.body)['buildings'];
+    } catch (e) {}
     return "REQUEST-OK";
   } else {
     return ('BAD-REQUEST');

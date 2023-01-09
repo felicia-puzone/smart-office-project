@@ -23,17 +23,15 @@ final snackBar = SnackBar(
 );
 
 class BuildingMarker extends StatefulWidget {
-  final int? idRoom;
+  final int? idBuilding;
   final String city;
-  final String number;
-  final String route;
+  final String address;
 
   BuildingMarker({
     super.key,
-    required this.idRoom,
+    required this.idBuilding,
     required this.city,
-    required this.number,
-    required this.route,
+    required this.address,
   });
 
   @override
@@ -60,11 +58,7 @@ class _BuildingMarkerState extends State<BuildingMarker> {
                   height: 70,
                   child: Column(
                     children: [
-                      Text(widget.city +
-                          ' ' +
-                          widget.route +
-                          ', ' +
-                          widget.number),
+                      Text(widget.city + ' ' + widget.address),
                       Text('Numero stanze disponibili: ' + '..')
                     ],
                   )),
@@ -82,8 +76,7 @@ class _BuildingMarkerState extends State<BuildingMarker> {
                                 ),
                                 backgroundColor: Colors.orangeAccent),
                             onPressed: () async {
-                              sendOccupationRequest(
-                                  GlobalValues.userSession!.id, widget.idRoom);
+                              sendOccupationRequest(widget.idBuilding);
 
                               Navigator.push(
                                   context,
@@ -241,10 +234,9 @@ List<Marker> initMarkers() {
         point: LatLng(
             double.parse(building['lat']), double.parse(building['lon'])),
         builder: (context) => BuildingMarker(
-            idRoom: building['id_building'],
+            idBuilding: building['id_building'],
             city: building['city'],
-            number: building['number'],
-            route: building['route'])));
+            address: building['address'])));
   });
 
   return markers;

@@ -163,6 +163,7 @@ class UserHome extends StatefulWidget {
 class _UserHomeState extends State<UserHome> {
   late Future<UserSession?> futureUserSession;
   late Future<int> mqttObject;
+  late Future<String> freeRoomFuture;
 
   @override
   void initState() {
@@ -481,12 +482,13 @@ class _UserHomeState extends State<UserHome> {
                                       ),
                                       backgroundColor: Colors.orangeAccent),
                                   onPressed: () async {
-                                    freeRoom(GlobalValues.userSession!.id);
+                                    final response = await freeRoom();
 
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Mappa()));
+                                    if (response == 'REQUEST-OK')
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Mappa()));
                                   },
                                   child: const Text('LASCIA STANZA')),
                             ))
