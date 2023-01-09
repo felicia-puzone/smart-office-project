@@ -575,28 +575,24 @@ def renderHomeWeb(id_room):
 
 def renderHomeApp(id_room):
     digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
+    id_building = db.session.query(rooms).filter_by(id_room=digitalTwin.id_room).first().id_building
     return jsonify(logged_in=True, outcome="Active", digitalTwin=digitalTwin.serializedActuators(),
-                   id=current_user.get_id(), id_edificio=0, id_room=0, username=current_user.get_username())
+                   id_edificio=id_building, id_room=id_room, username=current_user.get_username())
 
 def renderSelectionWeb():
     return render_template('newselect.html', buildings=buildJsonList(getFreeBuildings()), msg='')
 
 def renderSelectionApp():
-    return jsonify(logged_in=True, outcome="Login",
-                   digitalTwin={"led_actuator": 0, "temperature_actuator": 0,
-                                "led_brightness": 0}, id=current_user.get_id(),
-                   id_edificio=0, id_room=0, username=current_user.get_username(),
+    return jsonify(logged_in=True, outcome="Login", username=current_user.get_username(),
                    buildings=buildJsonList(getFreeBuildings()))
 def renderHomeAppOnAuth(id_room,token):
     digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
+    id_building = db.session.query(rooms).filter_by(id_room=digitalTwin.id_room).first().id_building
     return jsonify(token=token, logged_in=True, outcome="Active", digitalTwin=digitalTwin.serializedActuators(),
-                   id=current_user.get_id(), id_edificio=0, id_room=0, username=current_user.get_username())
+                   id_edificio=id_building, id_room=digitalTwin.id_room, username=current_user.get_username())
 
 def renderSelectionAppOnAuth(token):
-    return jsonify(token=token, logged_in=True, outcome="Login",
-                   digitalTwin={"led_actuator": 0, "temperature_actuator": 0,
-                                "led_brightness": 0}, id=current_user.get_id(),
-                   id_edificio=0, id_room=0, username=current_user.get_username(),
+    return jsonify(token=token, logged_in=True, outcome="Login",username=current_user.get_username(),
                    buildings=buildJsonList(getFreeBuildings()))
 
 
