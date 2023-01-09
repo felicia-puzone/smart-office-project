@@ -184,7 +184,6 @@ class digitalTwinFeed(db.Model):
     id_room=db.Column('ID_ROOM', db.Integer, primary_key = True)
     temperature_sensor=db.Column(db.Integer)
     humidity_sensor=db.Column(db.Integer)
-    noise_sensor=db.Column(db.Integer)
     light_sensor=db.Column(db.Integer)
     led_actuator=db.Column(db.String(20))
     temperature_actuator=db.Column(db.Integer)
@@ -192,13 +191,12 @@ class digitalTwinFeed(db.Model):
     healthy= db.Column(db.Boolean)
     #door=db.Column(db.Boolean)
     #pending
-    def __init__(self,id_room,temperature_sensor=0,humidity_sensor=0,noise_sensor=0,light_sensor=0,led_actuator=0,temperature_actuator=0,led_brightness=0,healthy=False):
+    def __init__(self,id_room,temperature_sensor=0,humidity_sensor=0,light_sensor=0,led_actuator=0,temperature_actuator=0,led_brightness=0,healthy=False):
         self.healthy = healthy
         self.led_brightness = led_brightness
         self.temperature_actuator = temperature_actuator
         self.led_actuator = led_actuator
         self.light_sensor = light_sensor
-        self.noise_sensor = noise_sensor
         self.temperature_sensor = temperature_sensor
         self.id_room = id_room
         self.humidity_sensor=humidity_sensor
@@ -359,7 +357,7 @@ def createAndPopulateDb():
        db.session.add(buildings(city="Genova",route='',number='',state='Italia'))
        db.session.add(buildings(city="Manzolino",route='via Giovanni archi',number='',state='Italia'))
        db.session.add(rooms(id_building=1))
-       db.session.add(digitalTwinFeed(1,0,0,0,0,0,0,0,True))
+       db.session.add(digitalTwinFeed(1,0,0,0,0,0,0,True))
        '''    db.session.add(rooms(id_building=1))
        db.session.add(rooms(id_building=1))
        db.session.add(rooms(id_building=1))

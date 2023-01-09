@@ -503,18 +503,19 @@ def StartListening():
     return 0
 #testato
 def updateDigitalTwinSensors(id_room,sensor,value):
-    with app.app_context():
-        digitalTwin=db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
-        timestamp=datetime.datetime.utcnow()
-        sensorFeed = sensorFeeds(digitalTwin.id_room,sensor,value,timestamp)
-        if sensor == "light":
-            digitalTwin.light_sensor=value
-        elif sensor == "humidity":
-            digitalTwin.humidity_sensor=value
-        elif sensor == "temperature":
-            digitalTwin.temperature_sensor=value
-        db.session.add(sensorFeed)
-        db.session.commit()
+    if sensor != "noise_sensor":
+        with app.app_context():
+            digitalTwin=db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
+            timestamp=datetime.datetime.utcnow()
+            sensorFeed = sensorFeeds(digitalTwin.id_room,sensor,value,timestamp)
+            if sensor == "light":
+                digitalTwin.light_sensor=value
+            elif sensor == "humidity":
+                digitalTwin.humidity_sensor=value
+            elif sensor == "temperature":
+                digitalTwin.temperature_sensor=value
+            db.session.add(sensorFeed)
+            db.session.commit()
     return 0
 #testato
 def updateDigitalTwinActuators(id_user, color, brightness, temperature):
@@ -539,7 +540,7 @@ def prepareRoom(id_user,id_session,digitalTwin,id_building):
     brightness = data['user_light']
     temperature = data['user_temp']
     timestamp = datetime.datetime.utcnow()
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(digitalTwin.id_room) + '/status_request', 1)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(digitalTwin.id_room) + '/status_request', "waiting")
     registerAction('color', led_color, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
     registerAction('brightness', brightness, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
     registerAction('temperature', temperature, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
@@ -671,7 +672,7 @@ def setRoomToSleepMode(id_room,id_building):
     mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/color', 0)
     mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/brightness', 0)
     mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/temperature', 20)
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/status_request', 0)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/status_request', "closed")
     return 0
 
 #testato
@@ -839,4 +840,6 @@ if __name__ =="__main__":
 #Se una sessione è attiva lo porta in output
 #Login funzionante
 #REPORT (SelectRoom)
+
+
 
