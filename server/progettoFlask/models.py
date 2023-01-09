@@ -7,9 +7,9 @@ from itsdangerous import URLSafeTimedSerializer
 from sqlalchemy import ForeignKey
 from werkzeug.routing import ValidationError
 from werkzeug.security import generate_password_hash, check_password_hash
-
 import geolog
-from geolog import getMarker,getMarkerByType
+from utilities import formatName
+
 serializer_secret = "my_secret_key"
 serializer = URLSafeTimedSerializer(serializer_secret)
 db = SQLAlchemy()
@@ -31,7 +31,7 @@ class User(db.Model,UserMixin):
     id = db.Column('ID_USER', db.Integer, primary_key = True)
     username=db.Column(db.String(100),unique= True)
     password = db.Column(db.String(150))
-    profession = db.Column(db.String,ForeignKey(professions.name),nullable=False)
+    profession = db.Column(db.String,db.ForeignKey('professions.name'),nullable=False, onupdate="CASCADE")
     sex = db.Column(db.Integer)
     dateOfBirth=db.Column(db.DateTime(timezone=True), nullable=False,  default=datetime.datetime.utcnow)
     admin=db.Column(db.Boolean)
@@ -60,9 +60,19 @@ class User(db.Model,UserMixin):
         return self.admin
     def is_super(self):
         return self.super_user
-
-
-
+    def new_password(self,password,new_password,new_password_confirm):
+        if len(password) < 8:
+            if self.verify_password(password):
+                if len(new_password) < 8 and len(new_password_confirm) < 8 and new_password_confirm==new_password:
+                    self.password = generate_password_hash(new_password)
+                    return True
+        return False
+    def set_sex(self,sex):
+        self.sex=sex
+    def set_profession(self,profession):
+        self.profession=profession
+    def set_birthday(self,birthday):
+        self.dateOfBirth=birthday
 
 
 
@@ -88,65 +98,77 @@ class sessionStates(db.Model):
 class rooms(db.Model):
     id_room = db.Column('ID_ROOM', db.Integer, primary_key=True)
     id_building = db.Column('ID_BUILDING', db.Integer)
-
+    description = db.Column(db.String(100))
+    available = db.Column(db.Boolean)
+    dashboard = db.db.Column(db.String(100))
     def __init__(self, id_building):
         self.id_building = id_building
-
+        building = db.session.query(buildings).filter_by(id_building=id_building).first()
+        self.description = "Room of building id:"+str(building.id_building)+ " stationed at "+building.city + " " +building.address
+        self.available = True
+        self.dashboard = ""
     def set_building(self,building):
         self.id_building=building
-
+    def set_availability(self,availability):
+        self.available = availability
 #TODO testing
 class buildings(db.Model):
     id_building = db.Column('ID_BUILDING', db.Integer, primary_key=True)
-    id_zone = db.Column(db.Integer)
-    route=db.Column(db.String(100))
-    number=db.Column(db.String(100))
+    city = db.Column(db.String(100))
+    address = db.Column(db.String(100))
     lat = db.Column(db.String(100))
     lon = db.Column(db.String(100))
+    available = db.Column(db.Boolean)
+    dashboard = db.Column(db.String(100))
     __table_args__ = (
-        db.UniqueConstraint(route, lat),
-        db.UniqueConstraint(route, lon),
+        db.UniqueConstraint(lat, lon,address),
     )
     def __init__(self,city,route,number,state):
-        #self.city = city
-        if route == '' and number=='':
-            marker = getMarker(city + ','+ state)
-            self.lon = marker['lon']
-            self.lat = marker['lat']
-        else:
-            marker=getMarker(city+','+route+'+'+number+','+state)
-            self.lon = marker['lon']
-            self.lat = marker['lat']
-        self.id_zone=tryToAssignZone(city,state)
-        self.route=route
-        self.number=number
+        street=""
+        if route:
+            if number:
+                street=formatName(route+" "+number)
+            else:
+                street=formatName(route)
+        marker = geolog.geoMarker(formatName(city),street,state)
+        street +=" ("+state+")"
+        self.lon = marker['lon']
+        self.lat = marker['lat']
+        self.address=street
+        self.city=formatName(city)
+        self.available = True
+        zone = db.session.query(zones).filter_by(city=city).filter_by(state=state).first()
+        if zone is None:
+            zone =  zones(formatName(city),formatName(state))
+            db.session.add(zone)
+            db.session.commit()
+        self.button=""
+    def set_availability(self,availability):
+        self.available = availability
 
-    #def __init__(self,city,lat,log):
-        #self.city = city
     def serialize(self):
         return {"id_building": self.id_building,
-                "city": db.session.query(zones).filter_by(id_zone=self.id_zone).first().city,
+                "city": self.city,
                 "lat":self.lat,
-                "lon":self.lon,"route":self.route,"number":self.number}
+                "lon":self.lon,"address":self.address}
 #TODO testing
 class zones(db.Model):
-    id_zone= db.Column(db.Integer, primary_key=True,autoincrement=True,nullable=True)
-    city = db.Column(db.String(100),unique= True)
-    state = db.Column(db.String(100))
+    city = db.Column(db.String(100),primary_key=True)
+    state = db.Column(db.String(100),primary_key=True)
     lat = db.Column(db.String(100))
     lon = db.Column(db.String(100))
     __table_args__ = (
         db.UniqueConstraint(city, state),
+        db.UniqueConstraint(lat, lon),
     )
     def __init__(self,city,state):
-        self.city = city
-        self.state=state
-        marker=getMarkerByType(city+','+state,"administrative")
+        marker = geolog.geoMarker(formatName(city), "", state)
+        self.city = formatName(city)
+        self.state=formatName(state)
         self.lon=marker['lon']
         self.lat = marker['lat']
     def serialize(self):
-        return {"id_zone": self.id_zone,
-                "city": self.city,"lat": self.lat,"lon": self.lon}
+        return {"city": self.city,"lat": self.lat,"lon": self.lon}
     def set_lon(self,lon):
         self.lon = lon
     def set_lat(self,lat):
@@ -164,7 +186,7 @@ class digitalTwinFeed(db.Model):
     humidity_sensor=db.Column(db.Integer)
     noise_sensor=db.Column(db.Integer)
     light_sensor=db.Column(db.Integer)
-    led_actuator=db.Column(db.Integer)
+    led_actuator=db.Column(db.String(20))
     temperature_actuator=db.Column(db.Integer)
     led_brightness=db.Column(db.Integer)
     healthy= db.Column(db.Boolean)
@@ -189,15 +211,15 @@ class digitalTwinFeed(db.Model):
         return {"id_room": self.id_room,
                 "temperature_sensor":self.temperature_sensor,
                 "light_sensor":self.light_sensor,
-                "led_actuator" : self.led_actuator,
-                "temperature_actuator" : self.temperature_actuator,
-                "led_brightness" : self.led_brightness,
+                "room_color" : self.led_actuator,
+                "room_temperature" : self.temperature_actuator,
+                "room_brightness" : self.led_brightness,
                 "healthy" : self.healthy,
                 "noise_sensor": self.noise_sensor}
     def serializedActuators(self):
-        return {"led_actuator": self.led_actuator,
-                "temperature_actuator": self.temperature_actuator,
-                "led_brightness": self.led_brightness}
+        return {"room_color": self.led_actuator,
+                "room_temperature": str(self.temperature_actuator),
+                "room_brightness": str(self.led_brightness)}
 
 
 #TODO testing
@@ -310,6 +332,7 @@ def deleteBuilding(id_building):
             return True
     return False
 def createAndPopulateDb():
+       db.drop_all()
        db.create_all()
        user = User(username="Admin",password="Admin",profession="Administrator",sex=3,dateOfBirth=datetime.datetime.utcnow().date())
        user.super_user = True
@@ -334,6 +357,7 @@ def createAndPopulateDb():
        db.session.add(buildings(city="Bologna",route='',number='',state='Italia'))
        db.session.add(buildings(city="Milano",route='',number='',state='Italia'))
        db.session.add(buildings(city="Genova",route='',number='',state='Italia'))
+       db.session.add(buildings(city="Manzolino",route='via Giovanni archi',number='',state='Italia'))
        db.session.add(rooms(id_building=1))
        db.session.add(rooms(id_building=1))
        db.session.add(rooms(id_building=1))
@@ -407,8 +431,8 @@ def createAndPopulateDb():
 #tested
 def getFreeBuildings():
     activeSessionStates = db.session.query(sessionStates.id_room).filter_by(active=True)
-    freeRoomsBuildings = db.session.query(rooms.id_building).filter(rooms.id_room.notin_(activeSessionStates))
-    freeBuildings=db.session.query(buildings).filter(buildings.id_building.in_(freeRoomsBuildings))
+    freeRoomsBuildings = db.session.query(rooms.id_building).filter(rooms.id_room.notin_(activeSessionStates)).filter_by(available=True)
+    freeBuildings=db.session.query(buildings).filter(buildings.id_building.in_(freeRoomsBuildings)).filter_by(available=True)
 
     return freeBuildings
 

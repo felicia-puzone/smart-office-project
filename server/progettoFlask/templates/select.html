@@ -23,6 +23,9 @@
                 </form>
             </h2>
             <form action="{{ url_for('logout') }}" method="post">
+            <p class="bottom">Aggiorna dati utente<a class="bottom" href="{{url_for('updateuserdata')}}">Clicca qui</a></p>
+            
+            <p class="bottom">Aggiorna le credenziali<a class="bottom" href="{{url_for('updatecredentials')}}">Clicca qui</a><
                   <div>logout</div>
                     <input type="submit" class="btn" value="Logout"></br></br>
                 </form>

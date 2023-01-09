@@ -26,7 +26,7 @@ from flask_cors import CORS
 import paho.mqtt.client as mqtt
 from firebase import firebase
 
-from modelviews import MyHomeView, ZoneAdmin, UserAdmin, JobAdmin
+from modelviews import MyHomeView, ZoneAdmin, UserAdmin, JobAdmin, BuildingAdmin, RoomAdmin
 from utilities import buildJsonList, calculateUserAge, createABuildingtupleList, createAProfessiontupleList, seconds_between
 from adafruitHandler import sendDataToAdafruitFeed
 from flask_admin import Admin, AdminIndexView
@@ -60,20 +60,22 @@ fb_app = firebase.FirebaseApplication('https://smartoffice-4eb51-default-rtdb.eu
 #admin = Admin(app, name='Dashboard')
 db.init_app(app)
 #with app.app_context():
-    #createAndPopulateDb()
+ #   createAndPopulateDb()
 months = ('January','February','March','April','May','June',\
 'July','August','September','October','November','December')
-
+colors = ('NONE','RED','ORANGE','YELLOW','GREEN','TEAL','BLUE','INDIGO','VIOLET','RAINBOW')
 
 admin = Admin(app, name='Dashboard',index_view=MyHomeView())
 #admin.add_view(MyView(name='My View', menu_icon_type='glyph', menu_icon_value='glyphicon-home'))
 admin.add_view(ZoneAdmin(zones, db.session,category='Models'))
-#admin.add_view(BuildingAdmin(buildings, db.session,category='Models'))
-#admin.add_view(RoomAdmin(rooms, db.session,category='Models'))
+admin.add_view(BuildingAdmin(buildings, db.session,category='Models'))
+admin.add_view(RoomAdmin(rooms, db.session,category='Models'))
 admin.add_view(JobAdmin(professions, db.session,category='Models'))
 admin.add_view(UserAdmin(User, db.session,category='Models'))
 
-
+#Questo decorator gestisce tutti di errore, se la sessione utente
+#è attiva, reidirizza a handleLoggedInUser
+#altrimenti reindirizza alla homepage 'login.html'
 @app.errorhandler(HTTPException)
 def handle_bad_request(e):
     print('bad request!', 400)
@@ -81,6 +83,8 @@ def handle_bad_request(e):
         return handleLoggedinUser("")
     else:
         return render_template('login.html',msg='')
+
+
 
 @login_manager.request_loader
 def load_user_from_request(request):
@@ -152,9 +156,10 @@ def homepage():
     else:
         return render_template('login.html',msg='')
 
-@app.route("/professions",methods=['POST'])
+@app.route("/professions",methods=['GET'])
 def fetchprofessions():
     return buildJsonList(fetchJobs())
+
 #/Login
 #Metodi accettati POST
 #Si
@@ -254,7 +259,7 @@ def update():
         return jsonify(changes=True,digitalTwin=digitalTwin.serializedActuators())
     else:
         id_user = current_user.get_id()
-        color = int(request.form['color'])
+        color = colors[int(request.form['color'])]
         brightness = int(request.form['brightness'])
         temperature = int(request.form['temperature'])
         digitalTwin=updateDigitalTwinActuators(id_user, color, brightness, temperature)
@@ -292,10 +297,82 @@ def freeRoom():
         #data = request.get_json(silent=True)
         id_user=current_user.get_id()
         tryToFreeRoom(id_user)
-        return jsonify(outcome="Freed")
+        return jsonify(outcome="Freed",buildings=buildJsonList(getFreeBuildings()))
     else:
         tryToFreeRoom(current_user.get_id())
         return render_template('newselect.html', buildings=buildJsonList(getFreeBuildings()), msg='')
+
+
+#TODO testing
+@app.route("/userpage",methods=['GET','POST'])
+@login_required
+def userpage():
+    content=request.headers.get("Content-ID")
+    if content is None:
+        content=""
+    return handleLoggedinUser(content)
+
+#TODO testing
+@app.route("/updatecredentials", methods = ['POST','GET'])
+@login_required
+def updatecredentials():
+    msg = ''
+    outcome=False
+    jobs = fetchJobs()
+    content=request.headers.get("Content-ID")
+    if request.method == 'POST':
+        if 'password'in request.form and 'new_password' in request.form and 'new_password_confirm' in request.form:
+            password = request.form['password']
+            new_password = request.form['new_password']
+            new_password_confirm = request.form['new_password_confirm']
+            token=current_user.get_auth_token(current_user.username,current_user.password)
+            print("new_passsword:" + str(new_password))
+            print("new_password confirm:" + str(new_password_confirm))
+            if current_user.new_password(password,new_password,new_password_confirm):
+                msg = "Credenziali inserite con successo!"
+                outcome= True
+            else:
+                msg = 'Credenziali inserite incorrettamente!'
+            if content== "NEW-CREDENTIALS-APP":
+                return {' outcome':outcome,'token':token, 'msg':msg}
+            else:
+                session["Auth-token"] = token
+                return render_template('newcredentials.html', msg=msg, jobs=jobs)
+        if content == "NEW-CREDENTIALS-APP":
+            return {' outcome': outcome}
+        else:
+            return handleLoggedinUser("")
+    else:
+        return render_template('newcredentials.html', msg=msg, jobs=jobs)
+#TODO testing
+@app.route("/updateuserdata", methods = ['GET','POST'])
+@login_required
+def updateuserdata():
+    msg = ''
+    jobs = fetchJobs()
+    content=request.headers.get("Content-ID")
+    if request.method == 'POST':
+        if 'birthday'in request.form and 'sex'in request.form and 'profession'in request.form:
+            birthday=request.form['birthday']
+            sex = request.form['sex']
+            profession=request.form['profession']
+            job = db.session.query(professions).filter_by(id_profession=profession).first()
+            current_user.set_birthday(datetime.datetime.strptime(birthday,"%Y-%m-%d"))
+            current_user.set_sex(sex)
+            current_user.set_profession(job.name)
+            if content == "USER-DATA-APP":
+                return {'job':job.name,'sex':sex,'job_id':job.id_profession}
+            else:
+                return render_template('newuserdata.html', msg=msg, jobs=jobs,user=current_user)
+        else:
+            if content == "USER-DATA-APP":
+                return {'outcome':False}
+            else:
+                return handleLoggedinUser("")
+    else:
+        return render_template('newuserdata.html', msg=msg, jobs=jobs, user=current_user)
+
+
 ########################################################################################################################
 #TODO view che permette la registrazione all'Admin
 #TODO controllo per consentire l'accesso solo all'admin
@@ -306,11 +383,11 @@ def admin():
     if not handleViewPermission(current_user.get_id()):
         return handleLoggedinUser("")
     return "hola"
-@app.route("/dashboard")
+@app.route("/dashboard",methods=['GET','POST'])
 @login_required
 def dashboard():
     #handleViewPermission(current_user.get_id())
-    return "ciao"
+    return "<p>ciao</p>"
 
 @app.route("/buildingDashboard")
 @login_required
@@ -487,7 +564,7 @@ def getAIdata(id_user,digitalTwin):
             dataFromServer = res.json()
         except requests.exceptions.RequestException as e:
             print("c'è stato un errore! Prenderò dati di Default!")
-            dataFromServer = {'user_temp':21,'user_color':9,'user_light':1}
+            dataFromServer = {'user_temp':21,'user_color':"RAINBOW",'user_light':1}
     return dataFromServer
 
 
@@ -675,14 +752,18 @@ if __name__ =="__main__":
     #db.init_app(app)
     mqtt.init_app(app)
 
-#    with app.app_context():
+    with app.app_context():
         #sensorFeedToCovert = db.session.query(sensorFeeds)
        # createRoomCSV(sensorFeedToCovert,"sensors",datetime.today(),"")
         #hashed_password = bcrypt.hashpw("18121996".encode("utf-8"), bcrypt.gensalt())
         #db.session.add(User(username="BArfaoui",password="password",profession=8,sex=1,dateOfBirth=datetime.datetime.utcnow().date()))
-        #db.session.add(sensorFeeds(1,"light",1,datetime.datetime.utcnow()))
+        db.session.add(sensorFeeds(1,"light",1,datetime.datetime.utcnow()))
+        db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
+        db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
+        db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
         #db.session.commit()
     #geolog.isAddressValid("ajejebrazov")
+    geolog.geoMarker("Manzolino","Via Giovanni Acerbi","Italia")
     port=5000
     interface='0.0.0.0'
     StartListening()
@@ -704,27 +785,49 @@ if __name__ =="__main__":
 #DONE fixare i timestamp (UTC NOW) gli orari saranno in orario standard utc now
 #DONE testare l'update snellito
 #DONE Content-ID dell'header LOGIN-APP,REGISTER-APP,SELECT-APP,LOGOUT-APP
-
-#TODO testare codice snellito mqtt
+#TODO testare il feedAdafruit
 #TODO testare il settaggio in risparmio energetico a fine sessione utente
 #TODO testare spegnimento/risparmio energetico digitalTwin alla chiusura della sessione
 #TODO testare il sensorFeed, il digitaltwinfeed terrà l'ultimo valore dei sensori e attuatori
-#TODO testare il feedAdafruit
-#TODO pagina gestione per l'admin:
-    #DONE gestione Zone
-    #TODO testing eliminazione edificio
-    #TODO testing inserimento edifici con controllo di validità dell'indirizzo
-    #TODO testing inserimento/rimozione stanze
-    #TODO dashboard che mostra i dati di adafruit
-    #TODO modifica dati edificio,indirizzo, numero stanze(da testare), impostazione di risparmio energetico, treshold degli attuatori
-    #TODO fare le view necessarie 1.lista edifici 2. view gestione (con bottone eliminazione) 3. view modifica dati
-
+#TODO dashboard che mostra i dati di adafruit
+#OBBIETTIVO 9 GENNAIO
+#TODO testing gestione anonymous user (wrappare le view in @login_required oppure if current_user.is_authenticated:)
 #TODO testing modelview
     #TODO testing grant permessi
     #TODO testing creazione,modifica,eliminazione jobs
     #TODO testing creazione,elimazione zone
-    #TODO gestione stanze
-    #TODO gestione edifici
+    #TODO testing stanze
+    #TODO testing edifici
+    #TODO testing jobs
+    #TODO testing impostare il formato dell'indirizzo in modo da evitare dati duplicati
+    #TODO testare che tutti gli edifici sono univoci
+    #TODO testare link per dashboard Zona, Palazzo e Stanza
+    #TODO testare aggiungere un attributo "Available" a Palazzo e Stanza
+    #TODO testare aggiornare getFreeBuildings
+#TODO testing aggiornamento dati utente (include il compleanno utente)
+#TODO permessi di visione solo a admin e super user, delle view/pagine dashboard e admin
+#TODO rerouting degli admin oppure creare una estensione delle pagine normali
+
+
+#OBBIETTIVO 10 gennaio
+    #TODO impostare il riconoscimento della richiesta edificio/stanza e id
+    #TODO impostare restrizioni di visione
+    #TODO scegliere la piattaforma
+
+
+
+#TODO fixare le view
+    # TODO sistemare lo zoom nella mappa di selezione, magari la media delle zone
+    # TODO gestione mancanza dati form (se serve)
+    # TODO gestione expetions scrittura su db
+    # TODO mettere un buon css
+#TODO commentare
+#TODO impostare l'indirizzo per l'AI
+
+
+#TODO testing ISSUE colori led Stringa MQTT
+#TODO testing ISSUE mandare la lista di edifici al freeroom
+#TODO ISSUE rimuovere noise sensor
 
 #DONE testare Flask-login con credenziali e meccaniche di logout
     #DONE testare le redirect (al momento fa redirect alla home per quando non si è loggati)
@@ -733,30 +836,7 @@ if __name__ =="__main__":
     #DONE (Flask-Login e admin hanno comperto questo problema) creare metodo isLoggedin, che controlla se l'utente è loggato e se ha i permessi di accesso alla pagina
     #DONE testare error handler, che reindirizza alla pagina di login/index/selezione
     #DONE integrare Flask-Login
-#TODO fixare le view
-    # TODO sistemare lo zoom nella mappa di selezione, magari la media delle zone
-    # TODO gestione mancanza dati form (se serve)
-#TODO commentare
-#TODO aggiornamento dati utente
-
-
-
-#TODO implementare le foreign key nel db
-# TODO gestione expetions scrittura su db
-#TODO impostare l'indirizzo per l'AI
-#TODO snellire il codice
-#TODO fornire i dati che vuole Felicia
-    #TODO dati che servono per l'app android in base alla route
-    #TODO dati da mandare all'app se non è loggato
-
 #DONE impostare la scelta dell'edificio tramite mappa
-#TODO implementare il file config
-
-
-#TODO tracciamento dei consumi per zona (magari con 3 livelli di restrizione)
-
-
-#TODO impostare il formato dell'indirizzo in modo da evitare dati duplicati
 #DONE Testato le zone dinamiche e  il serialize
 #REPORT(Testing Login):
 #Mostra gli edifici liberi correttamente
