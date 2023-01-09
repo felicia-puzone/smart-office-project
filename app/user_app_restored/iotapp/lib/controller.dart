@@ -79,6 +79,9 @@ Future<String> sendOccupationRequest(id_building) async {
   );
 
   if (response.statusCode == 200) {
+    GlobalValues.digitalTwin = DigitalTwin.fromJson(jsonDecode(response.body));
+    GlobalValues.userSession = UserSession.fromJson(jsonDecode(response.body));
+
     return "REQUEST-OK";
   } else {
     return ('BAD-REQUEST');

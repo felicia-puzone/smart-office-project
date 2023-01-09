@@ -76,12 +76,15 @@ class _BuildingMarkerState extends State<BuildingMarker> {
                                 ),
                                 backgroundColor: Colors.orangeAccent),
                             onPressed: () async {
-                              sendOccupationRequest(widget.idBuilding);
+                              final response = await sendOccupationRequest(
+                                  widget.idBuilding);
 
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const UserHome()));
+                              if (response == 'REQUEST-OK')
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const UserHome()));
                             },
                             /*prenotazione*/
                             child: const Text('Prenota'),

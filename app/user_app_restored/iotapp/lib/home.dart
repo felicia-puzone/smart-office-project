@@ -11,6 +11,7 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 import 'dart:async';
 import 'dart:io';
 import 'change_values.dart';
+import 'login.dart';
 
 final MqttServerClient client =
     MqttServerClient('broker.hivemq.com', 'iot-app');
@@ -81,10 +82,14 @@ Future<int> mqttConnect() async {
 
   /// Ok, lets try a subscription
   print('EXAMPLE::Subscribing to the test/lol topic');
-  const topicLightSensor =
-      'smartoffice/building_22/room_9/sensors/light_sensor'; // Not a wildcard topic
-  const topicNoiseSensor =
-      'smartoffice/building_22/room_9/sensors/noise_sensor';
+
+  String id_edificio = GlobalValues.userSession!.id_edificio.toString();
+  String id_room = GlobalValues.userSession!.id_room.toString();
+
+  String topicLightSensor =
+      'smartoffice/building_$id_edificio/room_$id_room/sensors/light_sensor'; // Not a wildcard topic
+  String topicNoiseSensor =
+      'smartoffice/building_$id_edificio/room_$id_room/sensors/noise_sensor';
   client.subscribe(topicLightSensor, MqttQos.atMostOnce);
   client.subscribe(topicNoiseSensor, MqttQos.atMostOnce);
 
