@@ -50,9 +50,13 @@ uint8_t distance_read;
 #define GREEN 4
 #define AQUA 5
 #define BLUE 6
-#define VIOLET 7
-#define MAGENTA 8
+#define INDIGO 7
+#define VIOLET 8
 #define NYAN_CAT 9
+
+#define BRIGHTNESS_LOW 0
+#define BRIGHTNESS_MEDIUM 1
+#define BRIGHTNESS_HIGH 2
 
 #define PIN_NEO_PIXEL 8  // Arduino pin that connects to NeoPixel
 #define NUM_PIXELS 62    // The number of LEDs (pixels) on NeoPixel
@@ -151,7 +155,7 @@ void loop() {
     if (!initialized && logged ==1) {
 
       //init LED strip
-      changeStripColor(RED);
+      changeStripColor(NO_COLOR);
 
       //init LCD
       lcd.setCursor(0, 1);
@@ -217,52 +221,85 @@ void loop() {
       for (int i = 0; i < rlen; i++)
         Serial.write(serial_buf[i]);
 
-      //LCD CHANGE
-      if (serial_buf[0] == 2) {
-
-        lcd.clear();
-        lcd.setCursor(0, 1);
-        lcd.print(serial_buf[1]);
-      }
 
       //MATRIX CHANGE
 
-      /******/
+      if (serial_buf[0] == 0) {
 
-      //LED CHANGE
+        if(serial_buf[1] == 0){
+          //spenta
+        }
+        else if(serial_buf[1] == 1){
+          //robot che si muove
+        }
+        else if(serial_buf[1] == 2){
+          //faccina
+        }
+      }
 
-      switch (serial_buf[0]) {
+      //LED COLOR CHANGE
+      if(serial_buf[0] == 1){
+        switch (serial_buf[1]) {
         case NO_COLOR:
-          strip.clear();
+          changeStripColor(NO_COLOR);
           break;
         case RED:
-          changeStripColor(BLUE);
+          changeStripColor(RED);
           break;
         case ORANGE:
-          changeStripColor(GREEN);
+          changeStripColor(ORANGE);
           break;
         case YELLOW:
-          changeStripColor(RED);
+          changeStripColor(YELLOW);
           break;
         case GREEN:
-          changeStripColor(RED);
+          changeStripColor(GREEN);
           break;
         case AQUA:
-          changeStripColor(RED);
+          changeStripColor(AQUA);
           break;
         case BLUE:
-          changeStripColor(RED);
+          changeStripColor(BLUE);
+          break;
+        case INDIGO:
+          changeStripColor(INDIGO);
           break;
         case VIOLET:
-          changeStripColor(RED);
-          break;
-        case MAGENTA:
-          changeStripColor(RED);
+          changeStripColor(VIOLET);
           break;
         case NYAN_CAT:
-          changeStripColor(RED);
+          changeStripColor(NYAN_CAT);
           break;
       }
+      }
+
+      //LED BRIGHTNESS CHANGE
+      if(serial_buf[0] == 2){
+        switch (serial_buf[1]) {
+        case BRIGHTNESS_LOW:
+             strip.setBrightness(10);
+            strip.show();
+          break;
+        case BRIGHTNESS_MEDIUM:
+          strip.setBrightness(30);
+            strip.show();
+          break;
+        case BRIGHTNESS_HIGH:
+          strip.setBrightness(50);
+            strip.show();
+            break;
+      }
+      }
+
+      //LCD CHANGE
+      if (serial_buf[0] == 3) {
+
+        lcd.clear();
+        lcd.setCursor(0, 1);
+        lcd.print(String("Temperatura: ") + String(serial_buf[1]) + String(" C°"));
+      }
+
+      
     }
   }
 }
@@ -271,38 +308,47 @@ void changeStripColor(int color) {
   for (int i = 0; i < strip.numPixels(); i++) {  // For each pixel in strip...
     switch (color) {
       case NO_COLOR:
-        strip.setPixelColor(i, strip.Color(255, 0, 0));  //  Set pixel's color (in RAM)
+        strip.setPixelColor(i, strip.Color(255, 255, 255));  //  Set pixel's color (in RAM)
         break;
       case RED:
         strip.setPixelColor(i, strip.Color(255, 0, 0));
         break;
       case ORANGE:
-        strip.setPixelColor(i, strip.Color(0, 255, 0));
+        strip.setPixelColor(i, strip.Color(255, 140, 0));
         break;
       case YELLOW:
-        strip.setPixelColor(i, strip.Color(0, 255, 0));
+        strip.setPixelColor(i, strip.Color(255, 255, 0));
         break;
       case GREEN:
         strip.setPixelColor(i, strip.Color(0, 255, 0));
         break;
       case AQUA:
-        strip.setPixelColor(i, strip.Color(0, 255, 0));
+        strip.setPixelColor(i, strip.Color(51, 255, 204));
         break;
       case BLUE:
         strip.setPixelColor(i, strip.Color(0, 0, 255));
         break;
-      case VIOLET:
-        strip.setPixelColor(i, strip.Color(0, 255, 0));
+      case INDIGO:
+        strip.setPixelColor(i, strip.Color(255, 51, 255));
         break;
-      case MAGENTA:
-        strip.setPixelColor(i, strip.Color(0, 255, 0));
+      case VIOLET:
+        strip.setPixelColor(i, strip.Color(76, 0, 153));
         break;
       case NYAN_CAT:
-        strip.setPixelColor(i, strip.Color(0, 255, 0));
+        rainbow(10);
         break;
       default:
         strip.clear();
     }
   }
   strip.show();
+}
+
+void rainbow(int wait) {
+
+  for(long firstPixelHue = 0; firstPixelHue < 5*65536; firstPixelHue += 256) {
+    strip.rainbow(firstPixelHue);
+    strip.show(); 
+    delay(wait); 
+  }
 }

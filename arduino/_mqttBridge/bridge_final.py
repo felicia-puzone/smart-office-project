@@ -15,8 +15,8 @@ class Bridge():
 		self.setupSerial()
 		self.setupMQTT()
   
-		self.building_id = '22'
-		self.room_id = '9'
+		self.building_id = '1'
+		self.room_id = '1'
 		
 
 	def setupSerial(self):
@@ -67,15 +67,80 @@ class Bridge():
 
 		# Subscribing in on_connect() means that if we lose the connection and
 		# reconnect then subscriptions will be renewed.
-		self.clientMQTT.subscribe("mylight")
+		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/actuators/color' % (self.building_id, self.room_id))
+		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/actuators/brightness' % (self.building_id, self.room_id))
+		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/actuators/temperature' % (self.building_id, self.room_id))
+    
 
 
 	# The callback for when a PUBLISH message is received from the server.
 	def on_message(self, client, userdata, msg):
 		print(msg.topic + " " + str(msg.payload))
-		if msg.topic=='mylight':
-			self.ser.write (msg.payload)
+		if msg.topic=='smartoffice/building_%s/room_%s/actuators/color' % (self.building_id, self.room_id):
+      
+			if(msg.payload.decode("utf-8") == 'RED'):
+				
+				self.ser.write(b'\x01'b'\x01')
+    
+			if(msg.payload.decode("utf-8") == 'ORANGE'):
+				
+				self.ser.write(b'\x01'b'\x02')
+    
+			if(msg.payload.decode("utf-8") == 'YELLOW'):
+				
+				self.ser.write(b'\x01'b'\x03')
+    
+			if(msg.payload.decode("utf-8") == 'GREEN'):
+				
+				self.ser.write(b'\x01'b'\x04')
+    
+			if(msg.payload.decode("utf-8") == 'TEAL'):
+				
+				self.ser.write(b'\x01'b'\x05')
+    
+			if(msg.payload.decode("utf-8") == 'BLUE'):
+				
+				self.ser.write(b'\x01'b'\x06')
+    
+			if(msg.payload.decode("utf-8") == 'INDIGO'):
+				
+				self.ser.write(b'\x01'b'\x07')
 
+			if(msg.payload.decode("utf-8") == 'VIOLET'):
+				
+				self.ser.write(b'\x01'b'\x08')
+    
+			if(msg.payload.decode("utf-8") == 'RAINBOW'):
+				
+				self.ser.write(b'\x01'b'\x09')
+    
+		if msg.topic=='smartoffice/building_%s/room_%s/actuators/brightness' % (self.building_id, self.room_id):
+			if(msg.payload.decode("utf-8") == 'LOW'):
+				
+				self.ser.write(b'\x02'b'\x00')
+    
+			if(msg.payload.decode("utf-8") == 'MEDIUM'):
+				
+				self.ser.write(b'\x02'b'\x01')
+    
+			if(msg.payload.decode("utf-8") == 'HIGH'):
+				
+				self.ser.write(b'\x02'b'\x02')
+
+		if msg.topic=='smartoffice/building_%s/room_%s/actuators/temperature' % (self.building_id, self.room_id):
+				
+			byte_temp_val = msg.payload.to_bytes(4, 'big')
+			self.ser.write(b'\x03'+byte_temp_val)
+   
+		if msg.topic=='smartoffice/building_%s/room_%s/actuators/status_request' % (self.building_id, self.room_id):
+				
+			if(msg.payload.decode("utf-8") == 'WAITING'):
+				
+				self.ser.write(b'\x00'b'\x01')
+    
+			if(msg.payload.decode("utf-8") == 'LOGGED-OUT'):
+				
+				self.ser.write(b'\x00'b'\x02')
 
 
 	def loop(self):
