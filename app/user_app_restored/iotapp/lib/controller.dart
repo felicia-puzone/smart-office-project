@@ -129,18 +129,19 @@ Future<String> freeRoom() async {
 }
 
 //@register
-Future<String> registerUser(id_building, id_user) async {
+Future<String> registerUser(user, pwd, sex, profession, birthDate) async {
   final response = await http.post(
     Uri.parse(IPSERVER + 'register'),
     headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Content-ID': 'REGISTER-APP'
+      'Content-Type': 'application/x-www-form-urlencoded',
+      // 'Content-ID': 'REGISTER-APP'
     },
-    body: (jsonEncode({"id_utente": id_user, "building_id": id_building})),
+    body:
+        ('username=$user&password=$pwd&birthday=$birthDate&sex=$sex&profession=$profession'),
   );
 
   if (response.statusCode == 200) {
-    return "REQUEST-OK";
+    return response.body;
   } else {
     return ('BAD-REQUEST');
   }
@@ -165,21 +166,20 @@ Future<String> updateRoom(id_building, id_user) async {
   }
 }
 
-Future<String> fetchJobs(List<dynamic> jobs) async {
-  final response = await http.post(Uri.parse(IPSERVER + 'selectJobs'),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'Content-ID': 'SELECT-JOBS-APP'
-      },
-      body: '');
-
-  //jobs = response
+Future<List<Profession>> fetchJobs() async {
+  final response = await http.get(
+    Uri.parse(IPSERVER + 'professions'),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Content-ID': 'SELECT-JOBS-APP'
+    },
+  );
 
   if (response.statusCode == 200) {
-    return "REQUEST-OK";
-  } else {
-    return ('BAD-REQUEST');
+    List jsonResponse = json.decode(response.body);
+    return jsonResponse.map((job) => new Profession.fromJson(job)).toList();
   }
+  return [];
 }
 
 

@@ -31,6 +31,20 @@ class UserSession {
   }
 }
 
+class Profession {
+  late int id;
+  late String name;
+
+  Profession({required this.id, required this.name});
+
+  factory Profession.fromJson(dynamic json) {
+    return Profession(
+      id: json['id_profession'],
+      name: json['name'],
+    );
+  }
+}
+
 class DigitalTwin {
   var room_color;
   var room_brightness;

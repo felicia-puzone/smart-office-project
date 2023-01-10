@@ -123,17 +123,25 @@ class _MyLoginState extends State<MyLogin> {
                                                 builder: (context) =>
                                                     const UserHome()));
                                       } else {
-                                        AlertDialog(
-                                          title: const Text('Login Fallito'),
-                                          alignment: Alignment.center,
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context, 'OK'),
-                                              child: const Text('OK'),
-                                            ),
-                                          ],
-                                        );
+                                        showDialog(
+                                            context: context,
+                                            builder: (ctx) => AlertDialog(
+                                                  title: Text('Login fallito'),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pushNamed(
+                                                            context, 'login');
+                                                      },
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(14),
+                                                        child: const Text("OK"),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ));
                                       }
                                     },
                                     icon: const Icon(

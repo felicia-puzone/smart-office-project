@@ -172,78 +172,65 @@ class _ColorChangerState extends State<ColorChanger> {
   }
 }
 
+class BrightnessChanger extends StatefulWidget {
+  const BrightnessChanger({super.key});
 
+  @override
+  State<BrightnessChanger> createState() => _BrightnessChangerState();
+}
 
-/*
-class ColorChanger extends StatelessWidget {
-  const ColorChanger({super.key});
-
-  final Color borderColor;
-
-  const ColorChanger(this.borderColor);
-
+class _BrightnessChangerState extends State<BrightnessChanger> {
   @override
   Widget build(BuildContext context) {
     return Container(
+        color: Colors.black87,
         child: Scaffold(
             backgroundColor: Colors.grey.shade100,
             appBar: AppBar(
-              title: const Text('Scegli il colore della luce'),
+              title: const Text('Scegli l\'intensità della luce'),
             ),
-            body: GridView.count(
-              primary: false,
-              padding: const EdgeInsets.all(20),
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              crossAxisCount: 2,
+            body: Column(
               children: <Widget>[
-                ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                    onPressed: () {},
-                    child: const Text(' ')),
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange),
-                    onPressed: () {},
-                    child: const Text(' ')),
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.yellow),
-                    onPressed: () {},
-                    child: const Text(' ')),
-                ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                    onPressed: () {},
-                    child: const Text(' ')),
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.tealAccent),
-                    onPressed: () {},
-                    child: const Text(' ')),
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.lightBlue),
-                    onPressed: () {},
-                    child: const Text(' ')),
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.indigo),
-                    onPressed: () {},
-                    child: const Text(' ')),
-                ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.pink),
-                    onPressed: () {},
-                    child: const Text(' ')),
-                ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-                    onPressed: () {},
-                    child: const Icon(Icons.lightbulb)),
+                Row(
+                  children: [
+                    Expanded(
+                        child: Container(
+                            padding: EdgeInsets.only(top: 35, bottom: 35),
+                            height: 150,
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white30),
+                                onPressed: () {},
+                                child: const Text('LOW'))))
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child: Container(
+                            padding: EdgeInsets.only(top: 35, bottom: 35),
+                            height: 150,
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white60),
+                                onPressed: () {},
+                                child: const Text('MEDIUM'))))
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child: Container(
+                            padding: EdgeInsets.only(top: 35, bottom: 35),
+                            height: 150,
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white),
+                                onPressed: () {},
+                                child: const Text('HIGH'))))
+                  ],
+                ),
               ],
             )));
   }
 }
-*/
