@@ -11,9 +11,10 @@ from wtforms import StringField, BooleanField, SelectField, validators
 
 import geolog
 from models import db, buildings, User, professions, zones, sessionStates, rooms, digitalTwinFeed, sensorFeeds, \
-    sessions, actuatorFeeds
+    sessions, actuatorFeeds, zoneToBuildingAssociation
 from werkzeug.routing import ValidationError
 
+from mqtthandler import mqtt
 from utilities import formatName, createABuildingtupleList
 
 class ZoneAdmin(sqla.ModelView):
@@ -24,10 +25,9 @@ class ZoneAdmin(sqla.ModelView):
         'city',
         'state',
     )
-
-    def on_model_delete(self, zones):
-        buildingsToCheck = db.session.query(buildings).filter_by(id_zone=zones.id_zone).first()
-        if buildingsToCheck is not None:
+    def on_model_delete(self, zone):
+        building_associations = db.session.query(zoneToBuildingAssociation).filter_by(id_zone=zone.id_zone).first()
+        if building_associations is not None:
             raise ValidationError('Sono presenti strutture assegnate a questa Zona')
 
     def is_accessible(self):
@@ -36,18 +36,14 @@ class ZoneAdmin(sqla.ModelView):
         else:
             return False
     def on_model_change(self, form, zones, is_created):
-        if geolog.isAddressValid(formatName(str(form.city.data) + "," + str(form.state.data))):
-            marker = geolog.getMarkerByType(formatName(str(form.city.data) + ',' + str(form.state.data)),
-                                            "administrative")
+        marker = geolog.geoMarker(str(form.city.data),"",str(form.state.data))
+        if marker:
             zones.set_lat(marker["lat"])
             zones.set_lon(marker["lon"])
             zones.city = formatName(form.city.data)
             zones.state = formatName(form.state.data)
         else:
             raise ValidationError('Indirizzo non valido')
-
-
-# inserire un super user che può dare grant di permessi
 class UserAdmin(sqla.ModelView):
     column_list = ('username', 'profession', 'admin', 'super_user')
     column_exclude_list = ['id', 'password']
@@ -61,31 +57,25 @@ class UserAdmin(sqla.ModelView):
             'disabled': True
         }
     }
-
     def is_accessible(self):
         if current_user.is_authenticated:
             return current_user.is_admin
         else:
             return False
-
     def get_list_row_actions(self):
         if current_user.is_authenticated and current_user.is_super:
             return (ViewRowAction(), EditRowAction())
         else:
             return ()
-
     def on_model_change(self, form, model, is_created):
-        if is_created == False:
+        if is_created is False:
             if form.username.data == "Admin":
                 raise ValidationError('Can\'t revoke permissions from Super User Admin')
             if form.super_user.data == True:
                 model.admin = True
+                print(model.profession)
     # def get_query(self):
     #   return (self.session.query(User).join(professions,User.profession==professions.id_profession))
-
-
-# TODO testing
-# creazione,eliminazione e edit
 class JobAdmin(sqla.ModelView):
     column_list = ('name', 'category')
     column_exclude_list = ['id_profession']
@@ -117,12 +107,16 @@ class JobAdmin(sqla.ModelView):
 
 # inserimento edifici
 # se non ha stanze non viene mostrato in getfree buildings
-# TODO testing Inserimento (state,city,route,number) da calcolare(lat,lon,id_zone) da ingnorare(id_building)
-# TODO Eliminazione testing
-# TODO Modifica testing
+# DONE testing Inserimento (state,city,route,number) da calcolare(lat,lon,id_zone) da ingnorare(id_building)
+    #DONE obbliga a compilare sia city che state
+    #DONE  testing assegnamento alla zona
+    #DONE Modifica testing associare a nuova zona se cambia
+# DONE Eliminazione testing
+    #DONE Scorre tutte le stanze e si disiscrive dai topic
+    #DONE testing eliminazione dati a cascata (dovrebbe funzionare essendo uguale al codice di rooms)
+
 # DONE Permessi di visualizzazione
 class BuildingAdmin(sqla.ModelView):
-    # Visible columns in the list view
     column_exclude_list = [ 'lat', 'lon']
     form_excluded_columns = ('id_building', 'address','lat', 'lon','dashboard')
     #form sarà city,address,state e basta
@@ -131,7 +125,6 @@ class BuildingAdmin(sqla.ModelView):
         'route':  StringField('route'),
         'number': StringField('number'),
     }
-
     def _format_pay_now(view, context, model, name):
         # render a form with a submit button for student, include a hidden field for the student id
         # note how checkout_view method is exposed as a route below
@@ -145,7 +138,6 @@ class BuildingAdmin(sqla.ModelView):
         '''.format(checkout_url=checkout_url, building_id=model.id_building)
 
         return Markup(_html)
-
     column_formatters = {
         'dashboard': _format_pay_now
     }
@@ -162,7 +154,7 @@ class BuildingAdmin(sqla.ModelView):
     def on_model_change(self, form, building, is_created):
         if form.city.data is None:
             raise ValidationError('Indirizzo non valido')
-        if form.state.data is None:
+        if form.state.data is None or form.state.data == '':
             raise ValidationError('Indirizzo non valido')
         street = ""
         if form.route.data is not None and form.route.data != '':
@@ -179,40 +171,61 @@ class BuildingAdmin(sqla.ModelView):
             building.lat = marker['lat']
             building.address = marker['route'] + " ("+formatName(form.state.data)+")"
             building.set_availability(form.available.data)
-        zone = db.session.query(zones).filter_by(city=formatName(form.city.data)).filter_by(state=formatName(form.state.data)).first()
-        if zone is None:
+    def after_model_change(self, form, model, is_created):
+         zone = db.session.query(zones).filter_by(city=formatName(form.city.data)).filter_by(state=formatName(form.state.data))
+         if zone.first() is None:
             zone =  zones(formatName(form.city.data),formatName(form.state.data))
             db.session.add(zone)
             db.session.commit()
+            db.session.refresh(zone)
+            if not is_created:
+                association_to_delete = db.session.query(zoneToBuildingAssociation).filter_by(id_building=model.id_building)
+                association_to_delete.delete(synchronize_session='fetch')
+                db.session.commit()
+            db.session.add(zoneToBuildingAssociation(zone.id_zone, model.id_building))
+            db.session.commit()
+         else:
+            if not is_created:
+                association_to_delete = db.session.query(zoneToBuildingAssociation).filter_by(id_building=model.id_building)
+                association_to_delete.delete(synchronize_session='fetch')
+                db.session.commit()
+            zone_nearest=geolog.geoNearest(zone, model)
+            db.session.add(zoneToBuildingAssociation(zone_nearest.id_zone,model.id_building))
+            db.session.commit()
     # aggiungere logica
-    # se sessioni attive non s'inserisce nienete
+    # se sessioni attive non s'inserisce nieete
     def on_model_delete(self, building):
         activeSessionStates = db.session.query(sessionStates.id_room).filter_by(active=True).first()
-        activeRoom = db.session.query(rooms).filter_by(id_building=building.id_building).filter(rooms.id_room.in_(activeSessionStates)).first()
-        if activeRoom is not None:
-            raise ValidationError('Sono presenti sessioni attive in questo Edificio')
-        else:
-            rooms_to_delete = db.session.query(rooms).filter_by(id_building=building.id_building)
-            for room in rooms_to_delete:
-                digital_twins_to_delete=db.session.query(digitalTwinFeed).filter_by(id_room=room.id_room)#ok
-                sensorfeed_to_delete=db.session.query(sensorFeeds).filter_by(id_room=room.id_room)#ok
-                session_states_to_delete = db.session.query(sessionStates).filter_by(id_room=room.id_room)#ok
-                session_ids_states_to_delete= db.session.query(sessionStates.id_session).filter_by(id_room=rooms.id_room)#ok
-                sessions_to_delete = db.session.query(sessions).filter(sessions.id.in_(session_ids_states_to_delete))#ok
-                actuator_feeds_to_delete=db.session.query(actuatorFeeds).filter(actuatorFeeds.id_session.in_(session_ids_states_to_delete))#ok1
-                actuator_feeds_to_delete.delete(synchronize_session='fetch')
-                sessions_to_delete.delete(synchronize_session='fetch')
-                session_states_to_delete.delete(synchronize_session='fetch')
-                sensorfeed_to_delete.delete(synchronize_session='fetch')
-                digital_twins_to_delete.delete(synchronize_session='fetch')
-                rooms_to_delete.delete(synchronize_session='fetch')
-                db.session.commit()
+        if activeSessionStates is not None:
+            activeRoom = db.session.query(rooms).filter_by(id_building=building.id_building).filter(rooms.id_room.in_(activeSessionStates)).first()
+            if activeRoom is not None:
+                raise ValidationError('Sono presenti sessioni attive in questo Edificio')
+        rooms_to_delete = db.session.query(rooms).filter_by(id_building=building.id_building)
+        zone_association = db.session.query(zoneToBuildingAssociation).filter_by(id_building=building.id_building)
+        for room in rooms_to_delete:
+            mqtt.unsubscribe('smartoffice/building_' + str(+room.id_building) + '/room_' + str(room.id_room) + '/sensors/#')
+            print("mi sono disiscritto dal topic " + 'smartoffice/building_' + str(room.id_building) + '/room_' + str(room.id_room) + '/sensors')
+            digital_twins_to_delete=db.session.query(digitalTwinFeed).filter_by(id_room=room.id_room)#ok
+            sensorfeed_to_delete=db.session.query(sensorFeeds).filter_by(id_room=room.id_room)#ok
+            session_states_to_delete = db.session.query(sessionStates).filter_by(id_room=room.id_room)#ok
+            session_ids_states_to_delete= db.session.query(sessionStates.id_session).filter_by(id_room=rooms.id_room)#ok
+            sessions_to_delete = db.session.query(sessions).filter(sessions.id.in_(session_ids_states_to_delete))#ok
+            actuator_feeds_to_delete=db.session.query(actuatorFeeds).filter(actuatorFeeds.id_session.in_(session_ids_states_to_delete))#ok1
+            actuator_feeds_to_delete.delete(synchronize_session='fetch')
+            sessions_to_delete.delete(synchronize_session='fetch')
+            session_states_to_delete.delete(synchronize_session='fetch')
+            sensorfeed_to_delete.delete(synchronize_session='fetch')
+            digital_twins_to_delete.delete(synchronize_session='fetch')
+            rooms_to_delete.delete(synchronize_session='fetch')
+            db.session.commit()
+        zone_association.delete(synchronize_session='fetch')
+        db.session.commit()
 
 
 # DONE convertire profession alla stringa
 # DONE mettere il controllo d'inserimento della zona
 # TODO inserimento palazzi
-# TODO inserimento stanza/digitaltwin
+# DONE inserimento stanza/digitaltwin
 
 
 class MyView(BaseView):
@@ -231,14 +244,10 @@ class MyHomeView(AdminIndexView):
 
 
 
-#TODO testing inserimento, eliminazione e modifica
-
-
-
+#DONE testing inserimento, eliminazione e modifica
 #creazione edifici
-
 #grant permessi admin
-#TODO gestione del digitaltwin per l'eliminazione delle stanze
+#DONE gestione del digitaltwin per l'eliminazione delle stanze
 #all'eliminazione togliamo pure i digital twin
 #si blocca se ci sono sessioni attive
 #alla creazione non viene creato nessun digital twin
@@ -249,9 +258,9 @@ class MyHomeView(AdminIndexView):
 
 
 
-#TODO testing eliminazione a cascata
-#TODO testing creazione e edit
-#TODO gestione del digitalTwin
+#DONE testing eliminazione a cascata
+#DONE testing creazione e edit
+#DONE gestione del digitalTwin
 #DONE gestione accessibilità
 #inserimento,modifica ed eliminazione stanze
 #gestione del digital twin
@@ -308,6 +317,8 @@ class RoomAdmin(sqla.ModelView):
             if activeSessionStates is not None:
                 raise ValidationError('è presente una sessione attiva in questa stanza!')
             else:
+                mqtt.unsubscribe('smartoffice/building_' + str(+room.id_building) + '/room_' + str(room.id_room) + '/sensors/#')
+                print("mi sono disiscritto dal topic " + 'smartoffice/building_' + str(room.id_building) + '/room_' + str(room.id_room) + '/sensors')
                 room.set_building(form.buildings.data)
                 building=db.session.query(buildings).filter_by(id_building=form.buildings.data).first()
                 room.description = "Room of building id:"+str(form.buildings.data)+ " stationed at "+building.city + " " +building.address
@@ -317,7 +328,17 @@ class RoomAdmin(sqla.ModelView):
             building = db.session.query(buildings).filter_by(id_building=form.buildings.data).first()
             room.description = "Room of building id:" + str(form.buildings.data) + " stationed at " + building.city + " " + building.address
             room.set_availability(form.available.data)
+
+    def after_model_change(self, form, model, is_created):
+        if is_created:
+            digital_twin = digitalTwinFeed(model.id_room,0,0,0,0)
+            db.session.add(digital_twin)
+            db.session.commit()
+        mqtt.subscribe('smartoffice/building_' + str(+model.id_building) + '/room_' + str(model.id_room) + '/sensors/#')
+        print("mi sono iscritto dal topic " + 'smartoffice/building_' + str(+model.id_building) + '/room_' + str(model.id_room) + '/sensors')
     def on_model_delete(self, room):
+        mqtt.unsubscribe('smartoffice/building_' + str(+room.id_building) + '/room_' + str(room.id_room) + '/sensors/#')
+        print("mi sono disiscritto dal topic " + 'smartoffice/building_' + str(room.id_building) + '/room_' + str(room.id_room) + '/sensors')
         activeSessionState = db.session.query(sessionStates).filter_by(active=True).filter_by(id_room=room.id_room).first()
         if activeSessionState is not None:
             raise ValidationError('E\' presente una sessione attiva in questa stanza')

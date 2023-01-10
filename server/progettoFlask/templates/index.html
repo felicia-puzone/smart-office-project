@@ -14,53 +14,53 @@
 		<form action="{{ url_for('update') }}" method="post">
 			<p>Colore luce:</p>
 			<select id="color" name="color"  required>
-			{% if digitalTwin.led_actuator == 1 %}
+			{% if digitalTwin.led_actuator == 'RED' %}
 			<option value=1 selected>Rosso</option>
 			{%else%}
 			 <option value=1>Rosso</option>
 			{% endif %}
 
-			{%  if digitalTwin.led_actuator == 2 %}
+			{%  if digitalTwin.led_actuator == 'ORANGE' %}
 			<option value=2 selected>Arancione</option>
 			{%else%}
 			<option value=2>Arancione</option>
 			{% endif %}
-			{%  if digitalTwin.led_actuator == 3%}
+			{%  if digitalTwin.led_actuator == 'YELLOW' %}
 			<option value=3 selected>Giallo</option>
 			{%else%}
 			<option value=3>Giallo</option>
 			{% endif %}
 
-			{%  if digitalTwin.led_actuator == 4%}
+			{%  if digitalTwin.led_actuator == 'GREEN' %}
 			<option value=4 selected>Verde</option>
 			{%else%}
 			<option value=4>Verde</option>
 			{% endif %}
 
-			{%  if digitalTwin.led_actuator == 5%}
+			{%  if digitalTwin.led_actuator == 'TEAL' %}
 			<option value=5 selected>Acqua</option>
 			{%else%}
 			<option value=5>Acqua</option>
 			{% endif %}
 
-			{%  if digitalTwin.led_actuator == 6%}
+			{%  if digitalTwin.led_actuator == 'BLUE' %}
 			<option value=6 selected>Blu</option>
 			{%else%}
 			<option value=6>Blu</option>
 			{% endif %}
 
-			{%  if digitalTwin.led_actuator == 7%}
+			{%  if digitalTwin.led_actuator == 'INDIGO' %}
 			<option value=7 selected>Viola</option>
 			{%else%}
 			<option value=7>Viola</option>
 			{% endif %}
 
-			{%  if digitalTwin.led_actuator == 8%}
+			{%  if digitalTwin.led_actuator == 'VIOLET' %}
 			<option value=8 selected>Fucsia</option>
 			{%else%}
 			<option value=8>Fucsia</option>
 			{% endif %}
-			{%  if digitalTwin.led_actuator == 9%}
+			{%  if digitalTwin.led_actuator == 'RAINBOW' %}
 			<option value=9 selected>RGB</option>
 			{%else%}
 			<option value=9>RGB</option>

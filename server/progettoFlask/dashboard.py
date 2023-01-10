@@ -49,6 +49,7 @@ def chart2():
 @app.route('/chart3')
 def line():
     df = px.data.gapminder().query("country=='Canada'")
+    df = {"year":[1964,1965,1966],"lifeExp":[1960,240,1965]}
     fig = px.line(df, x="year", y="lifeExp", title='Life expectancy in Canada')
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     header = "Vegetables in Europe"

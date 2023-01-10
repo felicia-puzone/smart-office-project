@@ -1,11 +1,20 @@
 import schedule
-import time
 
 
 
+#buildings
+#stanze
+#actuator fedd + sleep time
 
-def job(t):
-    print("I'm working...", t)
+
+#day(timestamp) building consumption(Stringa)
+#@telegram
+
+hello
+log
+
+def day_report():
+    print("I'm working...")
     #chiedo un report
     #se vi è troppo consumo, mettiamo in risparmio energetico
 
@@ -15,7 +24,7 @@ def job(t):
 
 
 
-schedule.every(2).seconds.do(job,'It is 01:00')
+schedule.every(1).days.do(day_report())
 
 while True:
     schedule.run_pending()
