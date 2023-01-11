@@ -407,12 +407,18 @@ class _UserHomeState extends State<UserHome> {
                                             fontSize: 20,
                                             fontWeight: FontWeight.w700),
                                       ),
-                                      Text(
-                                        'None',
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w700),
-                                      )
+                                      ValueListenableBuilder(
+                                          valueListenable: digitalTwinValue,
+                                          builder: (context, value, child) {
+                                            return Text(
+                                                digitalTwinValue
+                                                    .value.room_brightness
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.w700));
+                                          }),
                                     ]),
                                 const SizedBox(
                                   height: 5,
@@ -424,7 +430,13 @@ class _UserHomeState extends State<UserHome> {
                                           fontSize: 20,
                                         ),
                                         backgroundColor: Colors.orangeAccent),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  BrightnessChanger()));
+                                    },
                                     child: const Icon(Icons.edit))
                               ])),
 
@@ -451,12 +463,18 @@ class _UserHomeState extends State<UserHome> {
                                             fontSize: 20,
                                             fontWeight: FontWeight.w700),
                                       ),
-                                      Text(
-                                        '0',
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w700),
-                                      )
+                                      ValueListenableBuilder(
+                                          valueListenable: digitalTwinValue,
+                                          builder: (context, value, child) {
+                                            return Text(
+                                                digitalTwinValue
+                                                    .value.room_temperature
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.w700));
+                                          }),
                                     ]),
                                 const SizedBox(
                                   height: 5,
@@ -468,7 +486,13 @@ class _UserHomeState extends State<UserHome> {
                                           fontSize: 20,
                                         ),
                                         backgroundColor: Colors.orangeAccent),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TemperatureChanger()));
+                                    },
                                     child: const Icon(Icons.edit))
                               ])),
 

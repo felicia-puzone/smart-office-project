@@ -14,7 +14,7 @@ ValueNotifier<DigitalTwin> digitalTwinValue =
 class UpdateReq {
   final String color_val;
   final String brightness_val;
-  final String temp_val;
+  final int temp_val;
 
   UpdateReq(this.color_val, this.brightness_val, this.temp_val);
 
@@ -82,8 +82,7 @@ class _ColorChangerState extends State<ColorChanger> {
                       changeActuatorRequest(new UpdateReq(
                           'RED',
                           GlobalValues.digitalTwin.room_brightness.toString(),
-                          GlobalValues.digitalTwin.room_temperature
-                              .toString()));
+                          GlobalValues.digitalTwin.room_temperature));
                     },
                     child: const Text(' ')),
                 ElevatedButton(
@@ -93,8 +92,7 @@ class _ColorChangerState extends State<ColorChanger> {
                       changeActuatorRequest(new UpdateReq(
                           'ORANGE',
                           GlobalValues.digitalTwin.room_brightness.toString(),
-                          GlobalValues.digitalTwin.room_temperature
-                              .toString()));
+                          GlobalValues.digitalTwin.room_temperature));
                     },
                     child: const Text(' ')),
                 ElevatedButton(
@@ -183,54 +181,171 @@ class _BrightnessChangerState extends State<BrightnessChanger> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Colors.black87,
         child: Scaffold(
             backgroundColor: Colors.grey.shade100,
             appBar: AppBar(
               title: const Text('Scegli l\'intensità della luce'),
             ),
-            body: Column(
-              children: <Widget>[
-                Row(
-                  children: [
-                    Expanded(
-                        child: Container(
-                            padding: EdgeInsets.only(top: 35, bottom: 35),
-                            height: 150,
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white30),
-                                onPressed: () {},
-                                child: const Text('LOW'))))
+            body: Container(
+                color: Colors.black87,
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        Expanded(
+                            child: Container(
+                                height: 250,
+                                padding: EdgeInsets.only(top: 35, bottom: 35),
+                                child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.white30),
+                                    onPressed: () {
+                                      changeActuatorRequest(new UpdateReq(
+                                          GlobalValues.digitalTwin.room_color
+                                              .toString(),
+                                          'LOW',
+                                          GlobalValues
+                                              .digitalTwin.room_temperature));
+                                    },
+                                    child: const Text('LOW'))))
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                            child: Container(
+                                padding: EdgeInsets.only(top: 35, bottom: 35),
+                                height: 250,
+                                child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.white60),
+                                    onPressed: () {
+                                      changeActuatorRequest(new UpdateReq(
+                                          GlobalValues.digitalTwin.room_color
+                                              .toString(),
+                                          'MEDIUM',
+                                          GlobalValues
+                                              .digitalTwin.room_temperature));
+                                    },
+                                    child: const Text('MEDIUM'))))
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                            child: Container(
+                                padding: EdgeInsets.only(top: 35, bottom: 35),
+                                height: 250,
+                                child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.white),
+                                    onPressed: () {
+                                      changeActuatorRequest(new UpdateReq(
+                                          GlobalValues.digitalTwin.room_color
+                                              .toString(),
+                                          'HIGH',
+                                          GlobalValues
+                                              .digitalTwin.room_temperature));
+                                    },
+                                    child: const Text(
+                                      'HIGH',
+                                      style: TextStyle(color: Colors.black),
+                                    ))))
+                      ],
+                    ),
                   ],
-                ),
+                ))));
+  }
+}
+
+List<String> tempValuesList = [
+  '18',
+  '19',
+  '20',
+  '21',
+  '22',
+  '23',
+  '24',
+  '25',
+  '26',
+  '27',
+  '28',
+  '29',
+  '30'
+];
+
+class TemperatureChanger extends StatefulWidget {
+  const TemperatureChanger({super.key});
+
+  @override
+  State<TemperatureChanger> createState() => _TemperatureChangerState();
+}
+
+class _TemperatureChangerState extends State<TemperatureChanger> {
+  String _dropdownValueTemp = tempValuesList.first.toString();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Scaffold(
+            backgroundColor: Colors.grey.shade100,
+            appBar: AppBar(
+              title: const Text('Scegli la temperatura'),
+            ),
+            body: Container(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(children: <Widget>[
+                Row(children: [
+                  Expanded(
+                      child: DropdownButton<String>(
+                    value: _dropdownValueTemp,
+                    icon: const Icon(Icons.arrow_downward),
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.black87),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.black54,
+                    ),
+                    onChanged: (String? value) {
+                      // This is called when the user selects an item.
+                      setState(() {
+                        _dropdownValueTemp = value!;
+                      });
+                    },
+                    items: tempValuesList
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ))
+                ]),
                 Row(
                   children: [
                     Expanded(
                         child: Container(
                             padding: EdgeInsets.only(top: 35, bottom: 35),
-                            height: 150,
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white60),
-                                onPressed: () {},
-                                child: const Text('MEDIUM'))))
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                        child: Container(
-                            padding: EdgeInsets.only(top: 35, bottom: 35),
-                            height: 150,
+                            height: 200,
                             child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white),
-                                onPressed: () {},
-                                child: const Text('HIGH'))))
+                                onPressed: () {
+                                  changeActuatorRequest(new UpdateReq(
+                                      GlobalValues.digitalTwin.room_color
+                                          .toString(),
+                                      GlobalValues.digitalTwin.room_brightness
+                                          .toString(),
+                                      int.parse(_dropdownValueTemp)));
+                                },
+                                child: const Text(
+                                  'OK',
+                                  style: TextStyle(color: Colors.black),
+                                ))))
                   ],
                 ),
-              ],
+              ]),
             )));
   }
 }

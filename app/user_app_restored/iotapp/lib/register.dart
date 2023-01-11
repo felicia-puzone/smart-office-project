@@ -280,7 +280,7 @@ class _MyRegisterState extends State<MyRegister> {
                                                             .text,
                                                         sexId,
                                                         professionId,
-                                                        this.dateInput.value);
+                                                        this.dateInput.text);
                                                 showDialog(
                                                     context: context,
                                                     builder:

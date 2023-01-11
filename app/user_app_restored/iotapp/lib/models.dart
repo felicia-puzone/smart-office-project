@@ -48,7 +48,7 @@ class Profession {
 class DigitalTwin {
   var room_color;
   var room_brightness;
-  var room_temperature;
+  int room_temperature;
 
   DigitalTwin(
       {required this.room_color,
