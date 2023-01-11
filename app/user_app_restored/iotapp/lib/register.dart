@@ -17,10 +17,10 @@ class MyRegister extends StatefulWidget {
 class _MyRegisterState extends State<MyRegister> {
   final Future<List<Profession>> _listProfessions = fetchJobs();
   TextEditingController dateInput = TextEditingController();
-  String choosenProfession = '';
+  String choosenProfession = 'Streamer';
   String sex = sexList.first;
 
-  String _dropdownValueProfession = '';
+  String _dropdownValueProfession = 'Streamer';
   String _dropdownValueSex = sexList.first;
 
   final _userTextController = TextEditingController();
@@ -45,8 +45,9 @@ class _MyRegisterState extends State<MyRegister> {
                   AsyncSnapshot<List<Profession>> snapshot) {
                 if (snapshot.hasData) {
                   professionList = snapshot.data!;
-                  _dropdownValueProfession = professionList.first.name;
-                  choosenProfession = professionList.first.name;
+                  // _dropdownValueProfession = professionList.first.name;
+                  //
+                  //choosenProfession = professionList.first.name;
 
                   return Stack(
                     children: [
@@ -363,47 +364,3 @@ class _MyRegisterState extends State<MyRegister> {
 //     },
 //   );
 // }
-
-class DropDownButtonRegister extends StatefulWidget {
-  final List<String> list;
-
-  const DropDownButtonRegister({super.key, required this.list});
-
-  @override
-  State<DropDownButtonRegister> createState() => _DropDownButtonRegisterState();
-}
-
-class _DropDownButtonRegisterState extends State<DropDownButtonRegister> {
-  String _dropdownValue = '';
-
-  @override
-  void initState() {
-    _dropdownValue = widget.list.first;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: _dropdownValue,
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      style: const TextStyle(color: Colors.black87),
-      underline: Container(
-        height: 2,
-        color: Colors.black54,
-      ),
-      onChanged: (String? value) {
-        // This is called when the user selects an item.
-        setState(() {
-          _dropdownValue = value!;
-        });
-      },
-      items: widget.list.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    );
-  }
-}
