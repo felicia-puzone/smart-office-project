@@ -241,6 +241,14 @@ class actuatorFeeds(db.Model):
                 "timestamp":self.timestamp
                 }
 
+
+class zoneToBuildingAssociation(db.Model):
+    id_zone = db.Column('id_zone', db.Integer, primary_key=True)
+    id_building = db.Column('ID_BUILDING', db.Integer,primary_key=True)
+    def __init__(self, id_zone,id_building):
+        self.id_building = id_building
+        self.id_zone = id_zone
+
 class weatherReport(db.Model):
     id_building=db.Column('ID_BUILDING', db.Integer,primary_key=True)
     temperature= db.Column(db.String(20),primary_key=True)
@@ -257,16 +265,26 @@ class weatherReport(db.Model):
                 "temperature":self.temperature,
                 "timestamp":self.timestamp
                 }
-class zoneToBuildingAssociation(db.Model):
-    id_zone = db.Column('id_zone', db.Integer, primary_key=True)
-    id_building = db.Column('ID_BUILDING', db.Integer,primary_key=True)
-    def __init__(self, id_zone,id_building):
+
+class dailyconsumptionReport(db.Model):
+    id_building = db.Column('ID_BUILDING', db.Integer, primary_key=True)
+    temperature = db.Column(db.String(20), primary_key=True)
+    light = db.Column(db.String(20), primary_key=True)
+    timestamp = db.Column(db.DateTime(timezone=True), nullable=True, default=datetime.datetime.utcnow, primary_key=True)
+
+    def __init__(self, id_building, temperature, light, timestamp):
+        self.timestamp = timestamp
+        self.temperature = temperature
+        self.light = light
         self.id_building = id_building
-        self.id_zone = id_zone
 
-
-
-
+    def serialize(self):
+        return {"id_room": self.id_building,
+                "light": self.light,
+                "temperature": self.temperature,
+                "timestamp": self.timestamp
+                }
+#class actuatorReport(db.Model):
 
 
 
