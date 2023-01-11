@@ -13,7 +13,7 @@ app = Flask(appname)
 
 @app.route('/AI', methods=['GET','POST'])
 def test():
-    return jsonify( {'user_temp':25,'user_color':3,'user_light':4}), '200 OK'
+    return jsonify( {'user_temp':25,'user_color':'TEAL','user_light':'MEDIUM'}), '200 OK'
 
 
 

@@ -56,7 +56,7 @@ mqtt.init_app(app)
 months = ('January','February','March','April','May','June',\
 'July','August','September','October','November','December')
 colors = ('NONE','RED','ORANGE','YELLOW','GREEN','TEAL','BLUE','INDIGO','VIOLET','RAINBOW')
-
+brightness_values = ('LOW','MEDIUM','HIGH')
 admin = Admin(app, name='Dashboard',index_view=MyHomeView())
 #admin.add_view(MyView(name='My View', menu_icon_type='glyph', menu_icon_value='glyphicon-home'))
 admin.add_view(ZoneAdmin(zones, db.session,category='Models'))
@@ -179,7 +179,6 @@ def register():
             username = request.form['username']
             password = request.form['password']
             birthday= request.form['birthday']
-            print(birthday)
             sex = request.form['sex']
             profession=request.form['profession']
             account=db.session.query(User).filter_by(username=username).first()
@@ -231,7 +230,7 @@ def update():
     else:
         id_user = current_user.get_id()
         color = colors[int(request.form['color'])]
-        brightness = int(request.form['brightness'])
+        brightness = brightness_values[int(request.form['brightness'])]
         temperature = int(request.form['temperature'])
         digitalTwin=updateDigitalTwinActuators(id_user, color, brightness, temperature)
         return render_template('index.html',digitalTwin=digitalTwin,username=current_user.get_username())
@@ -348,10 +347,16 @@ def updateuserdata():
 #TODO view che permette la registrazione all'Admin
 #TODO controllo per consentire l'accesso solo all'admin
 
-@app.route("/dashboard",methods=['GET','POST'])
+@app.route("/dashboard",methods=['POST'])
 @login_required
 def dashboard():
-    #handleViewPermission(current_user.get_id())
+    #id della stanza
+    #sensore di luce
+    #colori istogramma di colori
+    #luminosità grafico linea
+    #temperatura linea
+    id_room = request.form['id_room']
+    light_sensor_feed = db.session.query(sensorFeeds).filter_by(id_room = id_room)
     return "<p>ciao</p>"
 
 @app.route("/buildingDashboard")
@@ -515,7 +520,7 @@ def getAIdata(id_user,digitalTwin):
             dataFromServer = res.json()
         except requests.exceptions.RequestException as e:
             print("c'è stato un errore! Prenderò dati di Default!")
-            dataFromServer = {'user_temp':21,'user_color':"RAINBOW",'user_light':1}
+            dataFromServer = {'user_temp':21,'user_color':"RAINBOW",'user_light':'MEDIUM'}
     return dataFromServer
 
 
@@ -621,9 +626,11 @@ def tryToFreeRoom(id_user):
 #TODO testing
 def setRoomToSleepMode(id_room,id_building):
     mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/color', "NONE")
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/brightness', 0)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/brightness', 'LOW')
     mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/temperature', 20)
     mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/status_request', "closed")
+    digital_twin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
+    digital_twin.set_to_sleep_mode()
     return 0
 
 #testato
@@ -770,6 +777,7 @@ if __name__ =="__main__":
     #TODO togliere humidity e temperature sensor
 #TODO gestire status_respond (forse con i websocket e attributi current user, si può fare)
 #TODO fixare le view
+    # TODO fixare l'intensità del led perchè passo una stringa
     # TODO sistemare lo zoom nella mappa di selezione, magari la media delle zone
     # TODO gestione mancanza dati form (se serve)
     # TODO gestione expetions scrittura su db

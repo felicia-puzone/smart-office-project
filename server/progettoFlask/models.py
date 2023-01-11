@@ -204,8 +204,10 @@ class digitalTwinFeed(db.Model):
         return {"room_color": self.led_actuator,
                 "room_temperature": str(self.temperature_actuator),
                 "room_brightness": str(self.led_brightness)}
-
-
+    def set_to_sleep_mode(self):
+        self.temperature_actuator = 20
+        self.led_brightness = "LOW"
+        self.led_actuator = "NONE"
 #TODO testing
 class sensorFeeds(db.Model):
     id_room = db.Column('ID_ROOM', db.Integer,primary_key=True)

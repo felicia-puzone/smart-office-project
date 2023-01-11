@@ -39,10 +39,6 @@ def updateDigitalTwinSensors(id_room,sensor,value):
             sensorFeed = sensorFeeds(digitalTwin.id_room,sensor,value,timestamp)
             if sensor == "light":
                 digitalTwin.light_sensor=value
-            elif sensor == "humidity":
-                digitalTwin.humidity_sensor=value
-            elif sensor == "temperature":
-                digitalTwin.temperature_sensor=value
-            db.session.add(sensorFeed)
-            db.session.commit()
+                db.session.add(sensorFeed)
+                db.session.commit()
     return 0

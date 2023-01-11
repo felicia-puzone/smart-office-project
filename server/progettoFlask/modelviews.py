@@ -279,10 +279,10 @@ class RoomAdmin(sqla.ModelView):
 
         _html = '''
             <form action="{checkout_url}" method="POST">
-                <input id="building_id" name="building_id"  type="hidden" value="{building_id}">
+                <input id="id_room" name="id_room"  type="hidden" value="{id_room}">
                 <button type='submit'>Dashboard</button>
             </form
-        '''.format(checkout_url=checkout_url, building_id=model.id_building)
+        '''.format(checkout_url=checkout_url, id_room=model.id_room)
 
         return Markup(_html)
 
