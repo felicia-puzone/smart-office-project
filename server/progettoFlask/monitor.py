@@ -1,11 +1,8 @@
 import schedule
-import time
 
 
-
-
-def job(t):
-    print("I'm working...", t)
+def day_report():
+    print("I'm working...")
     #chiedo un report
     #se vi è troppo consumo, mettiamo in risparmio energetico
 
@@ -13,9 +10,7 @@ def job(t):
 
 
 
-
-
-schedule.every(2).seconds.do(job,'It is 01:00')
+schedule.every(1).days.do(day_report())
 
 while True:
     schedule.run_pending()

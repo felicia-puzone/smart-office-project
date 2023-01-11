@@ -17,18 +17,18 @@ from flask import Flask, request, render_template, session,jsonify
 from werkzeug.exceptions import HTTPException
 from wtforms import StringField, IntegerField, SelectField, PasswordField, Form
 from wtforms.utils import unset_value
-
+from apphandler import app
 import geolog
 from models import db, digitalTwinFeed, sessions, sessionStates, rooms, professions, actuatorFeeds, buildings, \
-    sensorFeeds, getFreeBuildings, fetchJobs, createAndPopulateDb, admins, zones, User, serializer, serializer_secret
-from flask_mqtt import Mqtt
+    sensorFeeds, zones, User, serializer, serializer_secret
+#from flask_mqtt import Mqtt
 from flask_cors import CORS
-import paho.mqtt.client as mqtt
+#import paho.mqtt.client as mqtt
 from firebase import firebase
-
+from mqtthandler import mqtt
 from modelviews import MyHomeView, ZoneAdmin, UserAdmin, JobAdmin, BuildingAdmin, RoomAdmin
+from queries import fetchJobs, getFreeBuildings, createAndPopulateDb
 from utilities import buildJsonList, calculateUserAge, createABuildingtupleList, createAProfessiontupleList, seconds_between
-from adafruitHandler import sendDataToAdafruitFeed
 from flask_admin import Admin, AdminIndexView
 from flask_admin import BaseView, expose
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required,UserMixin
@@ -43,24 +43,16 @@ from functools import wraps
 
 
 
-appname="IOT main"
-app = Flask(appname)
-app.config['SECRET_KEY']='004f2af45d3a4e161a7dd2d17fdae47f'
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
-app.config['MQTT_BROKER_URL'] = 'broker.hivemq.com'#'ilvero.davidepalma.it'  # use the free broker from HIVEMQ
-app.config['MQTT_BROKER_PORT'] = 1883  # default port for non-tls connection
-app.config['MQTT_KEEPALIVE'] = 5  # set the time interval for sending a ping to the broker to 5 seconds
-app.config['MQTT_TLS_ENABLED'] = False  # set TLS to disabled for testing purposes
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+
 login_manager = LoginManager()
 login_manager.init_app(app)
-mqtt=Mqtt()
+#mqtt=Mqtt()
 fb_app = firebase.FirebaseApplication('https://smartoffice-4eb51-default-rtdb.europe-west1.firebasedatabase.app/', None)
 #admin = Admin(app, name='Dashboard')
 db.init_app(app)
+mqtt.init_app(app)
 #with app.app_context():
- #   createAndPopulateDb()
+    #createAndPopulateDb()
 months = ('January','February','March','April','May','June',\
 'July','August','September','October','November','December')
 colors = ('NONE','RED','ORANGE','YELLOW','GREEN','TEAL','BLUE','INDIGO','VIOLET','RAINBOW')
@@ -122,28 +114,7 @@ def unauthorized_callback():
         return "Not logged in", 401
     return render_template('login.html',msg='')
 
-@mqtt.on_connect()
-def handle_connect(client,userdata,flags,rc):
-    print("Ciao! sono il server Flask di Billi!")
 
-@mqtt.on_message()
-def handle_message_mqtt(client,userdata,message):
-    data = dict(
-        topic=message.topic,
-        payload=message.payload.decode()
-    )
-    print('Received message on topic: {topic} with payload: {payload}'.format(**data))
-    r = re.compile("smartoffice/building_\d/room_\d/sensors/\S")
-    if r.match(data.get('topic')):
-        print("ho ricevuto dati da un sensore!")
-        identifiers=re.findall('\d',data.get('topic'))
-        sensor=re.findall(r'\w+',data.get('topic'))
-        print("ho ricevuto dati dall'edificio:"+str(identifiers[0]))
-        print("ho ricevuto dati dalla stanza:"+str(identifiers[1]))
-        print(sensor[4])
-        value=data.get('payload')
-        updateDigitalTwinSensors(identifiers[1],sensor[4],value)
-        sendDataToAdafruitFeed(data.get)
 
 
 
@@ -207,7 +178,8 @@ def register():
         if 'username' in request.form and 'password'in request.form and 'birthday'in request.form and 'sex'in request.form and 'profession'in request.form:
             username = request.form['username']
             password = request.form['password']
-            birthday=request.form['birthday']
+            birthday= request.form['birthday']
+            print(birthday)
             sex = request.form['sex']
             profession=request.form['profession']
             account=db.session.query(User).filter_by(username=username).first()
@@ -232,8 +204,7 @@ def register():
         else:
             msg = 'Riempire i campi obbligatori!'
         if content == "REGISTER-APP":
-            jobs = buildJsonList(jobs)
-            return jsonify(signedUp=signedUp,msg=msg,jobs=jobs)
+            return jsonify(signedUp=signedUp,msg=msg)
         else:
             return render_template('register.html', msg=msg, jobs=jobs)
     else:
@@ -377,12 +348,6 @@ def updateuserdata():
 #TODO view che permette la registrazione all'Admin
 #TODO controllo per consentire l'accesso solo all'admin
 
-@app.route("/admin")
-@login_required
-def admin():
-    if not handleViewPermission(current_user.get_id()):
-        return handleLoggedinUser("")
-    return "hola"
 @app.route("/dashboard",methods=['GET','POST'])
 @login_required
 def dashboard():
@@ -484,12 +449,11 @@ def handleAuthenticatedUserResponse(content,token):
 
 
 #TODO testing
-def handleViewPermission(id_user):
-    admin=db.session.query(admins).filter_by(id=id_user).first()
-    if admin is None:
-        return False
-    else:
+def handleViewPermission():
+    if current_user.is_admin:
         return True
+    else:
+        return False
 #TODO
 def hasPermission(id_user):
     return False
@@ -503,20 +467,7 @@ def StartListening():
             print("mi sono iscritto al topic "+'smartoffice/building_'+str(+room.id_building)+'/room_'+str(room.id_room)+'/sensors')
     return 0
 #testato
-def updateDigitalTwinSensors(id_room,sensor,value):
-    with app.app_context():
-        digitalTwin=db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
-        timestamp=datetime.datetime.utcnow()
-        sensorFeed = sensorFeeds(digitalTwin.id_room,sensor,value,timestamp)
-        if sensor == "light":
-            digitalTwin.light_sensor=value
-        elif sensor == "humidity":
-            digitalTwin.humidity_sensor=value
-        elif sensor == "temperature":
-            digitalTwin.temperature_sensor=value
-        db.session.add(sensorFeed)
-        db.session.commit()
-    return 0
+
 #testato
 def updateDigitalTwinActuators(id_user, color, brightness, temperature):
     actualSession=db.session.query(sessionStates).filter_by(id_user=id_user,active=True).first()
@@ -540,7 +491,7 @@ def prepareRoom(id_user,id_session,digitalTwin,id_building):
     brightness = data['user_light']
     temperature = data['user_temp']
     timestamp = datetime.datetime.utcnow()
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(digitalTwin.id_room) + '/status_request', 1)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(digitalTwin.id_room) + '/status_request', "waiting")
     registerAction('color', led_color, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
     registerAction('brightness', brightness, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
     registerAction('temperature', temperature, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
@@ -549,8 +500,8 @@ def prepareRoom(id_user,id_session,digitalTwin,id_building):
 def getAIdata(id_user,digitalTwin):
     account = db.session.query(User).filter_by(id=id_user).first()
     job = db.session.query(professions).filter_by(name=account.profession).first()
-    dataToSend = {'user_age': calculateUserAge(account.dateOfBirth), 'user_sex': account.sex, 'user_task': job.name,
-                  'ext_temp': digitalTwin.temperature_sensor, 'ext_humidity': digitalTwin.humidity_sensor,
+    dataToSend = {'user_age': calculateUserAge(account.dateOfBirth), 'user_sex': account.sex - 1, 'user_task': job.category,
+                  'ext_temp': 0, 'ext_humidity': 0,
                   'ext_light': digitalTwin.light_sensor}
     try:
         res = requests.post('http://localhost:5001/AI', json=dataToSend)
@@ -669,10 +620,10 @@ def tryToFreeRoom(id_user):
 
 #TODO testing
 def setRoomToSleepMode(id_room,id_building):
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/color', 0)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/color', "NONE")
     mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/brightness', 0)
     mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/temperature', 20)
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/status_request', 0)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/status_request', "closed")
     return 0
 
 #testato
@@ -746,17 +697,17 @@ def remove_if_invalid(response):
 
 if __name__ =="__main__":
     #db.init_app(app)
-    mqtt.init_app(app)
+    #mqtt.init_app(app)
 
-    with app.app_context():
+    #with app.app_context():
         #sensorFeedToCovert = db.session.query(sensorFeeds)
        # createRoomCSV(sensorFeedToCovert,"sensors",datetime.today(),"")
         #hashed_password = bcrypt.hashpw("18121996".encode("utf-8"), bcrypt.gensalt())
         #db.session.add(User(username="BArfaoui",password="password",profession=8,sex=1,dateOfBirth=datetime.datetime.utcnow().date()))
-        db.session.add(sensorFeeds(1,"light",1,datetime.datetime.utcnow()))
-        db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
-        db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
-        db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
+        #db.session.add(sensorFeeds(1,"light",1,datetime.datetime.utcnow()))
+        #db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
+        #db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
+        #db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
         #db.session.commit()
     #geolog.isAddressValid("ajejebrazov")
     geolog.geoMarker("Manzolino","Via Giovanni Acerbi","Italia")
@@ -781,50 +732,56 @@ if __name__ =="__main__":
 #DONE fixare i timestamp (UTC NOW) gli orari saranno in orario standard utc now
 #DONE testare l'update snellito
 #DONE Content-ID dell'header LOGIN-APP,REGISTER-APP,SELECT-APP,LOGOUT-APP
-#TODO testare il feedAdafruit
-#TODO testare il settaggio in risparmio energetico a fine sessione utente
-#TODO testare spegnimento/risparmio energetico digitalTwin alla chiusura della sessione
-#TODO testare il sensorFeed, il digitaltwinfeed terrà l'ultimo valore dei sensori e attuatori
-#TODO dashboard che mostra i dati di adafruit
+#done testare il sensorFeed, mentre il digitaltwinfeed terrà l'ultimo valore dei sensori e attuatori
 #OBBIETTIVO 9 GENNAIO
-#TODO testing gestione anonymous user (wrappare le view in @login_required oppure if current_user.is_authenticated:)
-#TODO testing modelview
-    #TODO testing grant permessi
-    #TODO testing creazione,modifica,eliminazione jobs
-    #TODO testing creazione,elimazione zone
-    #TODO testing stanze
-    #TODO testing edifici
-    #TODO testing jobs
-    #TODO testing impostare il formato dell'indirizzo in modo da evitare dati duplicati
-    #TODO testare che tutti gli edifici sono univoci
-    #TODO testare link per dashboard Zona, Palazzo e Stanza
-    #TODO testare aggiungere un attributo "Available" a Palazzo e Stanza
-    #TODO testare aggiornare getFreeBuildings
-#TODO testing aggiornamento dati utente (include il compleanno utente)
-#TODO permessi di visione solo a admin e super user, delle view/pagine dashboard e admin
-#TODO rerouting degli admin oppure creare una estensione delle pagine normali
+#DONE testing gestione anonymous user (wrappare le view in @login_required oppure if current_user.is_authenticated:)
+#DONE testing modelview
+    #DONE testing grant permessi
+    #DONE vedere se le categorie di profession sono giuste
+    #DONE testing creazione,modifica,eliminazione jobs
+    #DONE testing creazione,elimazione zone (id_zone non esiste)
+    #DONE alla creazione/modifica della stanza, fare subscribe se la building è cambiata (dovrebbe iscriversi e disicriversi)
+    #DONE testare alla creazione della stanza non viene aggiunto il digital twin
+    #DONE testing stanze
+    #DONE testing edifici
+    #DONE testare aggiornato getFreeBuildings con l'available (dovrebbe funzionare comunque)
+    #DONE testing impostare il formato dell'indirizzo in modo da evitare dati duplicati
+    #Combinazione città indirizzo lat e lon  (Zone è univoco)
+    #building è univoco per forza
+    #DONE testare che tutti gli edifici sono univoci
+    #DONE testare link per dashboard Zona, Palazzo e Stanza
+    #DONE testare aggiungere un attributo "Available" a Palazzo e Stanza
+    #DONE ISSUE guardo faccio grant dei permessi cambia professione (CASCADE)
+#DONE permessi di visione solo a admin e super user, delle view/pagine dashboard e admin
+
 
 
 #OBBIETTIVO 10 gennaio
-    #TODO impostare il riconoscimento della richiesta edificio/stanza e id
+    #TODO dashboard impostare il riconoscimento della richiesta edificio/stanza e id
+    #TODO idee per il sensore di luminosità giornaliero(ogni ora o mezz'ora),mensile(ogni giorno) e settimanale(ogni mezza giornata)
+    #TODO grafico attuatori istogramma per colore, ESCLUSO NONE
+    #TODO grafico attuatore d'intensità della luce, linea + istogramma
+    #TODO grafico temperatura
+    #IDEA alla fine di ogni sessione prendendo i dati prevalenti della sessione e li mettiamo per il report (bho)
+    #TODO per evitare lunghi tempi di computazione creiamo report giornalieri
     #TODO impostare restrizioni di visione
     #TODO scegliere la piattaforma
-
-
-
+    #TODO meteo tramite lat e lon
+    #TODO togliere humidity e temperature sensor
+#TODO gestire status_respond (forse con i websocket e attributi current user, si può fare)
 #TODO fixare le view
     # TODO sistemare lo zoom nella mappa di selezione, magari la media delle zone
     # TODO gestione mancanza dati form (se serve)
     # TODO gestione expetions scrittura su db
     # TODO mettere un buon css
+#TODO testing aggiornamento dati utente (include il compleanno utente)
+#TODO rerouting degli admin oppure creare una estensione delle pagine normali
+#TODO testare il settaggio in risparmio energetico a fine sessione utente
 #TODO commentare
 #TODO impostare l'indirizzo per l'AI
-
-
-#TODO testing ISSUE colori led Stringa MQTT
-#TODO testing ISSUE mandare la lista di edifici al freeroom
-#TODO ISSUE rimuovere noise sensor
-
+#DONE testing ISSUE mandare la lista di edifici al freeroom
+#DONE testing ISSUE colori led Stringa MQTT
+#DONE ISSUE rimuovere noise sensor
 #DONE testare Flask-login con credenziali e meccaniche di logout
     #DONE testare le redirect (al momento fa redirect alla home per quando non si è loggati)
     #DONE encrypt della registrazione/login
@@ -839,4 +796,6 @@ if __name__ =="__main__":
 #Se una sessione è attiva lo porta in output
 #Login funzionante
 #REPORT (SelectRoom)
+
+
 
