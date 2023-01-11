@@ -7,6 +7,8 @@ import configparser
 
 import paho.mqtt.client as mqtt
 
+import time
+
 class Bridge():
 
 	def __init__(self):
@@ -70,6 +72,7 @@ class Bridge():
 		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/actuators/color' % (self.building_id, self.room_id))
 		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/actuators/brightness' % (self.building_id, self.room_id))
 		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/actuators/temperature' % (self.building_id, self.room_id))
+		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/status_request' % (self.building_id, self.room_id))
     
 
 
@@ -80,67 +83,73 @@ class Bridge():
       
 			if(msg.payload.decode("utf-8") == 'RED'):
 				
-				self.ser.write(b'\x01'b'\x01')
+				self.ser.write(b'\x01'b'\x01'b'\xff')
     
 			if(msg.payload.decode("utf-8") == 'ORANGE'):
 				
-				self.ser.write(b'\x01'b'\x02')
+				self.ser.write(b'\x01'b'\x02'b'\xff')
     
 			if(msg.payload.decode("utf-8") == 'YELLOW'):
 				
-				self.ser.write(b'\x01'b'\x03')
+				self.ser.write(b'\x01'b'\x03'b'\xff')
     
 			if(msg.payload.decode("utf-8") == 'GREEN'):
 				
-				self.ser.write(b'\x01'b'\x04')
+				self.ser.write(b'\x01'b'\x04'b'\xff')
     
 			if(msg.payload.decode("utf-8") == 'TEAL'):
 				
-				self.ser.write(b'\x01'b'\x05')
+				self.ser.write(b'\x01'b'\x05'b'\xff')
     
 			if(msg.payload.decode("utf-8") == 'BLUE'):
 				
-				self.ser.write(b'\x01'b'\x06')
+				self.ser.write(b'\x01'b'\x06'b'\xff')
     
 			if(msg.payload.decode("utf-8") == 'INDIGO'):
 				
-				self.ser.write(b'\x01'b'\x07')
+				self.ser.write(b'\x01'b'\x07'b'\xff')
 
 			if(msg.payload.decode("utf-8") == 'VIOLET'):
 				
-				self.ser.write(b'\x01'b'\x08')
+				self.ser.write(b'\x01'b'\x08'b'\xff')
     
 			if(msg.payload.decode("utf-8") == 'RAINBOW'):
 				
-				self.ser.write(b'\x01'b'\x09')
+				self.ser.write(b'\x01'b'\x09'b'\xff')
+    
+			time.sleep(0.5)
     
 		if msg.topic=='smartoffice/building_%s/room_%s/actuators/brightness' % (self.building_id, self.room_id):
 			if(msg.payload.decode("utf-8") == 'LOW'):
 				
-				self.ser.write(b'\x02'b'\x00')
+				self.ser.write(b'\x02'b'\x00'b'\xff')
     
 			if(msg.payload.decode("utf-8") == 'MEDIUM'):
 				
-				self.ser.write(b'\x02'b'\x01')
+				self.ser.write(b'\x02'b'\x01'b'\xff')
     
 			if(msg.payload.decode("utf-8") == 'HIGH'):
 				
-				self.ser.write(b'\x02'b'\x02')
+				self.ser.write(b'\x02'b'\x02'b'\xff')
+			time.sleep(0.5)
 
 		if msg.topic=='smartoffice/building_%s/room_%s/actuators/temperature' % (self.building_id, self.room_id):
 				
-			byte_temp_val = msg.payload.to_bytes(4, 'big')
-			self.ser.write(b'\x03'+byte_temp_val)
+			self.ser.write(b'\x03'+ (int(msg.payload.decode("utf-8"))).to_bytes(1, 'big') + b'\xff') 
+			time.sleep(0.5)
    
-		if msg.topic=='smartoffice/building_%s/room_%s/actuators/status_request' % (self.building_id, self.room_id):
+		if msg.topic=='smartoffice/building_%s/room_%s/status_request' % (self.building_id, self.room_id):
+      
+			print('Sono dentro status request')
 				
-			if(msg.payload.decode("utf-8") == 'WAITING'):
+			if(msg.payload.decode("utf-8") == '0'):
 				
-				self.ser.write(b'\x00'b'\x01')
+				self.ser.write(b'\x00'b'\x00'b'\xff')
     
-			if(msg.payload.decode("utf-8") == 'LOGGED-OUT'):
+			if(msg.payload.decode("utf-8") == '1'):
 				
-				self.ser.write(b'\x00'b'\x02')
+				self.ser.write(b'\x00'b'\x01'b'\xff')
+			time.sleep(0.5)
 
 
 	def loop(self):
