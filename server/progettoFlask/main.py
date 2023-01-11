@@ -179,6 +179,7 @@ def register():
             username = request.form['username']
             password = request.form['password']
             birthday= request.form['birthday']
+            print(birthday)
             sex = request.form['sex']
             profession=request.form['profession']
             account=db.session.query(User).filter_by(username=username).first()
@@ -761,6 +762,7 @@ if __name__ =="__main__":
     #TODO grafico attuatori istogramma per colore, ESCLUSO NONE
     #TODO grafico attuatore d'intensità della luce, linea + istogramma
     #TODO grafico temperatura
+    #IDEA alla fine di ogni sessione prendendo i dati prevalenti della sessione e li mettiamo per il report (bho)
     #TODO per evitare lunghi tempi di computazione creiamo report giornalieri
     #TODO impostare restrizioni di visione
     #TODO scegliere la piattaforma
