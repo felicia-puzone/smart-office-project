@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'models.dart';
 
-const IPSERVER = 'http://192.168.1.240:5000/';
+const IPSERVER = 'http://192.168.23.91:5000/';
 
 class GlobalValues {
   static UserSession? userSession;
@@ -16,9 +16,8 @@ class GlobalValues {
 
 //@login
 Future<String> fetchUserSession(user, pwd) async {
-//inserisci un try-catch su timeout exception
-
   try {
+//inserisci un try-catch su timeout exception
     final response = await http.post(
       Uri.parse(IPSERVER + 'login'),
       headers: <String, String>{
@@ -154,14 +153,14 @@ Future<String> registerUser(user, pwd, sex, profession, birthDate) async {
       Uri.parse(IPSERVER + 'register'),
       headers: <String, String>{
         'Content-Type': 'application/x-www-form-urlencoded',
-        // 'Content-ID': 'REGISTER-APP'
+        'Content-ID': 'REGISTER-APP'
       },
       body:
           ('username=$user&password=$pwd&birthday=$birthDate&sex=$sex&profession=$profession'),
     );
 
     if (response.statusCode == 200) {
-      return response.body;
+      return jsonDecode(response.body)['msg'];
     } else {
       return ('BAD-REQUEST');
     }

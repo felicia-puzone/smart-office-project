@@ -126,7 +126,7 @@ class _MyLoginState extends State<MyLogin> {
                                         showDialog(
                                             context: context,
                                             builder: (ctx) => AlertDialog(
-                                                  title: Text('Login fallito'),
+                                                  title: Text(result),
                                                   actions: <Widget>[
                                                     TextButton(
                                                       onPressed: () {

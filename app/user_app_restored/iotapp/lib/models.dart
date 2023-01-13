@@ -59,7 +59,7 @@ class DigitalTwin {
     json = json['digitalTwin'];
     return DigitalTwin(
         room_color: json?['room_color'],
-        room_brightness: json?['room_temperature'],
-        room_temperature: json?['room_brightness']);
+        room_brightness: json?['room_brightness'],
+        room_temperature: json?['room_temperature']);
   }
 }

@@ -32,7 +32,7 @@ class UpdateReq {
 
 Future<String?> changeActuatorRequest(UpdateReq request) async {
   final response = await http.post(
-    Uri.parse('http://192.168.1.240:5000/update'),
+    Uri.parse(IPSERVER + 'update'),
     headers: <String, String>{
       'Content-Type': 'application/json',
       'Content-ID': 'UPDATE-APP',
@@ -195,7 +195,7 @@ class _BrightnessChangerState extends State<BrightnessChanger> {
                       children: [
                         Expanded(
                             child: Container(
-                                height: 250,
+                                height: 200,
                                 padding: EdgeInsets.only(top: 35, bottom: 35),
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
@@ -216,7 +216,7 @@ class _BrightnessChangerState extends State<BrightnessChanger> {
                         Expanded(
                             child: Container(
                                 padding: EdgeInsets.only(top: 35, bottom: 35),
-                                height: 250,
+                                height: 200,
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.white60),
@@ -236,7 +236,7 @@ class _BrightnessChangerState extends State<BrightnessChanger> {
                         Expanded(
                             child: Container(
                                 padding: EdgeInsets.only(top: 35, bottom: 35),
-                                height: 250,
+                                height: 200,
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.white),
@@ -338,6 +338,7 @@ class _TemperatureChangerState extends State<TemperatureChanger> {
                                       GlobalValues.digitalTwin.room_brightness
                                           .toString(),
                                       int.parse(_dropdownValueTemp)));
+                                  Navigator.pop(context);
                                 },
                                 child: const Text(
                                   'OK',
