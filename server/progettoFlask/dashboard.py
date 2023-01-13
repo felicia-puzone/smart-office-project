@@ -26,7 +26,7 @@ def chart1():
     A academic study of the number of apples, oranges and bananas in the cities of
     San Francisco and Montreal would probably not come up with this chart.
     """
-    return render_template('notdash2.html', graphJSON=graphJSON, header=header,description=description)
+    return render_template('dashboard.html', graphJSON=graphJSON, header=header,description=description)
 
 @app.route('/chart2')
 def chart2():
@@ -44,7 +44,7 @@ def chart2():
     The rumor that vegetarians are having a hard time in London and Madrid can probably not be
     explained by this chart.
     """
-    return render_template('notdash2.html', graphJSON=graphJSON, header=header,description=description)
+    return render_template('dashboard.html', graphJSON=graphJSON, header=header,description=description)
 
 @app.route('/chart3')
 def line():
@@ -57,6 +57,6 @@ def line():
         The rumor that vegetarians are having a hard time in London and Madrid can probably not be
         explained by this chart.
         """
-    return render_template('notdash2.html', graphJSON=graphJSON, header=header, description=description)
+    return render_template('dashboard.html', graphJSON=graphJSON, header=header, description=description)
 if __name__ =="__main__":
     app.run(host='0.0.0.0', port=5001)

@@ -1,69 +1,42 @@
 import datetime
-import os
-import pathlib
 import re
-from pathlib import Path
-
-from flask_admin.contrib import sqla
-from flask_admin.model.template import ViewRowAction, EditRowAction
 from itsdangerous import BadSignature
-from sqlalchemy import extract
-from werkzeug.routing import ValidationError
-from werkzeug.security import generate_password_hash, check_password_hash
-import bcrypt as bcrypt
+
 import requests as requests
-import werkzeug
 from flask import Flask, request, render_template, session,jsonify
 from werkzeug.exceptions import HTTPException
-from wtforms import StringField, IntegerField, SelectField, PasswordField, Form
-from wtforms.utils import unset_value
+
 from apphandler import app
 import geolog
 from models import db, digitalTwinFeed, sessions, sessionStates, rooms, professions, actuatorFeeds, buildings, \
-    sensorFeeds, zones, User, serializer, serializer_secret
-#from flask_mqtt import Mqtt
-from flask_cors import CORS
-#import paho.mqtt.client as mqtt
+    zones, User, serializer, serializer_secret, weatherReport, zoneToBuildingAssociation
 from firebase import firebase
 from mqtthandler import mqtt
-from modelviews import MyHomeView, ZoneAdmin, UserAdmin, JobAdmin, BuildingAdmin, RoomAdmin
-from queries import fetchJobs, getFreeBuildings, createAndPopulateDb
-from utilities import buildJsonList, calculateUserAge, createABuildingtupleList, createAProfessiontupleList, seconds_between
-from flask_admin import Admin, AdminIndexView
-from flask_admin import BaseView, expose
+from modelviews import ZoneAdmin, UserAdmin, JobAdmin, BuildingAdmin, RoomAdmin, MyHomeView
+from queries import fetchJobs, getFreeBuildings, createAndPopulateDb, buildRoomLightSensorGraph, buildRoomColorGraph, \
+    buildRoomBrightnessGraph, buildRoomTemperatureGraph, buildBuildingLightSensorGraph, buildZoneWeatherGraph, \
+    buildZoneWeatherHumidityGraph
+from utilities import buildJsonList, calculateUserAge, createABuildingtupleList, createAProfessiontupleList, \
+    seconds_between, colors, brightness_values
+from flask_admin import Admin
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required,UserMixin
-
 from flask import Flask, jsonify, make_response, request
-from werkzeug.security import generate_password_hash,check_password_hash
-from flask_sqlalchemy import SQLAlchemy
-from functools import wraps
-
-
-
-
-
-
+from weather import weather_report
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-#mqtt=Mqtt()
 fb_app = firebase.FirebaseApplication('https://smartoffice-4eb51-default-rtdb.europe-west1.firebasedatabase.app/', None)
-#admin = Admin(app, name='Dashboard')
 db.init_app(app)
 mqtt.init_app(app)
 #with app.app_context():
-    #createAndPopulateDb()
-months = ('January','February','March','April','May','June',\
-'July','August','September','October','November','December')
-colors = ('NONE','RED','ORANGE','YELLOW','GREEN','TEAL','BLUE','INDIGO','VIOLET','RAINBOW')
-brightness_values = ('LOW','MEDIUM','HIGH')
-admin = Admin(app, name='Dashboard',index_view=MyHomeView())
-#admin.add_view(MyView(name='My View', menu_icon_type='glyph', menu_icon_value='glyphicon-home'))
-admin.add_view(ZoneAdmin(zones, db.session,category='Models'))
-admin.add_view(BuildingAdmin(buildings, db.session,category='Models'))
-admin.add_view(RoomAdmin(rooms, db.session,category='Models'))
-admin.add_view(JobAdmin(professions, db.session,category='Models'))
-admin.add_view(UserAdmin(User, db.session,category='Models'))
+ #   createAndPopulateDb()
+
+admin = Admin(app, name='Spazio Admin',index_view=MyHomeView())
+admin.add_view(ZoneAdmin(zones, db.session))
+admin.add_view(BuildingAdmin(buildings, db.session))
+admin.add_view(RoomAdmin(rooms, db.session))
+admin.add_view(JobAdmin(professions, db.session))
+admin.add_view(UserAdmin(User, db.session))
 
 #Questo decorator gestisce tutti di errore, se la sessione utente
 #è attiva, reidirizza a handleLoggedInUser
@@ -347,46 +320,82 @@ def updateuserdata():
 #TODO view che permette la registrazione all'Admin
 #TODO controllo per consentire l'accesso solo all'admin
 
-@app.route("/dashboard",methods=['POST'])
+@app.route("/dashboardroom",methods=['POST','GET'])
 @login_required
-def dashboard():
-    #id della stanza
-    #sensore di luce
-    #colori istogramma di colori
-    #luminosità grafico linea
-    #temperatura linea
+def dashboardroom():
     id_room = request.form['id_room']
-    light_sensor_feed = db.session.query(sensorFeeds).filter_by(id_room = id_room)
-    return "<p>ciao</p>"
+    graphs=[]
+    link="/admin/rooms"
+    header="Dashboard della stanza con id:" + str(id_room)
+    start_date = datetime.datetime.today() - datetime.timedelta(days = 30)
+    session_states = db.session.query(sessionStates.id_session).filter_by(id_room=id_room).filter_by(active=False)
+    sessions_to_plot = db.session.query(sessions.id).filter(
+        sessions.id.in_(session_states)).filter(sessions.timestamp_end >= start_date)
+    ##GRAFICO SENSORE DI LUCE
+    graphs.append(buildRoomLightSensorGraph(id_room))
+    #GRAFICO COLORI
+    graphs.append(buildRoomColorGraph(sessions_to_plot))
+    ##GRAFICO LUMINOSITA' LED
+    graphs.append(buildRoomBrightnessGraph(sessions_to_plot))
+    #GRAFICO TEMPERATURA
+    graphs.append(buildRoomTemperatureGraph(sessions_to_plot))
+    return render_template('dashboard.html', graphsJSON=graphs, header=header,link=link)
 
-@app.route("/buildingDashboard")
+@app.route("/dashboardbuilding",methods=['POST','GET'])
 @login_required
-def building():
-    if not handleViewPermission(current_user.get_id()):
-        return handleLoggedinUser("")
-    #permission=handleViewPermission(True)
-    #if permission!=0:
-     #   return permission
-    return "ciao"
-@login_required
-@app.route("/buildingregistration")
-def buildingregistration():
-    if not handleViewPermission(current_user.get_id()):
-        return handleLoggedinUser("")
-    return "ciao"
-@login_required
-@app.route("/digitalTwin")
-def digitalTwin():
-    if not handleViewPermission(current_user.get_id()):
-        return handleLoggedinUser("")
-    return "ciao"
-@login_required
-@app.route("/modify")
-def modify():
-    if not handleViewPermission(current_user.get_id()):
-        return handleLoggedinUser("")
-    return "ciao"
+def dashboardbuilding():
+    id_building = request.form['building_id']
+    graphs=[]
+    link = "/admin/buildings"
+    header="Dashboard dell'edificio' con id:" + str(id_building)
+    start_date = datetime.datetime.today() - datetime.timedelta(days = 30)
+    rooms_of_building = db.session.query(rooms.id_building).filter_by(id_building=id_building)
+    session_states = db.session.query(sessionStates.id_session).filter_by(active=False).filter(
+        sessionStates.id_room.in_(rooms_of_building))
+    sessions_to_plot = db.session.query(sessions.id).filter(
+        sessions.id.in_(session_states)).filter(sessions.timestamp_end >= start_date)
+    ##GRAFICO SENSORE DI LUCE
+    graphs.append(buildBuildingLightSensorGraph(rooms_of_building))
+    #GRAFICO COLORI
+    graphs.append(buildRoomColorGraph(sessions_to_plot))
+    ##GRAFICO LUMINOSITA' LED
+    graphs.append(buildRoomBrightnessGraph(sessions_to_plot))
+    #GRAFICO TEMPERATURA
+    graphs.append(buildRoomTemperatureGraph(sessions_to_plot))
+    return render_template('dashboard.html', graphsJSON=graphs, header=header,link=link)
 
+
+
+@app.route("/dashboardzone",methods=['POST','GET'])
+@login_required
+def dashboardzone():
+    id_zone = request.form['zone_id']
+    graphs=[]
+    link = "/admin/zones"
+    header="Dashboard della zona con id:" + str(id_zone)
+    id_buildings = db.session.query(zoneToBuildingAssociation.id_building).filter_by(id_zone=id_zone)
+    start_date = datetime.datetime.today() - datetime.timedelta(days = 30)
+    rooms_of_zone = db.session.query(rooms.id_room).filter(rooms.id_building.in_(id_buildings))
+    session_states = db.session.query(sessionStates.id_session).filter_by(active=False).filter(
+        sessionStates.id_room.in_(rooms_of_zone))
+    sessions_to_plot = db.session.query(sessions.id).filter(
+        sessions.id.in_(session_states)).filter(sessions.timestamp_end >= start_date)
+
+    weatherReport_feed = db.session.query(weatherReport).filter_by(id_zone=id_zone) \
+        .filter(weatherReport.timestamp >= start_date).order_by(weatherReport.timestamp.desc()).all()
+    #GRAFICO TEMPERATURA METEO
+    graphs.append(buildZoneWeatherGraph(weatherReport_feed))
+    #GRAFICO UMIDITA'
+    graphs.append(buildZoneWeatherHumidityGraph(weatherReport_feed))
+    ##GRAFICO SENSORE DI LUCE
+    graphs.append(buildBuildingLightSensorGraph(rooms_of_zone))
+    #GRAFICO COLORI
+    graphs.append(buildRoomColorGraph(sessions_to_plot))
+    ##GRAFICO LUMINOSITA' LED
+    graphs.append(buildRoomBrightnessGraph(sessions_to_plot))
+    #GRAFICO TEMPERATURA
+    graphs.append(buildRoomTemperatureGraph(sessions_to_plot))
+    return render_template('dashboard.html', graphsJSON=graphs, header=header,link=link)
 
 
 
@@ -505,8 +514,9 @@ def prepareRoom(id_user,id_session,digitalTwin,id_building):
 def getAIdata(id_user,digitalTwin):
     account = db.session.query(User).filter_by(id=id_user).first()
     job = db.session.query(professions).filter_by(name=account.profession).first()
+    weather_data = weather_report(digitalTwin.id_room)
     dataToSend = {'user_age': calculateUserAge(account.dateOfBirth), 'user_sex': account.sex - 1, 'user_task': job.category,
-                  'ext_temp': 0, 'ext_humidity': 0,
+                  'ext_temp': weather_data["temperature"], 'ext_humidity': weather_data["humidity"],
                   'ext_light': digitalTwin.light_sensor}
     try:
         res = requests.post('http://localhost:5001/AI', json=dataToSend)
@@ -532,8 +542,9 @@ def renderHomeWeb(id_room):
 def renderHomeApp(id_room):
     digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
     id_building = db.session.query(rooms).filter_by(id_room=digitalTwin.id_room).first().id_building
+    weather_data = weather_report(id_room)
     return jsonify(logged_in=True, outcome="Active", digitalTwin=digitalTwin.serializedActuators(),
-                   id_edificio=id_building, id_room=id_room, username=current_user.get_username())
+                   id_edificio=id_building, id_room=id_room, username=current_user.get_username())#,weather=weather_data)
 
 def renderSelectionWeb():
     return render_template('newselect.html', buildings=buildJsonList(getFreeBuildings()), msg='')
@@ -544,8 +555,9 @@ def renderSelectionApp():
 def renderHomeAppOnAuth(id_room,token):
     digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
     id_building = db.session.query(rooms).filter_by(id_room=digitalTwin.id_room).first().id_building
+    weather_data = weather_report(id_room)
     return jsonify(token=token, logged_in=True, outcome="Active", digitalTwin=digitalTwin.serializedActuators(),
-                   id_edificio=id_building, id_room=digitalTwin.id_room, username=current_user.get_username())
+                   id_edificio=id_building, id_room=digitalTwin.id_room, username=current_user.get_username())#''',weather=weather_data'''
 
 def renderSelectionAppOnAuth(token):
     return jsonify(token=token, logged_in=True, outcome="Login",username=current_user.get_username(),
@@ -641,11 +653,12 @@ def buildSessionData(user,room,active_session):
     digitalTwin=db.session.query(digitalTwinFeed).filter_by(id_room=room.id_room).first()
     job = db.session.query(professions).filter_by(name=user.profession).one().name
     age=calculateUserAge(user.dateOfBirth)
+    weather_data = weather_report(id_room=room.id_room)
     data = {'user_age':age,'user_sex':user.sex,'user_task':job,'room_id':room.id_room,'building_id':room.id_building,
             'date':active_session.timestamp_begin.strftime("%Y/%m/%d"),
             'session_open_time':active_session.timestamp_begin.strftime("%H:%M:%S"),
-            'session_close_time':active_session.timestamp_end.strftime("%H:%M:%S"),'ext_temp':digitalTwin.temperature_sensor,
-            'ext_humidity':digitalTwin.humidity_sensor,'ext_light':digitalTwin.light_sensor,
+            'session_close_time':active_session.timestamp_end.strftime("%H:%M:%S"),'ext_temp':weather_data["temperature"],
+            'ext_humidity':weather_data["humidity"],'ext_light':digitalTwin.light_sensor,
             'user_temp': preValentTemperature, 'user_color': preValentColor, 'user_light': preValentBrightness}
     return data
 
@@ -707,6 +720,8 @@ if __name__ =="__main__":
     #mqtt.init_app(app)
 
     #with app.app_context():
+        #db.session.add(weatherReport(1, 6, 70, datetime.datetime.utcnow()))
+        #db.session.commit()
         #sensorFeedToCovert = db.session.query(sensorFeeds)
        # createRoomCSV(sensorFeedToCovert,"sensors",datetime.today(),"")
         #hashed_password = bcrypt.hashpw("18121996".encode("utf-8"), bcrypt.gensalt())
@@ -764,26 +779,45 @@ if __name__ =="__main__":
 
 
 #OBBIETTIVO 10 gennaio
-    #TODO dashboard impostare il riconoscimento della richiesta edificio/stanza e id
-    #TODO idee per il sensore di luminosità giornaliero(ogni ora o mezz'ora),mensile(ogni giorno) e settimanale(ogni mezza giornata)
-    #TODO grafico attuatori istogramma per colore, ESCLUSO NONE
-    #TODO grafico attuatore d'intensità della luce, linea + istogramma
-    #TODO grafico temperatura
+    #DONE dashboard impostare il riconoscimento della richiesta edificio/stanza e id
+        #DONE RICONOSCIMENTO DASHBOARD STANZA
+        #DONE DASHBOARD STANZA
+        #DONE PRENDERE DATI DEGLI ULTIMI 30 GIORNI
+        #DONE SNELLIRE CODICE
+        #DONE DASHBOARD EDIFICIO
+    #DONE grafico attuatori istogramma per colore, ESCLUSO NONE
+    #DONE grafico attuatore d'intensità della luce, linea + istogramma
+    #DONE grafico temperatura
     #IDEA alla fine di ogni sessione prendendo i dati prevalenti della sessione e li mettiamo per il report (bho)
+    #DONE scegliere la piattaforma
+    #DONE meteo tramite lat e lon
+    #DONE togliere humidity e temperature sensor
+
+
+#OBBIETTIVO 13 GENNAIO
+    #TODO COLLEGARE ADMIN E HOME CON LINK VISIBILI SOLO DALL'ADMIN (passiamo una boolean tipo admin=User.id_admin)
+    #TODO mettere a posto il bottone della dashboard che ha come nome checkout payment ew
+    #TODO trovare una soluzione per la homepage dell'admin (Magari un div di bottoni per azione che può fare selezione/home logout)
+    #TODO sistemare view della dashboard
+        #DONE Link che ritorna alla pagina precedente
+        #TODO la grafica fa schifo lol
+    #TODO SCHERMATA ADMIN impostare restrizioni di visione
+    #CONSUMO DI UNA STANZA RISCALDATA WATT = AREA X ALTEZZA X 1,25
+#TODO RISPARMIO ENERGETICO
     #TODO per evitare lunghi tempi di computazione creiamo report giornalieri
-    #TODO impostare restrizioni di visione
-    #TODO scegliere la piattaforma
-    #TODO meteo tramite lat e lon
-    #TODO togliere humidity e temperature sensor
+    #TODO GRAFICO CONSUMI
+    #TODO route che fornisce il report di consumi
+    #TODO script che calcola il consumo energetico ogni giorno
 #TODO gestire status_respond (forse con i websocket e attributi current user, si può fare)
 #TODO fixare le view
-    # TODO fixare l'intensità del led perchè passo una stringa
+    # TODO togliere librerie inutilizzate
+    # DONE fixare l'intensità del led perchè passo una stringa
     # TODO sistemare lo zoom nella mappa di selezione, magari la media delle zone
     # TODO gestione mancanza dati form (se serve)
     # TODO gestione expetions scrittura su db
     # TODO mettere un buon css
-#TODO testing aggiornamento dati utente (include il compleanno utente)
-#TODO rerouting degli admin oppure creare una estensione delle pagine normali
+#CANCELED testing aggiornamento dati utente (include il compleanno utente)
+#CANCELED (METTIAMO UN LINK)rerouting degli admin oppure creare una estensione delle pagine normali
 #TODO testare il settaggio in risparmio energetico a fine sessione utente
 #TODO commentare
 #TODO impostare l'indirizzo per l'AI
