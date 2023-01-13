@@ -3,5 +3,17 @@
 {{ super() }}
 
 {% block body %}
-<p>hola</p>
+<h7>Schermata Home Admin</h7>
+  <form action="{{ url_for('logout') }}" method="post">
+      <input type="submit" class="btn" value="Logout"></br></br>
+  </form>
+  <form action="{{ url_for('homepage') }}" method="post">
+      <input type="submit" class="btn" value="Torna alla homepage"></br></br>
+  </form>
 {% endblock body %}
+
+
+
+
+
+

@@ -133,7 +133,6 @@ class buildings(db.Model):
         self.address=street
         self.city=formatName(city)
         self.available = True
-        self.button=""
     def set_availability(self,availability):
         self.available = availability
 
@@ -149,6 +148,7 @@ class zones(db.Model):
     state = db.Column(db.String(100))
     lat = db.Column(db.String(100))
     lon = db.Column(db.String(100))
+    dashboard = db.Column(db.String(100))
     __table_args__ = (
         db.UniqueConstraint(city, state),
         db.UniqueConstraint(lat, lon),
@@ -159,6 +159,7 @@ class zones(db.Model):
         self.state=formatName(state)
         self.lon=marker['lon']
         self.lat = marker['lat']
+        self.dashboard=""
     def serialize(self):
         return {"city": self.city,"lat": self.lat,"lon": self.lon}
     def set_lon(self,lon):
@@ -252,17 +253,17 @@ class zoneToBuildingAssociation(db.Model):
         self.id_zone = id_zone
 
 class weatherReport(db.Model):
-    id_building=db.Column('ID_BUILDING', db.Integer,primary_key=True)
+    id_zone=db.Column('ID_ZONE', db.Integer,primary_key=True)
     temperature= db.Column(db.String(20),primary_key=True)
     humidity= db.Column(db.String(20),primary_key=True)
     timestamp = db.Column(db.DateTime(timezone=True), nullable=True, default=datetime.datetime.utcnow,primary_key=True)
-    def __init__(self, id_building,temperature,humidity,timestamp):
+    def __init__(self, id_zone,temperature,humidity,timestamp):
         self.timestamp = timestamp
         self.temperature = temperature
         self.humidity = humidity
-        self.id_building = id_building
+        self.id_zone = id_zone
     def serialize(self):
-        return {"id_room": self.id_building,
+        return {"id_zone": self.id_id_zone,
                 "humidity":self.humidity,
                 "temperature":self.temperature,
                 "timestamp":self.timestamp
