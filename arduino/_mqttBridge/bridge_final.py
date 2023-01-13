@@ -7,6 +7,8 @@ import configparser
 
 import paho.mqtt.client as mqtt
 
+import time
+
 class Bridge():
 
 	def __init__(self):
@@ -15,8 +17,8 @@ class Bridge():
 		self.setupSerial()
 		self.setupMQTT()
   
-		self.building_id = '22'
-		self.room_id = '9'
+		self.building_id = '1'
+		self.room_id = '1'
 		
 
 	def setupSerial(self):
@@ -67,15 +69,87 @@ class Bridge():
 
 		# Subscribing in on_connect() means that if we lose the connection and
 		# reconnect then subscriptions will be renewed.
-		self.clientMQTT.subscribe("mylight")
+		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/actuators/color' % (self.building_id, self.room_id))
+		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/actuators/brightness' % (self.building_id, self.room_id))
+		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/actuators/temperature' % (self.building_id, self.room_id))
+		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/status_request' % (self.building_id, self.room_id))
+    
 
 
 	# The callback for when a PUBLISH message is received from the server.
 	def on_message(self, client, userdata, msg):
 		print(msg.topic + " " + str(msg.payload))
-		if msg.topic=='mylight':
-			self.ser.write (msg.payload)
+		if msg.topic=='smartoffice/building_%s/room_%s/actuators/color' % (self.building_id, self.room_id):
+      
+			if(msg.payload.decode("utf-8") == 'RED'):
+				
+				self.ser.write(b'\x01'b'\x01'b'\xff')
+    
+			if(msg.payload.decode("utf-8") == 'ORANGE'):
+				
+				self.ser.write(b'\x01'b'\x02'b'\xff')
+    
+			if(msg.payload.decode("utf-8") == 'YELLOW'):
+				
+				self.ser.write(b'\x01'b'\x03'b'\xff')
+    
+			if(msg.payload.decode("utf-8") == 'GREEN'):
+				
+				self.ser.write(b'\x01'b'\x04'b'\xff')
+    
+			if(msg.payload.decode("utf-8") == 'TEAL'):
+				
+				self.ser.write(b'\x01'b'\x05'b'\xff')
+    
+			if(msg.payload.decode("utf-8") == 'BLUE'):
+				
+				self.ser.write(b'\x01'b'\x06'b'\xff')
+    
+			if(msg.payload.decode("utf-8") == 'INDIGO'):
+				
+				self.ser.write(b'\x01'b'\x07'b'\xff')
 
+			if(msg.payload.decode("utf-8") == 'VIOLET'):
+				
+				self.ser.write(b'\x01'b'\x08'b'\xff')
+    
+			if(msg.payload.decode("utf-8") == 'RAINBOW'):
+				
+				self.ser.write(b'\x01'b'\x09'b'\xff')
+    
+			time.sleep(0.5)
+    
+		if msg.topic=='smartoffice/building_%s/room_%s/actuators/brightness' % (self.building_id, self.room_id):
+			if(msg.payload.decode("utf-8") == 'LOW'):
+				
+				self.ser.write(b'\x02'b'\x00'b'\xff')
+    
+			if(msg.payload.decode("utf-8") == 'MEDIUM'):
+				
+				self.ser.write(b'\x02'b'\x01'b'\xff')
+    
+			if(msg.payload.decode("utf-8") == 'HIGH'):
+				
+				self.ser.write(b'\x02'b'\x02'b'\xff')
+			time.sleep(0.5)
+
+		if msg.topic=='smartoffice/building_%s/room_%s/actuators/temperature' % (self.building_id, self.room_id):
+				
+			self.ser.write(b'\x03'+ (int(msg.payload.decode("utf-8"))).to_bytes(1, 'big') + b'\xff') 
+			time.sleep(0.5)
+   
+		if msg.topic=='smartoffice/building_%s/room_%s/status_request' % (self.building_id, self.room_id):
+      
+			print('Sono dentro status request')
+				
+			if(msg.payload.decode("utf-8") == '0'):
+				
+				self.ser.write(b'\x00'b'\x00'b'\xff')
+    
+			if(msg.payload.decode("utf-8") == '1'):
+				
+				self.ser.write(b'\x00'b'\x01'b'\xff')
+			time.sleep(0.5)
 
 
 	def loop(self):
@@ -110,7 +184,7 @@ class Bridge():
 		sensor_name = ''
 		match sensor_id:
 			case 1: sensor_name = 'light_sensor'
-			case 2: sensor_name = 'humidity_sensor'
+			case 2: sensor_name = 'noise_sensor'
    
 		numval = int.from_bytes(self.inbuffer[2], byteorder="little")
 		data = b''

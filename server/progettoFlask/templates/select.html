@@ -3,13 +3,13 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Selezione edificio</title>  
+        <title> Dashboard schifosa</title>  
     </head>
     <body></br></br></br></br></br>
         <div align="center">
           <div align="center" class="border">
              <div class="header">
-                <h1 class="word">Seleziona l'edificio</h1>
+                <h1 class="word">Registrazione</h1>
              </div></br></br></br>
             <h2 class="word">
                 <form action="{{ url_for('occupyRoom') }}" method="post">
@@ -22,6 +22,7 @@
 		    <input type="submit" class="btn" value="Occupa"></br>
                 </form>
             </h2>
+<<<<<<< HEAD
             <form action="{{ url_for('logout') }}" method="post">
             <p class="bottom">Aggiorna dati utente<a class="bottom" href="{{url_for('updateuserdata')}}">Clicca qui</a></p>
             
@@ -30,6 +31,10 @@
                     <input type="submit" class="btn" value="Logout"></br></br>
                 </form>
 	 </div>
+=======
+            <p class="bottom">Hai già un account?  <a class="bottom" href="{{url_for('login')}}">Accedi qui</a></p>
+          </div>
+>>>>>>> felicia-code
         </div>
     </body>
 </html>

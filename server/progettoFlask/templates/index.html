@@ -105,18 +105,21 @@
 		</form>
              </div></br></br></br>
             <h2 class="word">
-		<form action="{{ url_for('freeRoom') }}" method="post">
-                  <div>Libera la stanza</div>
-                    <input type="submit" class="btn" value="freeroom"></br></br>
-                </form>
                 <form action="{{ url_for('logout') }}" method="post">
                   <div>logout</div>
                     <input type="submit" class="btn" value="Logout"></br></br>
                 </form>
+<<<<<<< HEAD
 		
             <p class="bottom">Aggiorna dati utente<a class="bottom" href="{{url_for('updateuserdata')}}">Clicca qui</a></p>
             
             <p class="bottom">Aggiorna le credenziali<a class="bottom" href="{{url_for('updatecredentials')}}">Clicca qui</a></p>
+=======
+		<form action="{{ url_for('freeRoom') }}" method="post">
+                  <div>logout</div>
+                    <input type="submit" class="btn" value="freeroom"></br></br>
+                </form>
+>>>>>>> felicia-code
             </h2>
           </div>
         </div>
