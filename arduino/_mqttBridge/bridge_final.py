@@ -60,6 +60,7 @@ class Bridge():
 			self.config.getint("MQTT","Port", fallback= 1883),
 			60)
 
+		time.sleep(5)
 		self.clientMQTT.loop_start()
 
 
@@ -79,77 +80,105 @@ class Bridge():
 	# The callback for when a PUBLISH message is received from the server.
 	def on_message(self, client, userdata, msg):
 		print(msg.topic + " " + str(msg.payload))
-		if msg.topic=='smartoffice/building_%s/room_%s/actuators/color' % (self.building_id, self.room_id):
-      
-			if(msg.payload.decode("utf-8") == 'RED'):
-				
-				self.ser.write(b'\x01'b'\x01'b'\xff')
-    
-			if(msg.payload.decode("utf-8") == 'ORANGE'):
-				
-				self.ser.write(b'\x01'b'\x02'b'\xff')
-    
-			if(msg.payload.decode("utf-8") == 'YELLOW'):
-				
-				self.ser.write(b'\x01'b'\x03'b'\xff')
-    
-			if(msg.payload.decode("utf-8") == 'GREEN'):
-				
-				self.ser.write(b'\x01'b'\x04'b'\xff')
-    
-			if(msg.payload.decode("utf-8") == 'TEAL'):
-				
-				self.ser.write(b'\x01'b'\x05'b'\xff')
-    
-			if(msg.payload.decode("utf-8") == 'BLUE'):
-				
-				self.ser.write(b'\x01'b'\x06'b'\xff')
-    
-			if(msg.payload.decode("utf-8") == 'INDIGO'):
-				
-				self.ser.write(b'\x01'b'\x07'b'\xff')
-
-			if(msg.payload.decode("utf-8") == 'VIOLET'):
-				
-				self.ser.write(b'\x01'b'\x08'b'\xff')
-    
-			if(msg.payload.decode("utf-8") == 'RAINBOW'):
-				
-				self.ser.write(b'\x01'b'\x09'b'\xff')
-    
-			time.sleep(0.5)
-    
-		if msg.topic=='smartoffice/building_%s/room_%s/actuators/brightness' % (self.building_id, self.room_id):
-			if(msg.payload.decode("utf-8") == 'LOW'):
-				
-				self.ser.write(b'\x02'b'\x00'b'\xff')
-    
-			if(msg.payload.decode("utf-8") == 'MEDIUM'):
-				
-				self.ser.write(b'\x02'b'\x01'b'\xff')
-    
-			if(msg.payload.decode("utf-8") == 'HIGH'):
-				
-				self.ser.write(b'\x02'b'\x02'b'\xff')
-			time.sleep(0.5)
-
 		if msg.topic=='smartoffice/building_%s/room_%s/actuators/temperature' % (self.building_id, self.room_id):
 				
 			self.ser.write(b'\x03'+ (int(msg.payload.decode("utf-8"))).to_bytes(1, 'big') + b'\xff') 
-			time.sleep(0.5)
+
+			time.sleep(1)
    
 		if msg.topic=='smartoffice/building_%s/room_%s/status_request' % (self.building_id, self.room_id):
       
 			print('Sono dentro status request')
 				
-			if(msg.payload.decode("utf-8") == '0'):
+			if(msg.payload.decode("utf-8") == 'closed'):
 				
 				self.ser.write(b'\x00'b'\x00'b'\xff')
+				time.sleep(1)
     
-			if(msg.payload.decode("utf-8") == '1'):
+			if(msg.payload.decode("utf-8") == 'waiting'):
 				
 				self.ser.write(b'\x00'b'\x01'b'\xff')
-			time.sleep(0.5)
+				time.sleep(1)
+
+  
+		if msg.topic=='smartoffice/building_%s/room_%s/actuators/color' % (self.building_id, self.room_id):
+
+      
+			if(msg.payload.decode("utf-8") == 'RED'):
+				
+				self.ser.write(b'\x01'b'\x01'b'\xff')
+				time.sleep(1)
+    
+			if(msg.payload.decode("utf-8") == 'ORANGE'):
+				
+				self.ser.write(b'\x01'b'\x02'b'\xff')
+				time.sleep(1)
+    
+			if(msg.payload.decode("utf-8") == 'YELLOW'):
+				
+				self.ser.write(b'\x01'b'\x03'b'\xff')
+				time.sleep(1)
+    
+			if(msg.payload.decode("utf-8") == 'GREEN'):
+				
+				self.ser.write(b'\x01'b'\x04'b'\xff')
+				time.sleep(1)
+    
+			if(msg.payload.decode("utf-8") == 'TEAL'):
+				
+				self.ser.write(b'\x01'b'\x05'b'\xff')
+				time.sleep(1)
+    
+			if(msg.payload.decode("utf-8") == 'BLUE'):
+				
+				self.ser.write(b'\x01'b'\x06'b'\xff')
+    
+				time.sleep(1)
+    
+			if(msg.payload.decode("utf-8") == 'INDIGO'):
+				
+				self.ser.write(b'\x01'b'\x07'b'\xff')
+    
+				time.sleep(1)
+
+			if(msg.payload.decode("utf-8") == 'VIOLET'):
+				
+				self.ser.write(b'\x01'b'\x08'b'\xff')
+
+				time.sleep(1)
+    
+			if(msg.payload.decode("utf-8") == 'RAINBOW'):
+				
+				self.ser.write(b'\x01'b'\x09'b'\xff')
+    
+				time.sleep(1)
+    
+			if(msg.payload.decode("utf-8") == 'NONE'):
+				
+				self.ser.write(b'\x01'b'\x00'b'\xff')
+    
+			time.sleep(1)
+    
+		if msg.topic=='smartoffice/building_%s/room_%s/actuators/brightness' % (self.building_id, self.room_id):
+      
+			if(msg.payload.decode("utf-8") == 'LOW'):
+				
+				self.ser.write(b'\x02'b'\x00'b'\xff')
+    
+				time.sleep(1)
+    
+			if(msg.payload.decode("utf-8") == 'MEDIUM'):
+				
+				self.ser.write(b'\x02'b'\x01'b'\xff')
+    			
+				time.sleep(1)
+    
+			if(msg.payload.decode("utf-8") == 'HIGH'):
+				
+				self.ser.write(b'\x02'b'\x02'b'\xff')
+    
+				time.sleep(1)
+
 
 
 	def loop(self):

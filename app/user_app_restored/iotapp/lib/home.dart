@@ -30,7 +30,7 @@ Future<int> mqttConnect() async {
   client.connectTimeoutPeriod = 2000; // milliseconds
 
   /// Add the unsolicited disconnection callback
-  client.onDisconnected = onDisconnected;
+  //Aclient.onDisconnected = onDisconnected;
 
   /// Add the successful connection callback
   client.onConnected = onConnected;
