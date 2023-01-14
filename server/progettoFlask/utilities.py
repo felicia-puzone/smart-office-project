@@ -1,5 +1,10 @@
 from math import radians, cos, sin, asin, sqrt
 from datetime import datetime
+months = ('January','February','March','April','May','June',\
+'July','August','September','October','November','December')
+colors = ('NONE','RED','ORANGE','YELLOW','GREEN','TEAL','BLUE','INDIGO','VIOLET','RAINBOW')
+brightness_values = ('LOW','MEDIUM','HIGH')
+
 
 def formatName(name):
     return name.title()
@@ -19,7 +24,16 @@ def buildJsonList(list):
         new_list.append(element.serialize())
 <<<<<<< HEAD
     return new_list
-
+def buildSensorList(list):
+    new_list=[]
+    for element in list:
+        new_list.append(element.value)
+    return new_list
+def buildTimeStampList(list):
+    new_list=[]
+    for element in list:
+        new_list.append(element.timestamp)
+    return new_list
 def translateLEDValue(value):
     if value == "RED":
         return 1

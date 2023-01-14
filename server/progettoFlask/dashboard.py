@@ -26,7 +26,7 @@ def chart1():
     A academic study of the number of apples, oranges and bananas in the cities of
     San Francisco and Montreal would probably not come up with this chart.
     """
-    return render_template('notdash2.html', graphJSON=graphJSON, header=header,description=description)
+    return render_template('dashboard.html', graphJSON=graphJSON, header=header,description=description)
 
 @app.route('/chart2')
 def chart2():
@@ -44,12 +44,12 @@ def chart2():
     The rumor that vegetarians are having a hard time in London and Madrid can probably not be
     explained by this chart.
     """
-    return render_template('notdash2.html', graphJSON=graphJSON, header=header,description=description)
+    return render_template('dashboard.html', graphJSON=graphJSON, header=header,description=description)
 
 @app.route('/chart3')
 def line():
     df = px.data.gapminder().query("country=='Canada'")
-    df = {"year":[1964,1965,1966],"lifeExp":[1960,240,1965]}
+    df = {"year":[1964,240,1966],"lifeExp":[1960,240,1965]}
     fig = px.line(df, x="year", y="lifeExp", title='Life expectancy in Canada')
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     header = "Vegetables in Europe"
@@ -57,6 +57,6 @@ def line():
         The rumor that vegetarians are having a hard time in London and Madrid can probably not be
         explained by this chart.
         """
-    return render_template('notdash2.html', graphJSON=graphJSON, header=header, description=description)
+    return render_template('dashboard.html', graphJSON=graphJSON, header=header, description=description)
 if __name__ =="__main__":
     app.run(host='0.0.0.0', port=5001)

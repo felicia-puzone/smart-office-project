@@ -73,28 +73,22 @@
 			</br></br>
 			<p>Intensità luce:</p>
 			<select id="brightness" name="brightness"  required>
-			{% if digitalTwin.led_brightness == 0 %}
-			<option value=0 selected>Spenta</option>
+			{% if digitalTwin.led_brightness == 'LOW' %}
+			<option value=0 selected>Bassa</option>
 			{%else%}
-			<option value=0>Spenta</option>
+			<option value=0>Bassa</option>
 			{% endif %}
 
-			{%  if digitalTwin.led_brightness == 1 %}
-			<option value=1 selected>Bassa</option>
-			{%else%}			
-			<option value=1>Bassa</option>
+			{%  if digitalTwin.led_brightness == 'MEDIUM'%}
+			<option value=1 selected>Media</option>
+			{%else%}
+			<option value=1>Media</option>
 			{% endif %}
 
-			{%  if digitalTwin.led_brightness == 2%}
-			<option value=2 selected>Media</option>
+			{%  if digitalTwin.led_brightness == 'HIGH'%}
+				<option value=2 selected>Forte</option>
 			{%else%}
-			<option value=2>Media</option>
-			{% endif %}
-
-			{%  if digitalTwin.led_brightness == 3%}
-				<option value=3 selected>Forte</option>
-			{%else%}
-				<option value=3>Forte</option>
+				<option value=2>Forte</option>
 			{% endif %}
 
 			</select>
@@ -109,17 +103,7 @@
                   <div>logout</div>
                     <input type="submit" class="btn" value="Logout"></br></br>
                 </form>
-<<<<<<< HEAD
-		
-            <p class="bottom">Aggiorna dati utente<a class="bottom" href="{{url_for('updateuserdata')}}">Clicca qui</a></p>
-            
-            <p class="bottom">Aggiorna le credenziali<a class="bottom" href="{{url_for('updatecredentials')}}">Clicca qui</a></p>
-=======
-		<form action="{{ url_for('freeRoom') }}" method="post">
-                  <div>logout</div>
-                    <input type="submit" class="btn" value="freeroom"></br></br>
-                </form>
->>>>>>> felicia-code
+
             </h2>
           </div>
         </div>

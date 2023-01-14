@@ -1,7 +1,7 @@
 from tkinter.ttk import Label
 
 from flask import url_for
-from flask_admin import BaseView, expose, AdminIndexView
+from flask_admin import BaseView, expose, AdminIndexView, Admin
 from flask_admin.contrib import sqla
 from flask_admin.model.template import ViewRowAction, EditRowAction, DeleteRowAction
 from flask_login import current_user, login_required
@@ -15,16 +15,34 @@ from models import db, buildings, User, professions, zones, sessionStates, rooms
 from werkzeug.routing import ValidationError
 
 from mqtthandler import mqtt
-from utilities import formatName, createABuildingtupleList
+from queries import getFreeBuildings
+from utilities import formatName, createABuildingtupleList, buildJsonList
+
 
 class ZoneAdmin(sqla.ModelView):
     can_edit = False
-    column_list = ('city', 'state')
+    column_list = ('city', 'state','dashboard')
     column_exclude_list = [ 'lat', 'lon']
     form_columns = (
         'city',
         'state',
     )
+    def _format_pay_now(view, context, model, name):
+        # render a form with a submit button for student, include a hidden field for the student id
+        # note how checkout_view method is exposed as a route below
+        checkout_url = url_for('dashboardzone')
+
+        _html = '''
+            <form action="{checkout_url}" method="POST">
+                <input id="zone_id" name="zone_id"  type="hidden" value="{zone_id}">
+                <button type='submit'>Dashboard</button>
+            </form
+        '''.format(checkout_url=checkout_url, zone_id=model.id_zone)
+
+        return Markup(_html)
+    column_formatters = {
+        'dashboard': _format_pay_now
+    }
     def on_model_delete(self, zone):
         building_associations = db.session.query(zoneToBuildingAssociation).filter_by(id_zone=zone.id_zone).first()
         if building_associations is not None:
@@ -128,7 +146,7 @@ class BuildingAdmin(sqla.ModelView):
     def _format_pay_now(view, context, model, name):
         # render a form with a submit button for student, include a hidden field for the student id
         # note how checkout_view method is exposed as a route below
-        checkout_url = url_for('dashboard')
+        checkout_url = url_for('dashboardbuilding')
 
         _html = '''
             <form action="{checkout_url}" method="POST">
@@ -228,11 +246,6 @@ class BuildingAdmin(sqla.ModelView):
 # DONE inserimento stanza/digitaltwin
 
 
-class MyView(BaseView):
-    @expose('/')
-    @login_required
-    def index(self):
-        return self.render('admin/index.html')
 
 
 class MyHomeView(AdminIndexView):
@@ -240,21 +253,7 @@ class MyHomeView(AdminIndexView):
     @login_required
     def index(self):
         arg1 = 'Hello'
-        return self.render('admin/index.html')
-
-
-
-#DONE testing inserimento, eliminazione e modifica
-#creazione edifici
-#grant permessi admin
-#DONE gestione del digitaltwin per l'eliminazione delle stanze
-#all'eliminazione togliamo pure i digital twin
-#si blocca se ci sono sessioni attive
-#alla creazione non viene creato nessun digital twin
-#per la creazione possiamo assegnare una città già esistente o di poter inserire
-#una città nuova
-#modifica dell'indirizzo, con aggiornamento dei dati e controllo validità dell'indirizzo
-
+        return self.render('admin/index.html',buildings=buildJsonList(getFreeBuildings()), msg='')
 
 
 
@@ -275,14 +274,14 @@ class RoomAdmin(sqla.ModelView):
     def _format_pay_now(view, context, model, name):
         # render a form with a submit button for student, include a hidden field for the student id
         # note how checkout_view method is exposed as a route below
-        checkout_url = url_for('dashboard')
+        checkout_url = url_for('dashboardroom')
 
         _html = '''
             <form action="{checkout_url}" method="POST">
-                <input id="building_id" name="building_id"  type="hidden" value="{building_id}">
+                <input id="id_room" name="id_room"  type="hidden" value="{id_room}">
                 <button type='submit'>Dashboard</button>
             </form
-        '''.format(checkout_url=checkout_url, building_id=model.id_building)
+        '''.format(checkout_url=checkout_url, id_room=model.id_room)
 
         return Markup(_html)
 
