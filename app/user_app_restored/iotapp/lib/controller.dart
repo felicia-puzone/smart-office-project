@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'models.dart';
 
-const IPSERVER = 'http://192.168.23.91:5000/';
+const IPSERVER = 'http://192.168.53.227:5000/';
 
 class GlobalValues {
   static UserSession? userSession;
@@ -63,6 +63,7 @@ Future<String> fetchUserSession(user, pwd) async {
       return 'FAILED-LOGIN';
     }
   } catch (e) {
+    print(e);
     return 'ERRORE-RETE';
   }
 }

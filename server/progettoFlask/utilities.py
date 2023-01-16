@@ -22,7 +22,6 @@ def buildJsonList(list):
     new_list=[]
     for element in list:
         new_list.append(element.serialize())
-<<<<<<< HEAD
     return new_list
 def buildSensorList(list):
     new_list=[]
@@ -77,6 +76,3 @@ def haversine(lon1, lat1, lon2, lat2):
     # Radius of earth in kilometers is 6371
     km = 6371* c
     return km
-=======
-    return new_list
->>>>>>> felicia-code
