@@ -544,7 +544,7 @@ def renderHomeApp(id_room):
     id_building = db.session.query(rooms).filter_by(id_room=digitalTwin.id_room).first().id_building
     weather_data = weather_report(id_room)
     return jsonify(logged_in=True, outcome="Active", digitalTwin=digitalTwin.serializedActuators(),
-                   id_edificio=id_building, id_room=id_room, username=current_user.get_username())#,weather=weather_data)
+                   id_edificio=id_building, id_room=id_room, username=current_user.get_username(),weather=weather_data)
 
 def renderSelectionWeb():
     return render_template('newselect.html', buildings=buildJsonList(getFreeBuildings()), msg='')
@@ -557,7 +557,7 @@ def renderHomeAppOnAuth(id_room,token):
     id_building = db.session.query(rooms).filter_by(id_room=digitalTwin.id_room).first().id_building
     weather_data = weather_report(id_room)
     return jsonify(token=token, logged_in=True, outcome="Active", digitalTwin=digitalTwin.serializedActuators(),
-                   id_edificio=id_building, id_room=digitalTwin.id_room, username=current_user.get_username())#''',weather=weather_data'''
+                   id_edificio=id_building, id_room=digitalTwin.id_room, username=current_user.get_username(),weather=weather_data)
 
 def renderSelectionAppOnAuth(token):
     return jsonify(token=token, logged_in=True, outcome="Login",username=current_user.get_username(),

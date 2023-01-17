@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'register.dart';
 import 'controller.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'home.dart';
-import 'models.dart';
 import 'package:iotapp/rooms_map.dart';
 
 final userTextController = TextEditingController();
@@ -22,17 +18,7 @@ class _MyLoginState extends State<MyLogin> {
 
   @override
   void initState() {
-    print('INIT CALLED');
-
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    //userTextController.dispose();
-    //pwdTextController.dispose();
-    //super.dispose();
   }
 
   @override

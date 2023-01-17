@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'login.dart';
 import 'register.dart';
 import 'home.dart';
+import 'rooms_map.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -11,6 +12,7 @@ void main() {
       'register': (context) => MyRegister(),
       'login': (context) => MyLogin(),
       'home': (context) => UserHome(),
+      'map': (context) => Mappa(),
     },
   ));
 }

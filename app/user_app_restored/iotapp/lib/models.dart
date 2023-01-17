@@ -9,18 +9,10 @@ class Credentials {
 class UserSession {
   late int? id_edificio;
   late int? id_room;
+  late String? city_name;
   late String username;
 
-  //late DigitalTwin? digitalTwin;
-
-  //List<Building> edificiList;
-
-  UserSession({
-    this.id_edificio,
-    this.id_room,
-    required this.username,
-    //required this.edificiList
-  });
+  UserSession({this.id_edificio, this.id_room, required this.username});
 
   factory UserSession.fromJson(dynamic json) {
     return UserSession(
@@ -61,5 +53,27 @@ class DigitalTwin {
         room_color: json?['room_color'],
         room_brightness: json?['room_brightness'],
         room_temperature: json?['room_temperature']);
+  }
+}
+
+class WeatherInfo {
+  late String? city_name;
+  late String ext_temp;
+  late String ext_humidity;
+
+  WeatherInfo(
+      {this.city_name, required this.ext_temp, required this.ext_humidity});
+
+  void set cityName(String cityName) {
+    this.city_name = cityName;
+  }
+
+  factory WeatherInfo.fromJson(dynamic json) {
+    json = json['weather'];
+    return WeatherInfo(
+      city_name: json?['city_name'],
+      ext_temp: json['temperature'],
+      ext_humidity: json['humidity'],
+    );
   }
 }

@@ -3,21 +3,17 @@ import 'package:iotapp/login.dart';
 import 'models.dart';
 import 'controller.dart';
 import 'rooms_map.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'dart:async';
 import 'dart:io';
 import 'change_values.dart';
-import 'login.dart';
-
-final MqttServerClient client =
-    MqttServerClient('broker.hivemq.com', 'iot-app');
 
 ValueNotifier<String> lightSensorValue = ValueNotifier<String>('0');
 ValueNotifier<String> noiseSensorValue = ValueNotifier<String>('0');
+
+final MqttServerClient client =
+    MqttServerClient('broker.hivemq.com', 'iot-app');
 
 Future<int> mqttConnect() async {
   /// Set logging on if needed, defaults to off
@@ -129,17 +125,6 @@ Future<int> mqttConnect() async {
   /// Lets publish to our topic
   /// Use the payload builder rather than a raw buffer
   /// Our known topic to publish to
-  const pubTopic = 'fromFlutter';
-  final builder = MqttClientPayloadBuilder();
-  builder.addString('0');
-
-  /// Subscribe to it
-  print('EXAMPLE::Subscribing to the Dart/Mqtt_client/testtopic topic');
-  client.subscribe(pubTopic, MqttQos.exactlyOnce);
-
-  /// Publish it
-  print('EXAMPLE::Publishing our topic');
-  client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
 
   /// Ok, we will now sleep a while, in this gap you will see ping request/response
   /// messages being exchanged by the keep alive mechanism.
@@ -177,7 +162,7 @@ class _UserHomeState extends State<UserHome> {
     try {
       mqttConnect();
     } catch (e) {
-      print('ERROREEEE: $e');
+      print('Errore connessione MQTT: $e');
     }
   }
 
@@ -237,10 +222,44 @@ class _UserHomeState extends State<UserHome> {
                                         fontWeight: FontWeight.w700),
                                   ),
                                   Icon(Icons.sunny),
-                                  Text(
-                                    '0',
+                                ]),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Temperatura esterna',
                                     style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  Text(
+                                    GlobalValues.weatherInfo.ext_temp + '°',
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700),
+                                  )
+                                ]),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Umidità esterna',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  Text(
+                                    GlobalValues.weatherInfo.ext_humidity,
+                                    style: const TextStyle(
+                                        fontSize: 16,
                                         fontWeight: FontWeight.w700),
                                   )
                                 ]),
@@ -253,16 +272,16 @@ class _UserHomeState extends State<UserHome> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Luogo',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w700),
                                   ),
-                                  Icon(Icons.pin_drop_sharp),
+                                  const Icon(Icons.pin_drop_sharp),
                                   Text(
                                     '0',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w700),
                                   )
@@ -281,9 +300,9 @@ class _UserHomeState extends State<UserHome> {
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
+                                const Text(
                                   'Luminosità rilevata',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w700),
                                 ),
@@ -291,7 +310,7 @@ class _UserHomeState extends State<UserHome> {
                                   valueListenable: lightSensorValue,
                                   builder: (context, value, child) {
                                     return Text(value.toString(),
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.w700));
                                   },
@@ -321,7 +340,7 @@ class _UserHomeState extends State<UserHome> {
                                   valueListenable: noiseSensorValue,
                                   builder: (context, value, child) {
                                     return Text(value.toString(),
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.w700));
                                   },
@@ -345,7 +364,7 @@ class _UserHomeState extends State<UserHome> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
+                                    const Text(
                                       'Colore luce',
                                       style: TextStyle(
                                           fontSize: 20,
@@ -357,7 +376,7 @@ class _UserHomeState extends State<UserHome> {
                                         return Text(
                                             digitalTwinValue.value.room_color
                                                 .toString(),
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w700));
                                       },

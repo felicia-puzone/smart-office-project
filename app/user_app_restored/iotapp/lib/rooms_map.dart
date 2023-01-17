@@ -1,25 +1,16 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:iotapp/home.dart';
 import 'package:iotapp/login.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
 import 'controller.dart';
 
 final snackBar = SnackBar(
   content: const Text('Logged out!'),
-  action: SnackBarAction(
-    label: 'Undo',
-    onPressed: () {
-      // Some code to undo the change.
-    },
-  ),
 );
 
 class BuildingMarker extends StatefulWidget {
@@ -53,21 +44,18 @@ class _BuildingMarkerState extends State<BuildingMarker> {
             context: context,
             builder: (BuildContext context) => AlertDialog(
               title: Container(
-                  child: Text('Nome edificio'), alignment: Alignment.center),
+                  child: Text('Edificio: ' + widget.idBuilding.toString()),
+                  alignment: Alignment.center),
               content: Container(
                   height: 70,
                   child: Column(
-                    children: [
-                      Text(widget.city + ' ' + widget.address),
-                      Text('Numero stanze disponibili: ' + '..')
-                    ],
+                    children: [Text(widget.city + ' ' + widget.address)],
                   )),
               actions: <Widget>[
                 Row(children: [
                   Expanded(
                       child: Container(
                           height: 50,
-                          //padding: EdgeInsets.only(top: 35, bottom: 35),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 textStyle: const TextStyle(
@@ -86,7 +74,6 @@ class _BuildingMarkerState extends State<BuildingMarker> {
                                         builder: (context) =>
                                             const UserHome()));
                             },
-                            /*prenotazione*/
                             child: const Text('Prenota'),
                           ))),
                 ]),
@@ -95,7 +82,6 @@ class _BuildingMarkerState extends State<BuildingMarker> {
                     Expanded(
                         child: Container(
                             height: 50,
-                            //padding: EdgeInsets.only(top: 35, bottom: 35),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   textStyle: const TextStyle(
@@ -104,7 +90,7 @@ class _BuildingMarkerState extends State<BuildingMarker> {
                                   ),
                                   backgroundColor: Colors.grey),
                               onPressed: () => Navigator.pop(context),
-                              /*prenotazione*/
+                              
                               child: const Text('Annulla'),
                             )))
                   ],
