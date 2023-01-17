@@ -203,13 +203,13 @@ class digitalTwinFeed(db.Model):
                 "noise_sensor": self.noise_sensor}
     def serializedActuators(self):
         return {"room_color": self.led_actuator,
-                "room_temperature": str(self.temperature_actuator),
-                "room_brightness": str(self.led_brightness)}
+                "room_temperature": int(self.temperature_actuator),
+                "room_brightness": self.led_brightness}
     def set_to_sleep_mode(self):
         self.temperature_actuator = 20
         self.led_brightness = "LOW"
         self.led_actuator = "NONE"
-#TODO testing
+#DONE Testing
 class sensorFeeds(db.Model):
     id_room = db.Column('ID_ROOM', db.Integer,primary_key=True)
     type_of_sensor= db.Column(db.String(20),primary_key=True)
@@ -287,6 +287,25 @@ class dailyconsumptionReport(db.Model):
                 "temperature": self.temperature,
                 "timestamp": self.timestamp
                 }
+class session_consumption_report(db.Model):
+    id_session = db.Column('ID_BUILDING', db.Integer, primary_key=True)
+    temperature = db.Column(db.String(20), primary_key=True)
+    light = db.Column(db.String(20), primary_key=True)
+    timestamp = db.Column(db.DateTime(timezone=True), nullable=True, default=datetime.datetime.utcnow, primary_key=True)
+
+    def __init__(self, id_building, temperature, light, timestamp):
+        self.timestamp = timestamp
+        self.temperature = temperature
+        self.light = light
+        self.id_building = id_building
+
+    def serialize(self):
+        return {"id_room": self.id_building,
+                "light": self.light,
+                "temperature": self.temperature,
+                "timestamp": self.timestamp
+                }
+#class monthlyConsumption()
 #class actuatorReport(db.Model):
 
 
