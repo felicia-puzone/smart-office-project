@@ -25,7 +25,9 @@ def handle_message_mqtt(client,userdata,message):
         print("ho ricevuto dati dall'edificio:"+str(identifiers[0]))
         print("ho ricevuto dati dalla stanza:"+str(identifiers[1]))
         print(sensor[4])
+
         value=data.get('payload')
+        print("con valore:"+str(value))
         updateDigitalTwinSensors(identifiers[1],sensor[4],value)
         #sendDataToAdafruitFeed(data.get)
 
@@ -37,7 +39,9 @@ def updateDigitalTwinSensors(id_room,sensor,value):
             digitalTwin=db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
             timestamp=datetime.datetime.utcnow()
             sensorFeed = sensorFeeds(digitalTwin.id_room,sensor,value,timestamp)
-            if sensor == "light":
+            print("Ho creato l'oggetto!")
+            if sensor == "light_sensor":
+                print("Sto per scrivere!")
                 digitalTwin.light_sensor=value
                 db.session.add(sensorFeed)
                 db.session.commit()

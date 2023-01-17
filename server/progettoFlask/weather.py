@@ -4,11 +4,12 @@ from time import strftime
 
 from sqlalchemy import extract
 
-from models import db, weatherReport, zoneToBuildingAssociation, rooms, zones
+from models import db, weatherReport, zoneToBuildingAssociation, rooms, zones, buildings
 
 
 def weather_report(id_room):
     id_building = db.session.query(rooms).filter_by(id_room=id_room).first().id_building
+    building_name = db.session.query(buildings).filter_by(id_building=id_building).first().city
     id_zone =  db.session.query(zoneToBuildingAssociation).filter_by(id_building=id_building).first().id_zone
     zone = db.session.query(zones).filter_by(id_zone=id_zone).first()
     lon = zone.lon
@@ -38,4 +39,4 @@ def weather_report(id_room):
             return {"temperature":results["main"]["temp"],"humidity":results["main"]["humidity"]}
     else:
         print("printo dati del DB!")
-        return {"temperature":report.temperature,"humidity":report.humidity}
+        return {"temperature":report.temperature,"humidity":report.humidity,"city_name":building_name}

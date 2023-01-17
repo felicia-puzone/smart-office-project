@@ -323,3 +323,10 @@ def buildZoneWeatherHumidityGraph(weatherReport_feed):
     df = {"time": list_times, "values": list_values}
     fig = px.line(df, x="time", y="values", title='Umidità nella zona')
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+'''def createRoomSessionConsumptionReport(id_room,id_session):
+    actuator_feed = db.session.query(actuatorFeeds).filter_by(id_session=id_session).order_by(actuatorFeeds.timestamp.desc()).all()
+    id_building =
+    if actuator_feed:
+        session_data = db.session.query(weatherReport).filter(extract('day', weatherReport.timestamp) == timestamp.day)\
+            .filter(extract('month', weatherReport.timestamp)==timestamp.month).filter(extract('year', weatherReport.timestamp)==timestamp.year)\
+            .filter(extract('hour', weatherReport.timestamp)>(timestamp.hour-3)).first()'''
