@@ -158,7 +158,7 @@ def register():
             job = db.session.query(professions).filter_by(id_profession=profession).first()
             if account:
                 msg = 'Utente esistente!'
-            if job is None:
+            elif job is None:
                 msg = 'Professione non esistente!'
             elif not re.match(r'[A-Za-z0-9]+',username):
                 msg='L\'username deve solo contenere lettere e numeri!'
@@ -505,7 +505,7 @@ def prepareRoom(id_user,id_session,digitalTwin,id_building):
     brightness = data['user_light']
     temperature = data['user_temp']
     timestamp = datetime.datetime.utcnow()
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(digitalTwin.id_room) + '/status_request', "waiting")
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(digitalTwin.id_room) + '/status_request', "waiting",retain=True)
     registerAction('color', led_color, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
     registerAction('brightness', brightness, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
     registerAction('temperature', temperature, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
@@ -637,10 +637,10 @@ def tryToFreeRoom(id_user):
 
 #TODO testing
 def setRoomToSleepMode(id_room,id_building):
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/color', "NONE")
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/brightness', 'LOW')
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/temperature', 20)
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/status_request', "closed")
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/color', "NONE",retain=True)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/brightness', 'LOW',retain=True)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/temperature', 20,retain=True)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/status_request', "closed",retain=True)
     digital_twin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
     digital_twin.set_to_sleep_mode()
     return 0
@@ -693,7 +693,7 @@ def feedAIData(data):
 #tested
 def registerAction(type, value,session_id,timestamp,id_room,id_building,digitalTwin):
     db.session.add(actuatorFeeds(session_id, type, value, timestamp))
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_'+str(id_room)+'/actuators/'+type, value)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_'+str(id_room)+'/actuators/'+type, value,retain=True)
     print('smartoffice/building_' + str(id_building) + '/room_'+str(id_room)+'/actuators/'+type)
     if type=="temperature":
         digitalTwin.temperature_actuator = value
@@ -732,7 +732,7 @@ if __name__ =="__main__":
         #db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
         #db.session.commit()
     #geolog.isAddressValid("ajejebrazov")
-    geolog.geoMarker("Manzolino","Via Giovanni Acerbi","Italia")
+    #geolog.geoMarker("Manzolino","Via Giovanni Acerbi","Italia")
     port=5000
     interface='0.0.0.0'
     StartListening()
@@ -803,6 +803,7 @@ if __name__ =="__main__":
         #TODO la grafica fa schifo lol
     #TODO SCHERMATA ADMIN impostare restrizioni di visione
     #CONSUMO DI UNA STANZA RISCALDATA WATT = AREA X ALTEZZA X 1,25
+#TODO controllare valore sensori, solo int e niente strighe!
 #TODO RISPARMIO ENERGETICO
     #TODO per evitare lunghi tempi di computazione creiamo report giornalieri
     #TODO GRAFICO CONSUMI
