@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from math import radians, cos, sin, asin, sqrt
 from datetime import datetime
 months = ('January','February','March','April','May','June',\
@@ -9,6 +10,9 @@ brightness_values = ('LOW','MEDIUM','HIGH')
 def formatName(name):
     return name.title()
 
+=======
+from datetime import datetime
+>>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
 def calculateUserAge(born):
     today = datetime.today()
     return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
@@ -22,6 +26,7 @@ def buildJsonList(list):
     new_list=[]
     for element in list:
         new_list.append(element.serialize())
+<<<<<<< HEAD
     return new_list
 def buildSensorList(list):
     new_list=[]
@@ -76,3 +81,6 @@ def haversine(lon1, lat1, lon2, lat2):
     # Radius of earth in kilometers is 6371
     km = 6371* c
     return km
+=======
+    return new_list
+>>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd

@@ -14,53 +14,89 @@
 		<form action="{{ url_for('update') }}" method="post">
 			<p>Colore luce:</p>
 			<select id="color" name="color"  required>
+<<<<<<< HEAD
 			{% if digitalTwin.led_actuator == 'RED' %}
+=======
+			{% if digitalTwin.led_actuator == 1 %}
+>>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
 			<option value=1 selected>Rosso</option>
 			{%else%}
 			 <option value=1>Rosso</option>
 			{% endif %}
 
+<<<<<<< HEAD
 			{%  if digitalTwin.led_actuator == 'ORANGE' %}
+=======
+			{%  if digitalTwin.led_actuator == 2 %}
+>>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
 			<option value=2 selected>Arancione</option>
 			{%else%}
 			<option value=2>Arancione</option>
 			{% endif %}
+<<<<<<< HEAD
 			{%  if digitalTwin.led_actuator == 'YELLOW' %}
+=======
+			{%  if digitalTwin.led_actuator == 3%}
+>>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
 			<option value=3 selected>Giallo</option>
 			{%else%}
 			<option value=3>Giallo</option>
 			{% endif %}
 
+<<<<<<< HEAD
 			{%  if digitalTwin.led_actuator == 'GREEN' %}
+=======
+			{%  if digitalTwin.led_actuator == 4%}
+>>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
 			<option value=4 selected>Verde</option>
 			{%else%}
 			<option value=4>Verde</option>
 			{% endif %}
 
+<<<<<<< HEAD
 			{%  if digitalTwin.led_actuator == 'TEAL' %}
+=======
+			{%  if digitalTwin.led_actuator == 5%}
+>>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
 			<option value=5 selected>Acqua</option>
 			{%else%}
 			<option value=5>Acqua</option>
 			{% endif %}
 
+<<<<<<< HEAD
 			{%  if digitalTwin.led_actuator == 'BLUE' %}
+=======
+			{%  if digitalTwin.led_actuator == 6%}
+>>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
 			<option value=6 selected>Blu</option>
 			{%else%}
 			<option value=6>Blu</option>
 			{% endif %}
 
+<<<<<<< HEAD
 			{%  if digitalTwin.led_actuator == 'INDIGO' %}
+=======
+			{%  if digitalTwin.led_actuator == 7%}
+>>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
 			<option value=7 selected>Viola</option>
 			{%else%}
 			<option value=7>Viola</option>
 			{% endif %}
 
+<<<<<<< HEAD
 			{%  if digitalTwin.led_actuator == 'VIOLET' %}
+=======
+			{%  if digitalTwin.led_actuator == 8%}
+>>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
 			<option value=8 selected>Fucsia</option>
 			{%else%}
 			<option value=8>Fucsia</option>
 			{% endif %}
+<<<<<<< HEAD
 			{%  if digitalTwin.led_actuator == 'RAINBOW' %}
+=======
+			{%  if digitalTwin.led_actuator == 9%}
+>>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
 			<option value=9 selected>RGB</option>
 			{%else%}
 			<option value=9>RGB</option>
@@ -73,6 +109,7 @@
 			</br></br>
 			<p>Intensità luce:</p>
 			<select id="brightness" name="brightness"  required>
+<<<<<<< HEAD
 			{% if digitalTwin.led_brightness == 'LOW' %}
 			<option value=0 selected>Bassa</option>
 			{%else%}
@@ -89,6 +126,30 @@
 				<option value=2 selected>Forte</option>
 			{%else%}
 				<option value=2>Forte</option>
+=======
+			{% if digitalTwin.led_brightness == 0 %}
+			<option value=0 selected>Spenta</option>
+			{%else%}
+			<option value=0>Spenta</option>
+			{% endif %}
+
+			{%  if digitalTwin.led_brightness == 1 %}
+			<option value=1 selected>Bassa</option>
+			{%else%}			
+			<option value=1>Bassa</option>
+			{% endif %}
+
+			{%  if digitalTwin.led_brightness == 2%}
+			<option value=2 selected>Media</option>
+			{%else%}
+			<option value=2>Media</option>
+			{% endif %}
+
+			{%  if digitalTwin.led_brightness == 3%}
+				<option value=3 selected>Forte</option>
+			{%else%}
+				<option value=3>Forte</option>
+>>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
 			{% endif %}
 
 			</select>
@@ -99,15 +160,25 @@
 		</form>
              </div></br></br></br>
             <h2 class="word">
+<<<<<<< HEAD
 		<form action="{{ url_for('freeRoom') }}" method="post">
                   <div>Libera la stanza</div>
                     <input type="submit" class="btn" value="freeroom"></br></br>
                 </form>
+=======
+>>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
                 <form action="{{ url_for('logout') }}" method="post">
                   <div>logout</div>
                     <input type="submit" class="btn" value="Logout"></br></br>
                 </form>
+<<<<<<< HEAD
 
+=======
+		<form action="{{ url_for('freeRoom') }}" method="post">
+                  <div>logout</div>
+                    <input type="submit" class="btn" value="freeroom"></br></br>
+                </form>
+>>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
             </h2>
           </div>
         </div>

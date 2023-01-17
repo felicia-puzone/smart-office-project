@@ -2,9 +2,10 @@
 
 import serial
 import serial.tools.list_ports
-import requests
+
 import configparser
 
+import paho.mqtt.client as mqtt
 
 class Bridge():
 
@@ -12,18 +13,14 @@ class Bridge():
 		self.config = configparser.ConfigParser()
 		self.config.read('config.ini')
 		self.setupSerial()
-
+		self.setupMQTT()
 
 	def setupSerial(self):
 		# open serial port
 		self.ser = None
 
 		if self.config.get("Serial","UseDescription", fallback=False):
-<<<<<<< HEAD
-			self.portname = self.config.get("Serial","PortName", fallback="COM5")
-=======
 			self.portname = self.config.get("Serial","PortName", fallback="COM1")
->>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
 		else:
 			print("list of available ports: ")
 			ports = serial.tools.list_ports.comports()
@@ -47,14 +44,35 @@ class Bridge():
 		# internal input buffer from serial
 		self.inbuffer = []
 
-	def postdata(self, i, val):
-		if i>0:
-			return
-		url = self.config.get("HTTPAIO","Url")+"/data"
-		myobj = {'value': val}
-		headers = {'X-AIO-Key': 'aio_WmfO50SOelmkqksWHc19TQjBeVsd'}
-		x = requests.post(url, data=myobj, headers=headers)
-		print(x.json())
+	def setupMQTT(self):
+		self.clientMQTT = mqtt.Client()
+		self.clientMQTT.on_connect = self.on_connect
+		self.clientMQTT.on_message = self.on_message
+		print("connecting to MQTT broker...")
+		self.clientMQTT.connect(
+			self.config.get("MQTT","Server", fallback= "localhost"),
+			self.config.getint("MQTT","Port", fallback= 1883),
+			60)
+
+		self.clientMQTT.loop_start()
+
+
+
+	def on_connect(self, client, userdata, flags, rc):
+		print("Connected with result code " + str(rc))
+
+		# Subscribing in on_connect() means that if we lose the connection and
+		# reconnect then subscriptions will be renewed.
+		self.clientMQTT.subscribe("mylight")
+
+
+	# The callback for when a PUBLISH message is received from the server.
+	def on_message(self, client, userdata, msg):
+		print(msg.topic + " " + str(msg.payload))
+		if msg.topic=='mylight':
+			self.ser.write (msg.payload)
+
+
 
 	def loop(self):
 		# infinite loop for serial managing
@@ -89,7 +107,7 @@ class Bridge():
 			val = int.from_bytes(self.inbuffer[i+2], byteorder='little')
 			strval = "Sensor %d: %d " % (i, val)
 			print(strval)
-			self.postdata(i, val)
+			self.clientMQTT.publish('sensor/{:d}'.format(i),'{:d}'.format(val))
 
 
 
