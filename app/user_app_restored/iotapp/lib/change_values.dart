@@ -148,22 +148,23 @@ class _ColorChangerState extends State<ColorChanger> {
                     },
                     child: const Text(' ')),
                 ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-                    onPressed: () async {
-                      await changeActuatorRequest(new UpdateReq(
-                          'RAINBOW',
-                          GlobalValues.digitalTwin.room_brightness,
-                          GlobalValues.digitalTwin.room_temperature));
+                  style:
+                      ElevatedButton.styleFrom(backgroundColor: Colors.white),
+                  onPressed: () async {
+                    await changeActuatorRequest(new UpdateReq(
+                        'RAINBOW',
+                        GlobalValues.digitalTwin.room_brightness,
+                        GlobalValues.digitalTwin.room_temperature));
 
-                      digitalTwinValue.value = GlobalValues.digitalTwin;
+                    digitalTwinValue.value = GlobalValues.digitalTwin;
 
-                      Navigator.pop(context);
-                    },
-                    child: const Icon(Icons.not_interested_rounded)),
+                    Navigator.pop(context);
+                  },
+                  child: Image.asset('assets/rainbow.png'),
+                ),
                 ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey.shade400),
                     onPressed: () async {
                       await changeActuatorRequest(new UpdateReq(
                           'NONE',
@@ -174,7 +175,7 @@ class _ColorChangerState extends State<ColorChanger> {
 
                       Navigator.pop(context);
                     },
-                    child: const Icon(Icons.lightbulb)),
+                    child: const Icon(Icons.not_interested)),
               ],
             )));
   }
