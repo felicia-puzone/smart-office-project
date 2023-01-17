@@ -57,12 +57,14 @@ class DigitalTwin {
 }
 
 class WeatherInfo {
-  late String? city_name;
+  late String city_name;
   late String ext_temp;
   late String ext_humidity;
 
   WeatherInfo(
-      {this.city_name, required this.ext_temp, required this.ext_humidity});
+      {required this.city_name,
+      required this.ext_temp,
+      required this.ext_humidity});
 
   void set cityName(String cityName) {
     this.city_name = cityName;
@@ -71,7 +73,7 @@ class WeatherInfo {
   factory WeatherInfo.fromJson(dynamic json) {
     json = json['weather'];
     return WeatherInfo(
-      city_name: json?['city_name'],
+      city_name: json['city_name'],
       ext_temp: json['temperature'],
       ext_humidity: json['humidity'],
     );

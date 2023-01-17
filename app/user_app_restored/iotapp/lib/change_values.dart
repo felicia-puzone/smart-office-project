@@ -160,6 +160,20 @@ class _ColorChangerState extends State<ColorChanger> {
 
                       Navigator.pop(context);
                     },
+                    child: const Icon(Icons.not_interested_rounded)),
+                ElevatedButton(
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                    onPressed: () async {
+                      await changeActuatorRequest(new UpdateReq(
+                          'NONE',
+                          GlobalValues.digitalTwin.room_brightness,
+                          GlobalValues.digitalTwin.room_temperature));
+
+                      digitalTwinValue.value = GlobalValues.digitalTwin;
+
+                      Navigator.pop(context);
+                    },
                     child: const Icon(Icons.lightbulb)),
               ],
             )));

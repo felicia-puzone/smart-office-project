@@ -199,8 +199,14 @@ class _UserHomeState extends State<UserHome> {
                               color: Colors.grey.shade100,
                               borderRadius: BorderRadius.circular(5)),
                           padding: const EdgeInsets.all(8.0)),
+
                       const SizedBox(
-                        height: 55,
+                        height: 30,
+                      ),
+
+                      Image.asset('assets/profile_picture.png'),
+                      const SizedBox(
+                        height: 30,
                       ),
 
                       //METEO E LUOGO
@@ -280,7 +286,7 @@ class _UserHomeState extends State<UserHome> {
                                   ),
                                   const Icon(Icons.pin_drop_sharp),
                                   Text(
-                                    '0',
+                                    GlobalValues.weatherInfo.city_name,
                                     style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w700),

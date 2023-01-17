@@ -10,7 +10,7 @@ class GlobalValues {
       DigitalTwin(room_color: '', room_brightness: '', room_temperature: 0);
   static late List<dynamic> listBuildings = [];
   static late WeatherInfo weatherInfo =
-      WeatherInfo(ext_temp: '', ext_humidity: '');
+      WeatherInfo(ext_temp: '', ext_humidity: '', city_name: '');
   static late Credentials credentials = Credentials(username: '', password: '');
 }
 
