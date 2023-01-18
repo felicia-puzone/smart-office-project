@@ -1,0 +1,7004 @@
+{
+    "users": [
+        {
+            "user_id": "UID24",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID75",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID213",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID216",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID286",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID294",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID367",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID435",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID519",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID533",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID596",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID613",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID656",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID679",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID749",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID832",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID880",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID903",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID938",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID969",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID982",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID989",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID995",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID30",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID52",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID79",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID92",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID112",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID126",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID182",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID202",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID296",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID343",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID371",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID388",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID524",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID575",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID629",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID696",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID928",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID942",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID955",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID172",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID272",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID417",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID454",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID528",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID582",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID593",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID644",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID655",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID682",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID683",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID953",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID968",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID157",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID176",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID226",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID241",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID280",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID305",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID332",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID377",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID409",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID440",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID512",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID595",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID717",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID812",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID837",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID846",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID885",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID933",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID958",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID17",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID43",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID53",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID58",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID131",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID159",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID162",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID245",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID252",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID262",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID288",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID323",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID345",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID393",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID427",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID472",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID484",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID517",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID526",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID571",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID572",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID703",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID709",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID802",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID854",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID876",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID907",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID911",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID922",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID45",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID89",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID100",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID240",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID260",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID279",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID406",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID496",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID579",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID603",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID670",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID677",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID707",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID754",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID781",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID789",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID915",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID918",
+            "user_age": 5,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID920",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID931",
+            "user_age": 5,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID960",
+            "user_age": 5,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID0",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID6",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID9",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID23",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID36",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID76",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID80",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID93",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID99",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID109",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID118",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID150",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID151",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID153",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID169",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID175",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID201",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID222",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID253",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID289",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID300",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID310",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID315",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID331",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID360",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID395",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID422",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID430",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID431",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID455",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID457",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID460",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID483",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID507",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID523",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID535",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID554",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID600",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID601",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID632",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID661",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID663",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID669",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID687",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID725",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID731",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID766",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID771",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID787",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID796",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID842",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID862",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID873",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID890",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID930",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID935",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID939",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID945",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID962",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID970",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID999",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID10",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID11",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID13",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID21",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID26",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID29",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID34",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID37",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID48",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID84",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID91",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID97",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID104",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID106",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID114",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID120",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID121",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID129",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID136",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID146",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID179",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID186",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID192",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID196",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID203",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID209",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID215",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID219",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID223",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID247",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID249",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID254",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID261",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID273",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID275",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID276",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID277",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID295",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID308",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID313",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID334",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID338",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID353",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID357",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID369",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID383",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID389",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID390",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID418",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID444",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID446",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID452",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID461",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID462",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID464",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID490",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID492",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID493",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID509",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID525",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID542",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID547",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID553",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID555",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID566",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID569",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID578",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID607",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID633",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID646",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID676",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID693",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID698",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID711",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID721",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID722",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID730",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID735",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID752",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID791",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID792",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID814",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID838",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID853",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID868",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID884",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID896",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID902",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID971",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID978",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID985",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID993",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID5",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID8",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID16",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID22",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID39",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID47",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID54",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID64",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID72",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID115",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID119",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID122",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID133",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID138",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID166",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID170",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID177",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID193",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID200",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID212",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID233",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID251",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID274",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID287",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID319",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID351",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID354",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID358",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID361",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID384",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID412",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID420",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID421",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID426",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID434",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID438",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID443",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID453",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID482",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID486",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID491",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID499",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID505",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID514",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID520",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID563",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID589",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID594",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID598",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID637",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID640",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID648",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID650",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID654",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID657",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID664",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID667",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID674",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID692",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID701",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID720",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID733",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID760",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID790",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID804",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID805",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID807",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID816",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID855",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID871",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID874",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID941",
+            "user_age": 9,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID943",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID946",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID947",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID952",
+            "user_age": 9,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID997",
+            "user_age": 9,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID3",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID61",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID83",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID199",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID207",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID616",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID653",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID734",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID882",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID887",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID937",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID57",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID77",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID139",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID210",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID265",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID399",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID673",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID697",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID881",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID983",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID498",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID574",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID750",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID964",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID152",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID155",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID184",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID248",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID340",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID583",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID592",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID635",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID716",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID738",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID777",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID905",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID105",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID128",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID391",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID470",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID515",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID588",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID857",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID898",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID975",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID992",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID28",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID285",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID306",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID312",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID321",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID327",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID445",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID465",
+            "user_age": 1,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID513",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID784",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID824",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID858",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID892",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID936",
+            "user_age": 1,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID987",
+            "user_age": 1,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID67",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID116",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID125",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID148",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID164",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID244",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID291",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID298",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID299",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID318",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID320",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID342",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID355",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID362",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID419",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID451",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID480",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID489",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID495",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID506",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID541",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID546",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID611",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID625",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID631",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID665",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID702",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID769",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID774",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID803",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID811",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID900",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID980",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID15",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID32",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID33",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID50",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID56",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID141",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID144",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID220",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID221",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID227",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID259",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID268",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID271",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID303",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID311",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID322",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID348",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID364",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID372",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID396",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID562",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID584",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID586",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID599",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID628",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID638",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID643",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID652",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID659",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID688",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID705",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID772",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID788",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID809",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID817",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID834",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID847",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID867",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID893",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID894",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID904",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID925",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID929",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID973",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID984",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID996",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID19",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID123",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID130",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID132",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID142",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID178",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID183",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID194",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID258",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID350",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID363",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID400",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID402",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID425",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID473",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID478",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID534",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID549",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID558",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID587",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID605",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID608",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID617",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID622",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID623",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID627",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID634",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID636",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID681",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID700",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID710",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID727",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID770",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID779",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID795",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID819",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID822",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID828",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID851",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID877",
+            "user_age": 7,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID883",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID934",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID963",
+            "user_age": 7,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID967",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID977",
+            "user_age": 7,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID1",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID156",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID188",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID189",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID205",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID237",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID267",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID414",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID416",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID550",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID567",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID577",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID639",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID668",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID764",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID878",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID895",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID944",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID66",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID190",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID398",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID439",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID527",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID591",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID610",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID626",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID666",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID706",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID801",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID806",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID829",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID830",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID835",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID2",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID40",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID49",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID90",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID165",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID374",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID442",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID463",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID479",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID501",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID510",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID570",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID621",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID919",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID949",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID956",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID42",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID160",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID392",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID415",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID436",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID448",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID467",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID543",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID759",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID800",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID901",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID954",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID41",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID228",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID373",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID381",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID540",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID552",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID560",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID680",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID719",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID723",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID756",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID762",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID776",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID994",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID60",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID94",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID124",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID143",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID198",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID229",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID231",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID282",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID325",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID337",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID468",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID545",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID690",
+            "user_age": 0,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID959",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID974",
+            "user_age": 0,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID990",
+            "user_age": 0,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID82",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID149",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID317",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID336",
+            "user_age": 2,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID606",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID624",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID763",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID870",
+            "user_age": 2,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID921",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID68",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID108",
+            "user_age": 2,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID487",
+            "user_age": 2,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID729",
+            "user_age": 2,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID765",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID861",
+            "user_age": 2,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID864",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID961",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID988",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID180",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID385",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID500",
+            "user_age": 2,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID739",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID51",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID197",
+            "user_age": 2,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID423",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID458",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID471",
+            "user_age": 2,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID474",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID477",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID511",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID561",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID647",
+            "user_age": 2,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID708",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID793",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID14",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID195",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID413",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID529",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID818",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID872",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID914",
+            "user_age": 2,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID70",
+            "user_age": 2,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID74",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID107",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID174",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID382",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID394",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID485",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID620",
+            "user_age": 2,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID758",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID860",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID906",
+            "user_age": 2,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID986",
+            "user_age": 2,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID55",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID73",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID225",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID269",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID270",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID302",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID376",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID386",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID548",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID559",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID642",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID672",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID694",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID699",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID713",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID753",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID794",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID826",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID899",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID908",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID917",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID926",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID951",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID998",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID25",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID27",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID35",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID78",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID81",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID88",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID101",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID110",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID135",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID168",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID257",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID309",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID329",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID401",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID404",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID441",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID481",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID494",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID539",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID557",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID580",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID604",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID671",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID684",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID808",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID923",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID12",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID20",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID62",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID87",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID117",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID230",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID263",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID284",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID304",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID316",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID324",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID328",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID344",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID359",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID365",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID378",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID405",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID469",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID568",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID649",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID686",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID714",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID741",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID742",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID782",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID845",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID889",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID950",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID46",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID71",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID95",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID218",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID293",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID349",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID447",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID449",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID532",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID537",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID612",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID615",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID641",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID767",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID768",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID783",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID786",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID841",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID863",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID865",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID869",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID875",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID888",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID927",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID18",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID158",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID181",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID187",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID214",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID333",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID370",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID410",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID450",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID538",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID704",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID755",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID839",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID913",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID976",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID103",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID137",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID239",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID387",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID476",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID488",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID503",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID544",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID551",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID645",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID658",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID685",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID712",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID732",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID737",
+            "user_age": 6,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID844",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID848",
+            "user_age": 6,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID981",
+            "user_age": 6,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID429",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID718",
+            "user_age": 3,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID761",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID778",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID785",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID849",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID44",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID134",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID255",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID346",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID424",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID618",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID852",
+            "user_age": 3,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID924",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID31",
+            "user_age": 3,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID69",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID163",
+            "user_age": 3,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID292",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID366",
+            "user_age": 3,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID375",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID432",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID475",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID508",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID576",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID651",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID695",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID746",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID831",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID909",
+            "user_age": 3,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID145",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID264",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID368",
+            "user_age": 3,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID456",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID740",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID743",
+            "user_age": 3,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID748",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID836",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID866",
+            "user_age": 3,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID910",
+            "user_age": 3,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID204",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID301",
+            "user_age": 3,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID407",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID502",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID573",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID856",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID897",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID4",
+            "user_age": 3,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID7",
+            "user_age": 3,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID185",
+            "user_age": 3,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID238",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID256",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID379",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID437",
+            "user_age": 3,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID459",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID516",
+            "user_age": 3,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID518",
+            "user_age": 3,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID724",
+            "user_age": 3,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID113",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID154",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID206",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID224",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID403",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID565",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID581",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID726",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID751",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID757",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID821",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 0,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID840",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 0,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID859",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID886",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID912",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID948",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 0,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID127",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID161",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID236",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID290",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID352",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID380",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID397",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID521",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID522",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID536",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID556",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID564",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID590",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID597",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID619",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID745",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID797",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID798",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID815",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 1,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID820",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID932",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID966",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 1,
+            "user_color": 8
+        },
+        {
+            "user_id": "UID991",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 1,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID63",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID102",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID111",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID234",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID243",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID283",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID297",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID466",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID497",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID531",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID585",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID691",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID810",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID823",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID833",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 2,
+            "user_color": 7
+        },
+        {
+            "user_id": "UID850",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID940",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID965",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 2,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID979",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 2,
+            "user_color": 6
+        },
+        {
+            "user_id": "UID59",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID65",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID96",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID98",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID171",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID278",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID307",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID314",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID339",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID341",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID602",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID678",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID715",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID736",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID780",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID799",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 3,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID813",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 3,
+            "user_color": 1
+        },
+        {
+            "user_id": "UID916",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID972",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 3,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID86",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID140",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID147",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID167",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID191",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID208",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID217",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID232",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID250",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID266",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID330",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID408",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID411",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID504",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID530",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID614",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID660",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID689",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID728",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID747",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID775",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 4,
+            "user_color": 3
+        },
+        {
+            "user_id": "UID843",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 4,
+            "user_color": 5
+        },
+        {
+            "user_id": "UID891",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 4,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID38",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID85",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID173",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID211",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID235",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID242",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID246",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID281",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID326",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID335",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID347",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID356",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID428",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID433",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID609",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID630",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID662",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID675",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID744",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID773",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID825",
+            "user_age": 4,
+            "user_sex": 0,
+            "user_task": 5,
+            "user_color": 4
+        },
+        {
+            "user_id": "UID827",
+            "user_age": 4,
+            "user_sex": 1,
+            "user_task": 5,
+            "user_color": 2
+        },
+        {
+            "user_id": "UID879",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 9
+        },
+        {
+            "user_id": "UID957",
+            "user_age": 4,
+            "user_sex": 2,
+            "user_task": 5,
+            "user_color": 9
+        }
+    ]
+}
