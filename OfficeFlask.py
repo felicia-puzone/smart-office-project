@@ -1,9 +1,6 @@
-from flask import Flask
+from flask import Flask, request
 from Script.Operators import AIOperator as aio, GlobalDataOperator as gdo
 from Script.Generators import ModelSetup as ms
-
-import os
-print(os.getcwd())
 
 model_op = ms.Network(None)
 global_op = gdo.Operator()
@@ -21,22 +18,36 @@ appname = "IoT - Smart Office"
 app = Flask(appname)
 
 
-@app.route('/getUserTemp/')
-def getUserTemp(data):
-    conv_data = global_op.from_flask_in(data, 0)
-    return global_op.from_temp_idx(ai_op.predict_feature(temp_model, conv_data))
+@app.route('/getUserTemp/', methods=['POST'])
+def getUserTemp():
+    data = request.get_json(force=True)
+    if data is None:
+        return "<p> Dati mancanti </p>"
+    else:
+        print(data)
+        conv_data = global_op.from_flask_in(data, 0)
+        return str(global_op.from_temp_idx(ai_op.predict_feature(temp_model, conv_data)))
 
 
-@app.route('/getUserLight/')
-def getUserLight(data):
-    conv_data = global_op.from_flask_in(data, 1)
-    return ai_op.predict_feature(light_model, conv_data)
+@app.route('/getUserLight/', methods=['POST'])
+def getUserLight():
+    data = request.get_json(force=True)
+    if data is None:
+        return "<p> Dati mancanti </p>"
+    else:
+        print(data)
+        conv_data = global_op.from_flask_in(data, 1)
+        return str(ai_op.predict_feature(light_model, conv_data))
 
 
-@app.route('/getUserColor/')
-def getUserColor(data):
-    conv_data = global_op.from_flask_in(data, 2)
-    return ai_op.predict_feature(color_model, conv_data)
+@app.route('/getUserColor/', methods=['POST'])
+def getUserColor():
+    if data is None:
+        return "<p> Dati mancanti </p>"
+    else:
+        print(data)
+        conv_data = global_op.from_flask_in(data, 2)
+        return str(ai_op.predict_feature(color_model, conv_data))
 
 
 if __name__ == '__main__':
