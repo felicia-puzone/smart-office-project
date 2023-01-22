@@ -2,7 +2,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Index</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">          
+        <link rel="stylesheet" href="{{ url_for('static', filename='universal.css') }}">
     </head>
     <body></br></br></br></br></br>
         <div align="center">
@@ -107,9 +107,11 @@
                   <div>logout</div>
                     <input type="submit" class="btn" value="Logout"></br></br>
                 </form>
-
             </h2>
           </div>
         </div>
+	{%if admin == 1%}
+	<h2 ><a href="/admin">Apri la schermata Admin</a></h2>
+	{% endif %}
     </body>
 </html>
