@@ -5,6 +5,7 @@ appname="IOT main"
 app = Flask(appname)
 app.config['SECRET_KEY']='004f2af45d3a4e161a7dd2d17fdae47f'
 cors = CORS(app)
+app.static_folder = 'static'
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['MQTT_BROKER_URL'] = 'broker.hivemq.com'#'ilvero.davidepalma.it'  # use the free broker from HIVEMQ
 app.config['MQTT_BROKER_PORT'] = 1883  # default port for non-tls connection

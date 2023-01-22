@@ -1,26 +1,25 @@
 import datetime
 import re
 from itsdangerous import BadSignature
-
 import requests as requests
-from flask import Flask, request, render_template, session,jsonify
+from flask import  render_template, session, json
 from werkzeug.exceptions import HTTPException
-
 from apphandler import app
-import geolog
 from models import db, digitalTwinFeed, sessions, sessionStates, rooms, professions, actuatorFeeds, buildings, \
-    zones, User, serializer, serializer_secret, weatherReport, zoneToBuildingAssociation
+    zones, User, serializer, serializer_secret, weatherReport, zoneToBuildingAssociation, telegram
 from firebase import firebase
 from mqtthandler import mqtt
-from modelviews import ZoneAdmin, UserAdmin, JobAdmin, BuildingAdmin, RoomAdmin, MyHomeView
+from modelviews import ZoneAdmin, UserAdmin, JobAdmin, BuildingAdmin, RoomAdmin, MyHomeView, TelegramAdmin
 from queries import fetchJobs, getFreeBuildings, createAndPopulateDb, buildRoomLightSensorGraph, buildRoomColorGraph, \
     buildRoomBrightnessGraph, buildRoomTemperatureGraph, buildBuildingLightSensorGraph, buildZoneWeatherGraph, \
-    buildZoneWeatherHumidityGraph
-from utilities import buildJsonList, calculateUserAge, createABuildingtupleList, createAProfessiontupleList, \
+    buildZoneWeatherHumidityGraph, buildRoomDailyConsumptionReport, buildRoomMonthlyConsumptionReport, \
+    buildBuildingDailyConsumptionReport, buildBuildingMonthlyConsumptionReport, buildZoneDailyConsumptionReport, \
+    buildZoneMonthlyConsumptionReport, fetchMontlhyReport
+from utilities import buildJsonList, calculateUserAge, \
     seconds_between, colors, brightness_values
 from flask_admin import Admin
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required,UserMixin
-from flask import Flask, jsonify, make_response, request
+from flask import  jsonify, request
 from weather import weather_report
 
 login_manager = LoginManager()
@@ -28,8 +27,8 @@ login_manager.init_app(app)
 fb_app = firebase.FirebaseApplication('https://smartoffice-4eb51-default-rtdb.europe-west1.firebasedatabase.app/', None)
 db.init_app(app)
 mqtt.init_app(app)
-#with app.app_context():
- #   createAndPopulateDb()
+'''with app.app_context():
+    createAndPopulateDb()'''
 
 admin = Admin(app, name='Spazio Admin',index_view=MyHomeView())
 admin.add_view(ZoneAdmin(zones, db.session))
@@ -37,7 +36,7 @@ admin.add_view(BuildingAdmin(buildings, db.session))
 admin.add_view(RoomAdmin(rooms, db.session))
 admin.add_view(JobAdmin(professions, db.session))
 admin.add_view(UserAdmin(User, db.session))
-
+admin.add_view(TelegramAdmin(telegram, db.session))
 #Questo decorator gestisce tutti di errore, se la sessione utente
 #è attiva, reidirizza a handleLoggedInUser
 #altrimenti reindirizza alla homepage 'login.html'
@@ -168,7 +167,11 @@ def register():
                 msg='Riempire i campi obbligatori!'
             else:
                 #hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
-                account = User(username=username,password=password,profession=job.name,sex=sex,dateOfBirth=datetime.datetime.strptime(birthday,"%Y-%m-%d"))
+                if (datetime.datetime.utcnow()-datetime.datetime.strptime(birthday,"%Y-%m-%d")).days/365.25 < 18:
+                    birthday=datetime.datetime.utcnow() - datetime.timedelta(days=(18*366))
+                    account = User(username=username,password=password,profession=job.name,sex=sex,dateOfBirth=birthday)
+                else:
+                    account = User(username=username,password=password,profession=job.name,sex=sex,dateOfBirth=datetime.datetime.strptime(birthday,"%Y-%m-%d"))
                 db.session.add(account)
                 db.session.commit()
                 msg = 'Ti sei registrato con successo!'
@@ -206,7 +209,7 @@ def update():
         brightness = brightness_values[int(request.form['brightness'])]
         temperature = int(request.form['temperature'])
         digitalTwin=updateDigitalTwinActuators(id_user, color, brightness, temperature)
-        return render_template('index.html',digitalTwin=digitalTwin,username=current_user.get_username())
+        return render_template('index.html',digitalTwin=digitalTwin,username=current_user.get_username(),admin=int(current_user.is_admin()))
 
 #testato
 
@@ -243,86 +246,18 @@ def freeRoom():
         return jsonify(outcome="Freed",buildings=buildJsonList(getFreeBuildings()))
     else:
         tryToFreeRoom(current_user.get_id())
-        return render_template('newselect.html', buildings=buildJsonList(getFreeBuildings()), msg='')
+        return render_template('newselect.html', buildings=buildJsonList(getFreeBuildings()), msg='',admin=int(current_user.is_admin()))
 
 
-#TODO testing
-@app.route("/userpage",methods=['GET','POST'])
-@login_required
-def userpage():
-    content=request.headers.get("Content-ID")
-    if content is None:
-        content=""
-    return handleLoggedinUser(content)
-
-#TODO testing
-@app.route("/updatecredentials", methods = ['POST','GET'])
-@login_required
-def updatecredentials():
-    msg = ''
-    outcome=False
-    jobs = fetchJobs()
-    content=request.headers.get("Content-ID")
-    if request.method == 'POST':
-        if 'password'in request.form and 'new_password' in request.form and 'new_password_confirm' in request.form:
-            password = request.form['password']
-            new_password = request.form['new_password']
-            new_password_confirm = request.form['new_password_confirm']
-            token=current_user.get_auth_token(current_user.username,current_user.password)
-            print("new_passsword:" + str(new_password))
-            print("new_password confirm:" + str(new_password_confirm))
-            if current_user.new_password(password,new_password,new_password_confirm):
-                msg = "Credenziali inserite con successo!"
-                outcome= True
-            else:
-                msg = 'Credenziali inserite incorrettamente!'
-            if content== "NEW-CREDENTIALS-APP":
-                return {' outcome':outcome,'token':token, 'msg':msg}
-            else:
-                session["Auth-token"] = token
-                return render_template('newcredentials.html', msg=msg, jobs=jobs)
-        if content == "NEW-CREDENTIALS-APP":
-            return {' outcome': outcome}
-        else:
-            return handleLoggedinUser("")
-    else:
-        return render_template('newcredentials.html', msg=msg, jobs=jobs)
-#TODO testing
-@app.route("/updateuserdata", methods = ['GET','POST'])
-@login_required
-def updateuserdata():
-    msg = ''
-    jobs = fetchJobs()
-    content=request.headers.get("Content-ID")
-    if request.method == 'POST':
-        if 'birthday'in request.form and 'sex'in request.form and 'profession'in request.form:
-            birthday=request.form['birthday']
-            sex = request.form['sex']
-            profession=request.form['profession']
-            job = db.session.query(professions).filter_by(id_profession=profession).first()
-            current_user.set_birthday(datetime.datetime.strptime(birthday,"%Y-%m-%d"))
-            current_user.set_sex(sex)
-            current_user.set_profession(job.name)
-            if content == "USER-DATA-APP":
-                return {'job':job.name,'sex':sex,'job_id':job.id_profession}
-            else:
-                return render_template('newuserdata.html', msg=msg, jobs=jobs,user=current_user)
-        else:
-            if content == "USER-DATA-APP":
-                return {'outcome':False}
-            else:
-                return handleLoggedinUser("")
-    else:
-        return render_template('newuserdata.html', msg=msg, jobs=jobs, user=current_user)
 
 
-########################################################################################################################
-#TODO view che permette la registrazione all'Admin
-#TODO controllo per consentire l'accesso solo all'admin
 
-@app.route("/dashboardroom",methods=['POST','GET'])
+@app.route("/dashboardroom",methods=['POST'])
 @login_required
 def dashboardroom():
+    if not handleViewPermission():
+        print("current user is not Admin")
+        return handleLoggedinUser()
     id_room = request.form['id_room']
     graphs=[]
     link="/admin/rooms"
@@ -339,11 +274,17 @@ def dashboardroom():
     graphs.append(buildRoomBrightnessGraph(sessions_to_plot))
     #GRAFICO TEMPERATURA
     graphs.append(buildRoomTemperatureGraph(sessions_to_plot))
+    # GRAFICO CONSUMI
+    graphs.append(buildRoomDailyConsumptionReport(id_room))
+    graphs.append(buildRoomMonthlyConsumptionReport(id_room))
     return render_template('dashboard.html', graphsJSON=graphs, header=header,link=link)
 
-@app.route("/dashboardbuilding",methods=['POST','GET'])
+@app.route("/dashboardbuilding",methods=['POST'])
 @login_required
 def dashboardbuilding():
+    if not handleViewPermission():
+        print("current user is not Admin")
+        return handleLoggedinUser()
     id_building = request.form['building_id']
     graphs=[]
     link = "/admin/buildings"
@@ -362,13 +303,19 @@ def dashboardbuilding():
     graphs.append(buildRoomBrightnessGraph(sessions_to_plot))
     #GRAFICO TEMPERATURA
     graphs.append(buildRoomTemperatureGraph(sessions_to_plot))
+    # GRAFICO CONSUMI
+    graphs.append(buildBuildingDailyConsumptionReport(id_building))
+    graphs.append(buildBuildingMonthlyConsumptionReport(id_building))
     return render_template('dashboard.html', graphsJSON=graphs, header=header,link=link)
 
 
 
-@app.route("/dashboardzone",methods=['POST','GET'])
+@app.route("/dashboardzone",methods=['POST'])
 @login_required
 def dashboardzone():
+    if not handleViewPermission():
+        print("current user is not Admin")
+        return handleLoggedinUser()
     id_zone = request.form['zone_id']
     graphs=[]
     link = "/admin/zones"
@@ -395,32 +342,25 @@ def dashboardzone():
     graphs.append(buildRoomBrightnessGraph(sessions_to_plot))
     #GRAFICO TEMPERATURA
     graphs.append(buildRoomTemperatureGraph(sessions_to_plot))
+    # GRAFICO CONSUMI
+    graphs.append(buildZoneDailyConsumptionReport(id_buildings))
+    graphs.append(buildZoneMonthlyConsumptionReport(id_buildings))
     return render_template('dashboard.html', graphsJSON=graphs, header=header,link=link)
 
 
-
-
-#TODO metodi non ancora implementati
-#TODO da vedere se lo implemento o meno, magari al resume session
-def fetchLastSetting(id_session,digitalTwin):
-    historyColor = db.session.query(actuatorFeeds).filter_by(id_session=id_session,type_of_action="color").order_by(actuatorFeeds.timestamp).first()
-    historyBrightness=db.session.query(actuatorFeeds).filter_by(id_session=id_session,type_of_action="brightness").order_by(actuatorFeeds.timestamp).first()
-    historyTemperature=db.session.query(actuatorFeeds).filter_by(id_session=id_session,type_of_action="temperature").order_by(actuatorFeeds.timestamp).first()
-    if historyBrightness is not None and historyColor is not None and historyTemperature is not None:
-        digitalTwin.led_actuator=historyColor.value
-        digitalTwin.led_brightness=historyBrightness.value
-        digitalTwin.temperature_actuator=historyTemperature.value
-        db.session.commit()
+@app.route('/botAuth', methods=['POST'])
+def auth():
+    key = request.json['key']
+    key_check = db.session.query(telegram).filter_by(telegram_key=key).first()
+    if key_check is not None:
+        return jsonify({'status': 'AUTHENTICATED'})
     else:
-        return -1
-    return 0
-#TODO
-def roomHealthCheck():
-    return 0
-#TODO
-#metodo che manda un messaggio al bot telegram
-def botTelegramAlert():
-    return 0
+        return jsonify({'status': 'NOT-AUTHENTICATED'})
+
+
+@app.route('/botReport', methods=['GET'])
+def report():
+    return jsonify({'report': fetchMontlhyReport()})
 #################################################################################
 
 
@@ -430,7 +370,6 @@ def botTelegramAlert():
 #fa return 0 se passa i check
 #per mobile controlliamo solo che è loggato e magari ripariamo i dati di sessione
 #i dati di sessione utilizzati sono id_user loggedin, id_room e id_buidling non sono usati
-#TODO testing
 def handleLoggedinUser(content):
     id_room = tryToGetAssignedRoom(current_user.get_id())
     if id_room != -1:  # stanza già assegnata
@@ -462,15 +401,10 @@ def handleAuthenticatedUserResponse(content,token):
 
 
 
-#TODO testing
+
 def handleViewPermission():
-    if current_user.is_admin:
-        return True
-    else:
-        return False
-#TODO
-def hasPermission(id_user):
-    return False
+    return current_user.is_admin()
+
 
 #testato
 def StartListening():
@@ -515,29 +449,49 @@ def getAIdata(id_user,digitalTwin):
     account = db.session.query(User).filter_by(id=id_user).first()
     job = db.session.query(professions).filter_by(name=account.profession).first()
     weather_data = weather_report(digitalTwin.id_room)
-    dataToSend = {'user_age': calculateUserAge(account.dateOfBirth), 'user_sex': account.sex - 1, 'user_task': job.category,
+    external_light=0
+    if digitalTwin.light_sensor <250:
+        external_light = 3
+    elif digitalTwin.light_sensor < 500:
+        external_light = 2
+    elif digitalTwin.light_sensor < 750:
+        external_light = 1
+    user_age=calculateUserAge(account.dateOfBirth)
+    if user_age < 18:
+        user_age = 18
+    dataToSend = {'user_age': user_age, 'user_sex': account.sex - 1, 'user_task': job.category,
                   'ext_temp': weather_data["temperature"], 'ext_humidity': weather_data["humidity"],
-                  'ext_light': digitalTwin.light_sensor}
+                  'ext_light': external_light}
     try:
-        res = requests.post('http://localhost:5001/AI', json=dataToSend)
-        print('response from server:', res.text)
-        dataFromServer = res.json()
+        res_temp = requests.post('http://54.86.207.49:5000/getUserTemp/',data=json.dumps(dataToSend))
+        res_brightness = requests.post('http://54.86.207.49:5000/getUserLight/', data=json.dumps(dataToSend))
+        res_color = requests.post('http://54.86.207.49:5000/getUserColor/', data=json.dumps(dataToSend))
+        print('response from server:', res_temp.text)
+        print('response from server:', res_brightness.text)
+        print('response from server:', res_color.text)
+        dataFromServer = {'user_temp':int(res_temp.text),'user_color':colors[int(res_color.text)],'user_light':brightness_values[int(res_brightness.text)]}
     except requests.exceptions.RequestException as e:
         print("c'è stato un errore! Prenderò i dati dall'AI locale!")
         try:
             res = requests.post('http://localhost:5001/AI', json=dataToSend)
             print('response from server:', res.text)
             dataFromServer = res.json()
+            print(dataFromServer)
         except requests.exceptions.RequestException as e:
             print("c'è stato un errore! Prenderò dati di Default!")
-            dataFromServer = {'user_temp':21,'user_color':"RAINBOW",'user_light':'MEDIUM'}
+            default_temp=17
+            if int (float(weather_data['temperature']))>30:
+                default_temp=30
+            elif int (float(weather_data['temperature'])) > 17:
+                default_temp = int(float(weather_data['temperature']))
+            dataFromServer = {'user_temp':default_temp,'user_color':"RAINBOW",'user_light':'MEDIUM'}
     return dataFromServer
 
 
 
 def renderHomeWeb(id_room):
     digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
-    return render_template('index.html', digitalTwin=digitalTwin, username=current_user.get_username())
+    return render_template('index.html', digitalTwin=digitalTwin, username=current_user.get_username(),admin=int(current_user.is_admin()))
 
 def renderHomeApp(id_room):
     digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
@@ -547,7 +501,7 @@ def renderHomeApp(id_room):
                    id_edificio=id_building, id_room=id_room, username=current_user.get_username(),weather=weather_data)
 
 def renderSelectionWeb():
-    return render_template('newselect.html', buildings=buildJsonList(getFreeBuildings()), msg='')
+    return render_template('newselect.html', buildings=buildJsonList(getFreeBuildings()), msg='',admin=int(current_user.is_admin()))
 
 def renderSelectionApp():
     return jsonify(logged_in=True, outcome="Login", username=current_user.get_username(),
@@ -564,7 +518,7 @@ def renderSelectionAppOnAuth(token):
                    buildings=buildJsonList(getFreeBuildings()))
 
 
-#TODO testing
+
 def hasRoomAssigned(id_user):
     actual_sessionState = db.session.query(sessionStates).filter_by(id_user=id_user,active=True).first()
     if actual_sessionState is not None:
@@ -598,7 +552,7 @@ def handleRoomAssignment(id_user,content,building):
             return jsonify(outcome="Full",buildings=buildJsonList(getFreeBuildings()))
         else:
             msg = 'non ci sono stanze disponibili nell\'edificio ' + str(building)
-            return render_template('newselect.html', buildings=buildJsonList(getFreeBuildings()), msg=msg)
+            return render_template('newselect.html', buildings=buildJsonList(getFreeBuildings()), msg=msg,admin=int(current_user.is_admin()))
     elif data["outcome"] == -2: #stanza esistente
         if content=="SELECT-APP":
             return renderHomeApp(data["session_state"].id_room)
@@ -635,11 +589,11 @@ def tryToFreeRoom(id_user):
     feedAIData(data)
     return 0
 
-#TODO testing
 def setRoomToSleepMode(id_room,id_building):
+    weather_data = weather_report(id_room)
     mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/color', "NONE",retain=True)
     mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/brightness', 'LOW',retain=True)
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/temperature', 20,retain=True)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/temperature', round(int(float(weather_data['temperature']))),retain=True)
     mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/status_request', "closed",retain=True)
     digital_twin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
     digital_twin.set_to_sleep_mode()
@@ -716,23 +670,6 @@ def remove_if_invalid(response):
 
 
 if __name__ =="__main__":
-    #db.init_app(app)
-    #mqtt.init_app(app)
-
-    #with app.app_context():
-        #db.session.add(weatherReport(1, 6, 70, datetime.datetime.utcnow()))
-        #db.session.commit()
-        #sensorFeedToCovert = db.session.query(sensorFeeds)
-       # createRoomCSV(sensorFeedToCovert,"sensors",datetime.today(),"")
-        #hashed_password = bcrypt.hashpw("18121996".encode("utf-8"), bcrypt.gensalt())
-        #db.session.add(User(username="BArfaoui",password="password",profession=8,sex=1,dateOfBirth=datetime.datetime.utcnow().date()))
-        #db.session.add(sensorFeeds(1,"light",1,datetime.datetime.utcnow()))
-        #db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
-        #db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
-        #db.session.add(sensorFeeds(1, "light", 1, datetime.datetime.utcnow()))
-        #db.session.commit()
-    #geolog.isAddressValid("ajejebrazov")
-    #geolog.geoMarker("Manzolino","Via Giovanni Acerbi","Italia")
     port=5000
     interface='0.0.0.0'
     StartListening()
@@ -775,9 +712,6 @@ if __name__ =="__main__":
     #DONE testare aggiungere un attributo "Available" a Palazzo e Stanza
     #DONE ISSUE guardo faccio grant dei permessi cambia professione (CASCADE)
 #DONE permessi di visione solo a admin e super user, delle view/pagine dashboard e admin
-
-
-
 #OBBIETTIVO 10 gennaio
     #DONE dashboard impostare il riconoscimento della richiesta edificio/stanza e id
         #DONE RICONOSCIMENTO DASHBOARD STANZA
@@ -795,33 +729,48 @@ if __name__ =="__main__":
 
 
 #OBBIETTIVO 13 GENNAIO
-    #TODO COLLEGARE ADMIN E HOME CON LINK VISIBILI SOLO DALL'ADMIN (passiamo una boolean tipo admin=User.id_admin)
-    #TODO mettere a posto il bottone della dashboard che ha come nome checkout payment ew
-    #TODO trovare una soluzione per la homepage dell'admin (Magari un div di bottoni per azione che può fare selezione/home logout)
-    #TODO sistemare view della dashboard
+    #DONE COLLEGARE ADMIN E HOME CON LINK VISIBILI SOLO DALL'ADMIN (passiamo una boolean tipo admin=User.id_admin)
+    #DONE mettere a posto il bottone della dashboard che ha come nome checkout payment ew
         #DONE Link che ritorna alla pagina precedente
-        #TODO la grafica fa schifo lol
-    #TODO SCHERMATA ADMIN impostare restrizioni di visione
+    #DONE SCHERMATA ADMIN impostare restrizioni di visione
     #CONSUMO DI UNA STANZA RISCALDATA WATT = AREA X ALTEZZA X 1,25
-#TODO controllare valore sensori, solo int e niente strighe!
+#DONE controllare valore sensori, solo int e niente strighe!
+
+
+
 #TODO RISPARMIO ENERGETICO
-    #TODO per evitare lunghi tempi di computazione creiamo report giornalieri
-    #TODO GRAFICO CONSUMI
-    #TODO route che fornisce il report di consumi
-    #TODO script che calcola il consumo energetico ogni giorno
-#TODO gestire status_respond (forse con i websocket e attributi current user, si può fare)
+    #TODO fixare bug monitor
+    #TODO stress test del monitor
+    #TODO test bot telegram
+    #TODO test report telegram
+    #DONE per evitare lunghi tempi di computazione creiamo report giornalieri
+    #DONE GRAFICO CONSUMI
+    #DONE testare se la dashoard è funzionante
+    #DONE calibrare la dashboard
+    #DONE route che fornisce il report di consumi
+    #DONE script che calcola il consumo energetico ogni giorno
+    #DONE scrive azione e manda messaggio mqtt
+# DONE fixare l'intensità del led perchè passo una stringa
+#TODO verificare che i topic mqtt corrispondono
 #TODO fixare le view
     # TODO togliere librerie inutilizzate
-    # DONE fixare l'intensità del led perchè passo una stringa
     # TODO sistemare lo zoom nella mappa di selezione, magari la media delle zone
     # TODO gestione mancanza dati form (se serve)
-    # TODO gestione expetions scrittura su db
     # TODO mettere un buon css
+    #TODO trovare una soluzione per la homepage dell'admin (Magari un div di bottoni per azione che può fare selezione/home logout)
+    #TODO sistemare view della dashboard
+# TODO commentare
+#DONE AI locale impostare un If else
+#DONE dati default, la temperatura la mettiamo vicino a quella d'ambiente
+#DONE COMUNICAZIONE CON L'AI
+    #DONE IMPOSTARE ETA' MINIMA A 18 ANNI
+    #DONE IMPOSTARE LE RICHIESTE
+    #DONE testare le richieste
+#DONE testare il settaggio in risparmio energetico a fine sessione utente
+#DONE gestire status_respond (forse con i websocket e attributi current user, si può fare)
 #CANCELED testing aggiornamento dati utente (include il compleanno utente)
 #CANCELED (METTIAMO UN LINK)rerouting degli admin oppure creare una estensione delle pagine normali
-#TODO testare il settaggio in risparmio energetico a fine sessione utente
-#TODO commentare
-#TODO impostare l'indirizzo per l'AI
+#DONE impostare l'indirizzo per l'AI
 #DONE testing ISSUE mandare la lista di edifici al freeroom
 #DONE testing ISSUE colori led Stringa MQTT
 #DONE ISSUE rimuovere noise sensor
