@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'models.dart';
 
-const IPSERVER = 'http://192.168.1.79:5000/';
+const IPSERVER = 'http://44.204.42.245:5000/';
 
 class GlobalValues {
   static UserSession? userSession;
@@ -154,8 +154,6 @@ Future<String> freeRoom() async {
   }
 }
 
-//@update
-
 class UpdateReq {
   final String color_val;
   final String brightness_val;
@@ -175,6 +173,7 @@ class UpdateReq {
       };
 }
 
+//@update
 Future<String?> changeActuatorRequest(UpdateReq request) async {
   final response = await http.post(
     Uri.parse(IPSERVER + 'update'),
@@ -216,6 +215,7 @@ Future<String> registerUser(user, pwd, sex, profession, birthDate) async {
   }
 }
 
+//@professions
 Future<List<Profession>> fetchJobs() async {
   try {
     final response = await http.get(
