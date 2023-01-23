@@ -149,10 +149,10 @@ void loop() {
     initializedRoomState = 0;
   }
 
-  /* If the room has been activated, check if the button is pressed and send
+  /* If the room has been activated, check if the button is pressed and send sensors data to the bridge */
   if (enteredState == 1 && occupiedState == 1 && initializedRoomState == 1) {
-    /* Leggi lo stato del bottone e controlla lo stato del bottone. Se è premuto (HIGH), setta la stanza in WAITING */
 
+    /* Read button state and check the state. If it is pressed (HIGH), set the room in WAITING state */
     buttonState = digitalRead(buttonPin);
 
     if (buttonState == HIGH) {
