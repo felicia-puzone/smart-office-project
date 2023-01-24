@@ -18,7 +18,7 @@ from queries import fetchJobs, getFreeBuildings, createAndPopulateDb, buildRoomL
 from utilities import buildJsonList, calculateUserAge, \
     seconds_between, colors, brightness_values
 from flask_admin import Admin
-from flask_login import current_user, LoginManager, login_user, logout_user, login_required,UserMixin
+from flask_login import current_user, LoginManager, login_user, logout_user, login_required
 from flask import  jsonify, request
 from weather import weather_report
 
@@ -257,7 +257,7 @@ def freeRoom():
 def dashboardroom():
     if not handleViewPermission():
         print("current user is not Admin")
-        return handleLoggedinUser()
+        return handleLoggedinUser("")
     id_room = request.form['id_room']
     graphs=[]
     link="/admin/rooms"
@@ -284,7 +284,7 @@ def dashboardroom():
 def dashboardbuilding():
     if not handleViewPermission():
         print("current user is not Admin")
-        return handleLoggedinUser()
+        return handleLoggedinUser("")
     id_building = request.form['building_id']
     graphs=[]
     link = "/admin/buildings"
@@ -315,7 +315,7 @@ def dashboardbuilding():
 def dashboardzone():
     if not handleViewPermission():
         print("current user is not Admin")
-        return handleLoggedinUser()
+        return handleLoggedinUser("")
     id_zone = request.form['zone_id']
     graphs=[]
     link = "/admin/zones"
@@ -590,13 +590,11 @@ def tryToFreeRoom(id_user):
     return 0
 
 def setRoomToSleepMode(id_room,id_building):
-    weather_data = weather_report(id_room)
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/color', "NONE",retain=True)
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/brightness', 'LOW',retain=True)
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/temperature', round(int(float(weather_data['temperature']))),retain=True)
+    #weather_data = weather_report(id_room)
+    #mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/temperature', round(int(float(weather_data['temperature']))),retain=True)
     mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/status_request', "closed",retain=True)
     digital_twin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
-    digital_twin.set_to_sleep_mode()
+    #digital_twin.set_to_sleep_mode(round(int(float(weather_data['temperature']))))
     return 0
 
 #testato
@@ -661,11 +659,7 @@ def registerAction(type, value,session_id,timestamp,id_room,id_building,digitalT
 
 
 
-@app.after_request
-def remove_if_invalid(response):
-    if "__invalidate__" in session:
-        response.delete_cookie(app.session_cookie_name)
-    return response
+
 
 
 
@@ -739,10 +733,11 @@ if __name__ =="__main__":
 
 
 #TODO RISPARMIO ENERGETICO
-    #TODO fixare bug monitor
+    #DONE fixare bug monitor (non era un bug, ma un errore della costante di tempo)
     #TODO stress test del monitor
     #TODO test bot telegram
     #TODO test report telegram
+    #TODO vedere se la prima action è lontana dall'inizio
     #DONE per evitare lunghi tempi di computazione creiamo report giornalieri
     #DONE GRAFICO CONSUMI
     #DONE testare se la dashoard è funzionante

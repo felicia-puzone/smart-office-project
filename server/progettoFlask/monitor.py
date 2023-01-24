@@ -5,6 +5,9 @@ import paho.mqtt.client as mqtt
 
 
 #TODO TEST piano
+#TODO Testare i 2 fix
+#TODO Testare il last action
+#TODO Testare il past actions nuovo
 #DONE CALIBRAZIONE CONSUMI
 #creaimo un insieme di dati di finte sessioni
 #una volta fatto ciò creeremo delle dei casi e  vedere se funziona in modo giusto
@@ -108,9 +111,11 @@ def hour_count():
             print("###############################################################################################################################à")
             print("ratio di consumo nuovo:" + str(max_consumption_rate))
             print("max consumption nuovo:" + str(max_consumption))
-        actuator_actions = fetchActions().fetchall()
+        actuator_temperature_actions = fetchTemperatureActions().fetchall()
+        actuator_brightness_actions = fetchBrightnessActions().fetchall()
         print("Azioni all'interno del range")
-        print(actuator_actions)
+        print(actuator_temperature_actions)
+        print(actuator_brightness_actions)
         #ultime azioni delle sessioni attive che non hanno fatto niente in questo range temporaneo
         actuator_past_action = fetchPastActions().fetchall()
         print("Azioni di sessioni passate")
@@ -120,7 +125,8 @@ def hour_count():
         print("la temperatura nella zona è:"+str(weather_temperature))
         hour_consumption += calculate_past_query_consumption( actuator_past_action)
         print("hour consumption passo 1:"+str(hour_consumption))
-        hour_consumption += calculate_query_consumption(actuator_actions)
+        hour_consumption += calculate_query_consumption(actuator_brightness_actions)
+        hour_consumption += calculate_query_consumption(actuator_temperature_actions)
         print("passo 2 :"+str(hour_consumption))
         max_consumption -= hour_consumption
         if max_consumption_rate < hour_consumption:
@@ -150,6 +156,8 @@ def calculate_query_consumption(actuator_actions):
     global total_active_sessions_consumption
     hour_consumption=0
     counter=0
+    check_sessions_temp=[]
+    check_sessions_bright=[]
     for row in actuator_actions:
         action_duration = 0
         active = bool(int(row[5]))
@@ -177,14 +185,17 @@ def calculate_query_consumption(actuator_actions):
                 total_active_sessions_consumption += hour_consumption
                 upsertSessionReport(id_session, id_room, id_building, 0, light_consumption)
             upsertConsumptionReport(id_building, id_room, datetime.datetime.strptime(timestamp_action,'%Y-%m-%d %H:%M:%S.%f'), 0, light_consumption)
+            if id_session not in check_sessions_bright:
+                print("-----------------------Controlliamo----------------------")
+                print("Tempo tra la prima azione e l'inizio della sessione")
+                print(hours_between(datetime.datetime.strptime(timestamp_action, '%Y-%m-%d %H:%M:%S.%f'),begin_timestamp))
+                if hours_between(datetime.datetime.strptime(timestamp_action,'%Y-%m-%d %H:%M:%S.%f'),begin_timestamp)>0:
+                    hour_consumption+=fetchLastAction(int(id_session),timestamp_action,"brightness")
+                check_sessions_bright.append(id_session)
         else:
-            #1,204 è la densità dell'aria
-            #1.006 calore specifico dell'aria
             deltaT = weather_temperature-int(value)
             print("La temperatura della sessione è:"+value)
             print("deltaT della sessione:"+str(deltaT))
-            #vecchia formula
-            #temperature_consumption= abs(deltaT) * (1.204 * room_size) * 1.006 * action_duration #consumazione in ora giusto per vedere
             temperature_consumption = (1 + 0.03 * abs(deltaT)) * AC_consumption *  action_duration  # consumazione in ora giusto per vedere
             hour_consumption += temperature_consumption
             if active:
@@ -192,7 +203,15 @@ def calculate_query_consumption(actuator_actions):
                 upsertSessionReport(id_session, id_room, id_building, temperature_consumption, 0)
                 upsertDeltaT(id_session, deltaT)
             upsertConsumptionReport(id_building, id_room, datetime.datetime.strptime(timestamp_action,'%Y-%m-%d %H:%M:%S.%f'), temperature_consumption, 0)
+            if id_session not in check_sessions_temp:
+                print("-----------------------Controlliamo----------------------")
+                print("Tempo tra la prima azione e l'inizio della sessione")
+                print(hours_between(datetime.datetime.strptime(timestamp_action, '%Y-%m-%d %H:%M:%S.%f'),begin_timestamp))
+                if hours_between(datetime.datetime.strptime(timestamp_action, '%Y-%m-%d %H:%M:%S.%f'),begin_timestamp) > 0:
+                    hour_consumption+=fetchLastAction(int(id_session),timestamp_action,"temperature")
+                check_sessions_temp.append(id_session)
         print(counter)
+
         counter+=1
     return hour_consumption
 def calculate_past_query_consumption(actuator_actions):
@@ -273,7 +292,7 @@ def insertNewAction(id_session,id_room,id_building, timestamp,type,value):
     else:
         db.execute("UPDATE digital_twin_feed SET temperature_actuator='"+str(value)+"' WHERE ID_ROOM="+str(id_room))
     return 0
-def fetchActions():
+def fetchBrightnessActions():
     return  db.execute('select '
     'actuator_feeds.ID_SESSION, actuator_feeds.type_of_action, actuator_feeds.value, actuator_feeds.timestamp,'
     'session_states.ID_ROOM, session_states.active AS active,rooms.id_building,'
@@ -285,25 +304,44 @@ def fetchActions():
     'join zone_to_building_association ON (rooms.id_building=zone_to_building_association.id_building)'
     'where (actuator_feeds.timestamp BETWEEN "'+str(begin_timestamp)+'" AND "'+str(end_timestamp)+'")'
     'AND zone_to_building_association.id_zone='+str(ZONE_ID)+' '
-    'AND actuator_feeds.type_of_action!="color"')
-def fetchPastActions():
+    'AND actuator_feeds.type_of_action!="color" AND actuator_feeds.type_of_action!="temperature"')
+
+
+def fetchTemperatureActions():
+    return  db.execute('select '
+    'actuator_feeds.ID_SESSION, actuator_feeds.type_of_action, actuator_feeds.value, actuator_feeds.timestamp,'
+    'session_states.ID_ROOM, session_states.active AS active,rooms.id_building,'
+    'sessions.timestamp_end '
+    'from actuator_feeds '
+    'join session_states ON (actuator_feeds.id_session = session_states.id_session) '
+    'join rooms ON (session_states.id_room = rooms.id_room)'
+    'join sessions ON (sessions.id_session = actuator_feeds.id_session AND sessions.id_session=session_states.id_session)'
+    'join zone_to_building_association ON (rooms.id_building=zone_to_building_association.id_building)'
+    'where (actuator_feeds.timestamp BETWEEN "'+str(begin_timestamp)+'" AND "'+str(end_timestamp)+'")'
+    'AND zone_to_building_association.id_zone='+str(ZONE_ID)+' '
+    'AND actuator_feeds.type_of_action!="color" AND actuator_feeds.type_of_action!="brightness"')
+
+
+
+def fetchPastActions():#se fai un azione nel range non prende il resto
+                       #al momento dovrebbe essere safe se cambi colore nel range
     return db.execute('select session_states.id_session, type_of_action, value, MAX(timestamp) as timestamp,'
      'rooms.id_room,rooms.id_building'
      ' FROM  actuator_feeds join session_states ON (session_states.id_session=actuator_feeds.id_session)'
      ' JOIN rooms ON (rooms.id_room=session_states.id_room)' 
-     ' JOIN zone_to_building_association ON (rooms.id_building=zone_to_building_association.id_building)'
-     ' JOIN (SELECT id_zone,temperature, MAX(timestamp) FROM weather_report GROUP BY id_zone) x ON (x.id_zone = zone_to_building_association.id_zone)'                                                   
+     ' JOIN zone_to_building_association ON (rooms.id_building=zone_to_building_association.id_building)'                                                 
      ' WHERE timestamp <"' + str(begin_timestamp) + '" AND active=TRUE AND actuator_feeds.type_of_action!="color"'
-     ' AND session_states.id_session NOT IN (SELECT id_session FROM actuator_feeds WHERE timestamp BETWEEN "'+str(begin_timestamp)+'" AND "'+str(end_timestamp)+'")'
+     ' AND session_states.id_session NOT IN (SELECT id_session '
+     ' FROM actuator_feeds WHERE type_of_action!="color" AND timestamp BETWEEN "'+str(begin_timestamp)+'" AND "'+str(end_timestamp)+'")'
      ' AND zone_to_building_association.id_zone='+str(ZONE_ID)+' '
      ' GROUP BY session_states.id_session,type_of_action')
 
+
 def fetchZoneNumberOfrooms():
     return db.execute(" SELECT COUNT(*) FROM rooms WHERE id_building IN "
-                      "(SELECT zone_to_building_association.id_building FROM zone_to_building_association JOIN  buildings ON (zone_to_building_association.id_building = buildings.id_building)"
-                      " WHERE id_zone="+str(ZONE_ID)+" AND  available=True)")
-
-
+                      "(SELECT zone_to_building_association.id_building FROM zone_to_building_association "
+                      " JOIN  buildings ON (zone_to_building_association.id_building = buildings.id_building)"
+                      " WHERE id_zone="+str(ZONE_ID)+" AND  available=True) AND  available=True")
 def adjustConsumption(over_consumption):
     consumption_session_reports=db_report.execute("SELECT * FROM active_session_report").fetchall()
     deltaTs=db_report.execute("SELECT * FROM deltaT").fetchall()
@@ -350,12 +388,63 @@ def adjustConsumption(over_consumption):
                 new_room_temp=30
             print("Nuova temperatura:" + str(new_room_temp))
             insertNewAction(id_session,id_room,id_building, timestamp_invertion, "temperature", new_room_temp)
+def fetchLastAction(id_session,timestamp,type):
+
+    if type == "temperature":
+        query = db.execute(' select session_states.id_session, type_of_action, value, MAX(timestamp) as timestamp'
+                      ' FROM  actuator_feeds join session_states ON (session_states.id_session=actuator_feeds.id_session) '
+                      ' JOIN rooms ON (rooms.id_room=session_states.id_room)'
+                      ' JOIN zone_to_building_association ON (rooms.id_building=zone_to_building_association.id_building)'
+                      ' WHERE timestamp <"' + str(begin_timestamp) + '" AND actuator_feeds.type_of_action!="color" AND actuator_feeds.type_of_action!="brightness"'
+                      ' AND session_states.id_session='+str(id_session)+
+                      ' AND zone_to_building_association.id_zone=' + str(ZONE_ID) +
+                      ' GROUP BY session_states.id_session,type_of_action').fetchone()
+        if query is not None:
+            print("Azione trovata")
+            print(query)
+            temperature = int(query[2])
+            action_duration = hours_between(datetime.datetime.strptime(timestamp,'%Y-%m-%d %H:%M:%S.%f'),begin_timestamp)
+            deltaT = weather_temperature - int(temperature)
+            print("La temperatura della sessione è:" + str(temperature))
+            print("deltaT della sessione:" + str(deltaT))
+            # vecchia formula
+            # temperature_consumption= abs(deltaT) * (1.204 * room_size) * 1.006 * action_duration #consumazione in ora giusto per vedere
+            temperature_consumption = (1 + 0.03 * abs(deltaT)) * AC_consumption * action_duration  # consumazione in ora giusto per vedere
+            print("Ho consumato dall'inizio:"+str(temperature_consumption))
+            return temperature_consumption
+            #Calcolo
+        return 0
+    if type == "brightness":
+        query = db.execute('select session_states.id_session, type_of_action, value, MAX(timestamp) as timestamp'
+                      ' FROM  actuator_feeds join session_states ON (session_states.id_session=actuator_feeds.id_session)'
+                      ' JOIN rooms ON (rooms.id_room=session_states.id_room)'
+                      ' JOIN zone_to_building_association ON (rooms.id_building=zone_to_building_association.id_building)'
+                      ' WHERE timestamp <"' + str(begin_timestamp) + '" AND actuator_feeds.type_of_action!="color" AND actuator_feeds.type_of_action!="temperature"'
+                      ' AND session_states.id_session='+str(id_session)+
+                      ' AND zone_to_building_association.id_zone=' + str(ZONE_ID) +
+                      ' GROUP BY session_states.id_session,type_of_action').fetchone()
+        if query is not None:
+            print("Azione trovata")
+            print(query)
+            brightness = query[2]
+            action_duration = hours_between(datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S.%f'),
+                                            begin_timestamp)
+            # vecchia formula
+            # temperature_consumption= abs(deltaT) * (1.204 * room_size) * 1.006 * action_duration #consumazione in ora giusto per vedere
+            light_consumption = 5 * (1 + brightness_tuple.index(brightness)) * action_duration
+            print("Ho consumato dall'inizio:" + str(light_consumption))
+            return light_consumption
+        return 0
 
 
 
 
 
-schedule.every(1).minutes.do(hour_count)
+
+
+
+
+schedule.every(60/time_constant).minutes.do(hour_count)
 while True:
     schedule.run_pending()
 
