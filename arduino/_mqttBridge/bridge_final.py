@@ -90,12 +90,12 @@ class Bridge():
       
 			print('Sono dentro status request')
 				
-			if(msg.payload.decode("utf-8") == '0'):
+			if(msg.payload.decode("utf-8") == 'closed'):
 				
 				self.ser.write(b'\x00'b'\x00'b'\xff')
 				time.sleep(1)
     
-			if(msg.payload.decode("utf-8") == '1'):
+			if(msg.payload.decode("utf-8") == 'waiting'):
 				
 				self.ser.write(b'\x00'b'\x01'b'\xff')
 				time.sleep(1)

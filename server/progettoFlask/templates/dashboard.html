@@ -1,46 +1,18 @@
-<!-- Store this code in 'register.html' file inside the 'templates' folder -->
- 
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title> Register </title> 
-<style>
-.myDiv {
-  border: 5px outset red;
-  background-color: lightblue;    
-  text-align: center;
-}
-</style> 
-    </head>
-    <body></br></br></br></br></br>
-        <div align="center">
-          <div align="center" class="border">
-             <div class="header">
-                <h1 class="word">Registrazione</h1>
-             </div></br></br></br>
-            <h2 class="word">
+<body>
+    <h1>{{header}}</h1>
+    <h2 ><a href="{{link}}">Ritorna alla pagina precedente</a></h2>
+    {%for graphJSON in graphsJSON%}
+        <div id="chart{{loop.index}}" class="chart{{loop.index}}"></div>
+    {%endfor%}
+</body>
 
-			{% for d in digitalTwins%}
-      				<div class="myDiv">
-				<p>{{d.id_room}}</p>
-				<p>{{d.temperature_sensor}}</p>
-				<p>{{d.humidity_sensor}}</p>
-				<p>{{d.light_sensor}}</p>
-				<p>{{d.led_actuactor}}</p>
-				<p>{{d.temperature_actuactor}}</p>
-				<p>{{d.led_brightness}}</p>
-				<p>{{d.healthy}}</p>				
-				</div>
-  			{% endfor %}
-            </h2>
-            <p class="bottom">Hai già un account?  <a class="bottom" href="{{url_for('login')}}">Accedi qui</a></p>
-          </div>
-        </div>
-    </body>
-</html>
 
-<script>
-
-setTimeout(() => { console.log("World!"); }, 5000);
-
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script type="text/javascript">
+    {%for graphJSON in graphsJSON%}
+        var graph = {{graphJSON | safe}};
+        Plotly.plot('chart{{loop.index}}',graph,{});
+    {%endfor%}
 </script>
+</html>

@@ -14,53 +14,53 @@
 		<form action="{{ url_for('update') }}" method="post">
 			<p>Colore luce:</p>
 			<select id="color" name="color"  required>
-			{% if digitalTwin.led_actuator == 1 %}
+			{% if digitalTwin.led_actuator == 'RED' %}
 			<option value=1 selected>Rosso</option>
 			{%else%}
 			 <option value=1>Rosso</option>
 			{% endif %}
 
-			{%  if digitalTwin.led_actuator == 2 %}
+			{%  if digitalTwin.led_actuator == 'ORANGE' %}
 			<option value=2 selected>Arancione</option>
 			{%else%}
 			<option value=2>Arancione</option>
 			{% endif %}
-			{%  if digitalTwin.led_actuator == 3%}
+			{%  if digitalTwin.led_actuator == 'YELLOW' %}
 			<option value=3 selected>Giallo</option>
 			{%else%}
 			<option value=3>Giallo</option>
 			{% endif %}
 
-			{%  if digitalTwin.led_actuator == 4%}
+			{%  if digitalTwin.led_actuator == 'GREEN' %}
 			<option value=4 selected>Verde</option>
 			{%else%}
 			<option value=4>Verde</option>
 			{% endif %}
 
-			{%  if digitalTwin.led_actuator == 5%}
+			{%  if digitalTwin.led_actuator == 'TEAL' %}
 			<option value=5 selected>Acqua</option>
 			{%else%}
 			<option value=5>Acqua</option>
 			{% endif %}
 
-			{%  if digitalTwin.led_actuator == 6%}
+			{%  if digitalTwin.led_actuator == 'BLUE' %}
 			<option value=6 selected>Blu</option>
 			{%else%}
 			<option value=6>Blu</option>
 			{% endif %}
 
-			{%  if digitalTwin.led_actuator == 7%}
+			{%  if digitalTwin.led_actuator == 'INDIGO' %}
 			<option value=7 selected>Viola</option>
 			{%else%}
 			<option value=7>Viola</option>
 			{% endif %}
 
-			{%  if digitalTwin.led_actuator == 8%}
+			{%  if digitalTwin.led_actuator == 'VIOLET' %}
 			<option value=8 selected>Fucsia</option>
 			{%else%}
 			<option value=8>Fucsia</option>
 			{% endif %}
-			{%  if digitalTwin.led_actuator == 9%}
+			{%  if digitalTwin.led_actuator == 'RAINBOW' %}
 			<option value=9 selected>RGB</option>
 			{%else%}
 			<option value=9>RGB</option>
@@ -73,28 +73,22 @@
 			</br></br>
 			<p>Intensità luce:</p>
 			<select id="brightness" name="brightness"  required>
-			{% if digitalTwin.led_brightness == 0 %}
-			<option value=0 selected>Spenta</option>
+			{% if digitalTwin.led_brightness == 'LOW' %}
+			<option value=0 selected>Bassa</option>
 			{%else%}
-			<option value=0>Spenta</option>
+			<option value=0>Bassa</option>
 			{% endif %}
 
-			{%  if digitalTwin.led_brightness == 1 %}
-			<option value=1 selected>Bassa</option>
-			{%else%}			
-			<option value=1>Bassa</option>
+			{%  if digitalTwin.led_brightness == 'MEDIUM'%}
+			<option value=1 selected>Media</option>
+			{%else%}
+			<option value=1>Media</option>
 			{% endif %}
 
-			{%  if digitalTwin.led_brightness == 2%}
-			<option value=2 selected>Media</option>
+			{%  if digitalTwin.led_brightness == 'HIGH'%}
+				<option value=2 selected>Forte</option>
 			{%else%}
-			<option value=2>Media</option>
-			{% endif %}
-
-			{%  if digitalTwin.led_brightness == 3%}
-				<option value=3 selected>Forte</option>
-			{%else%}
-				<option value=3>Forte</option>
+				<option value=2>Forte</option>
 			{% endif %}
 
 			</select>
@@ -105,14 +99,15 @@
 		</form>
              </div></br></br></br>
             <h2 class="word">
+		<form action="{{ url_for('freeRoom') }}" method="post">
+                  <div>Libera la stanza</div>
+                    <input type="submit" class="btn" value="freeroom"></br></br>
+                </form>
                 <form action="{{ url_for('logout') }}" method="post">
                   <div>logout</div>
                     <input type="submit" class="btn" value="Logout"></br></br>
                 </form>
-		<form action="{{ url_for('freeRoom') }}" method="post">
-                  <div>logout</div>
-                    <input type="submit" class="btn" value="freeroom"></br></br>
-                </form>
+
             </h2>
           </div>
         </div>

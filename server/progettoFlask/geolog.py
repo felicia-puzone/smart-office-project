@@ -1,58 +1,38 @@
-import requests
-import urllib.parse
+import geopy
+from geopy import Nominatim
+
+from utilities import haversine
 
 
-#TODO testing
-#TODO handle errori
-def getMarker(address):
-    print(address)
-    url = 'https://nominatim.openstreetmap.org/search/' + urllib.parse.quote(address) + '?format=json'
-    print("ciao")
-    response = requests.get(url).json()
-    print(response[0]["lat"])
-    print(response[0]["lon"])
-    marker= {
-        'name':address,
-        'lat':str(response[0]["lat"]),
-        'lon':str(response[0]["lon"]),
-        }
+def geoMarker(city,route,state):
+    geolocator = Nominatim(user_agent='smartoffice')
+    address=""
+    if  route == "":
+        address=city+","+state
+    else:
+        address=city+","+route+","+state
+    location = geolocator.geocode(address, exactly_one=True)
+    if location is None:
+        address = city + "," + state
+        location = geolocator.geocode(address, exactly_one=True)
+        if location is None:
+            return None
+
+    marker = {'city':city,'route':route,'address': address, 'lat': location.latitude, 'lon': location.longitude}
+    print(marker)
     return marker
-
-
-#possible values of type:
-#administrative
-#locality
-#neighbourhood
-#stop
-#bus_stop
-#cinema
-#etc....
-def getMarkerByType(address,type):
-    print(address)
-    url = 'https://nominatim.openstreetmap.org/search/' + urllib.parse.quote(address) + '?format=json'
-    places = requests.get(url).json()
-    marker = {}
-    for place in places:
-        if place["type"] == type:
-            print(place["lat"])
-            print(place["lon"])
-            marker= {
-            'name':address,
-            'lat':str(place["lat"]),
-            'lon':str(place["lon"]),
-            }
-            return marker
-    return marker
-
-def isAddressValid(address):
-    print(address)
-    url = 'https://nominatim.openstreetmap.org/search/' + urllib.parse.quote(address) + '?format=json'
-    response = requests.get(url).json()
-    if response == []:
-        #print("non esisto lol")
-        return False
-    return True
-
+def geoNearest(zone_candidates,building):
+    nearest_zone=zone_candidates.first()
+    min_distance = haversine(int(float(nearest_zone.lon)),int(float(nearest_zone.lat)),int(float(building.lon)),int(float(building.lat)))
+    for zone in zone_candidates:
+        distance = haversine(int(float(zone.lon)),int(float(zone.lat)),int(float(building.lon)),int(float(building.lat)))
+        if distance < min_distance:
+            nearest_zone = zone
+            min_distance=distance
+    return nearest_zone
+    #>> > gn.geocode("Cleveland, OH", exactly_one=False)[0]
+    #(u'Cleveland, OH, US', (41.4994954, -81.6954088))
+#def isAddressValid():
 
 
 #def reverseGetMarker():

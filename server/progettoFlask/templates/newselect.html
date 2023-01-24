@@ -24,7 +24,7 @@
   <script>
 
     {% for building in buildings %}
-      	var popupContent1 = '<form action={{url_for("occupyRoom") }} method=post><p>{{ building.route + building.number }}</p><button type=submit name=building id=building value={{ building.id_building }}>Prenota</button></form>';
+      	var popupContent1 = '<form action={{url_for("occupyRoom") }} method=post><p>{{building.city}} {{ building.address }}</p><button type=submit name=building id=building value={{ building.id_building }}>Prenota</button></form>';
         popup1 = new L.Popup();
         popup1.setLatLng([{{building.lat }}, {{ building.lon }}]);
         popup1.setContent(popupContent1);
@@ -38,6 +38,7 @@
 // Set map's center to target with zoom 14.
       map.setView(target, 9);
   </script>
+
 </body>
 
 </html>

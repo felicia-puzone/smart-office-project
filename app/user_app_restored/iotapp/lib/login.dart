@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'register.dart';
-import 'main.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'controller.dart';
 import 'home.dart';
-import 'userSession.dart';
-import 'edificio.dart';
+import 'package:iotapp/rooms_map.dart';
 
-//////////////// REQUEST
 final userTextController = TextEditingController();
 final pwdTextController = TextEditingController();
-
 
 class MyLogin extends StatefulWidget {
   const MyLogin({Key? key}) : super(key: key);
@@ -20,20 +14,11 @@ class MyLogin extends StatefulWidget {
 }
 
 class _MyLoginState extends State<MyLogin> {
+  late Future<String> futureUserSession;
 
-  
   @override
   void initState() {
-    print('INIT CALLED');
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    //userTextController.dispose();
-    //pwdTextController.dispose();
-    //super.dispose();
   }
 
   @override
@@ -107,21 +92,51 @@ class _MyLoginState extends State<MyLogin> {
                                 backgroundColor: Color(0xff4c505b),
                                 child: IconButton(
                                     color: Colors.white,
-                                    onPressed: () {
-                                      
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  UserHome()));
+                                    onPressed: () async {
+                                      String result = await fetchUserSession(
+                                          userTextController.text,
+                                          pwdTextController.text);
+                                      if (result == 'FIRST-LOGIN') {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const Mappa()));
+                                      } else if (result == 'LOGGED-ALREADY') {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const UserHome()));
+                                      } else {
+                                        showDialog(
+                                            context: context,
+                                            builder: (ctx) => AlertDialog(
+                                                  title: Text(result),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pushNamed(
+                                                            context, 'login');
+                                                      },
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(14),
+                                                        child: const Text("OK"),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ));
+                                      }
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.arrow_forward,
                                     )),
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 40,
                           ),
                           Row(
