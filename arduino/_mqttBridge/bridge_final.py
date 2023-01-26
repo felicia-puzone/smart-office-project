@@ -54,6 +54,7 @@ class Bridge():
 		self.clientMQTT = mqtt.Client()
 		self.clientMQTT.on_connect = self.on_connect
 		self.clientMQTT.on_message = self.on_message
+		self.clientMQTT.will_set('smartoffice/building_%s/room_%s/health', payload='Bad', qos=0, retain=False)
 		print("connecting to MQTT broker...")
 		self.clientMQTT.connect(
 			self.config.get("MQTT","Server", fallback= "localhost"),
@@ -74,6 +75,13 @@ class Bridge():
 		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/actuators/brightness' % (self.building_id, self.room_id))
 		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/actuators/temperature' % (self.building_id, self.room_id))
 		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/status_request' % (self.building_id, self.room_id))
+		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/health' % (self.building_id, self.room_id))
+  
+		
+		self.clientMQTT.publish('smartoffice/building_%s/room_%s/health' % (self.building_id, self.room_id),'Good')
+
+  
+
     
 
 
