@@ -39,9 +39,7 @@ def updateDigitalTwinSensors(id_room,sensor,value):
             digitalTwin=db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
             timestamp=datetime.datetime.utcnow()
             sensorFeed = sensorFeeds(digitalTwin.id_room,sensor,value,timestamp)
-            print("Ho creato l'oggetto!")
             if sensor == "light_sensor":
-                print("Sto per scrivere!")
                 digitalTwin.light_sensor=value
                 db.session.add(sensorFeed)
                 db.session.commit()
