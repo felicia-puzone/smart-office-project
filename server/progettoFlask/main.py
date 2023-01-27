@@ -1,8 +1,14 @@
 import datetime
 import re
+import random
+
+from apiflask import Schema, PaginationSchema, pagination_builder
 from itsdangerous import BadSignature
 import requests as requests
 from flask import  render_template, session, json
+from marshmallow.fields import List, Nested, Integer, String, Boolean, Dict, Str, Raw
+from marshmallow.validate import Range
+
 from werkzeug.exceptions import HTTPException
 from apphandler import app
 from models import db, digitalTwinFeed, sessions, sessionStates, rooms, professions, actuatorFeeds, buildings, \
@@ -21,6 +27,8 @@ from flask_admin import Admin
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required
 from flask import  jsonify, request
 from weather import weather_report
+
+
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -89,25 +97,40 @@ def unauthorized_callback():
 
 
 
-
-
-
-@app.route("/") #percorsi url locali
+@app.route("/")
 def homepage():
+    """Homepage
+    Pagina iniziale per i client web, reindizza alla pagina di Login o alla schermata utente se la sessione è attiva."""
+    # returning a dict or list equals to use jsonify()
     if current_user.is_authenticated:
         return handleLoggedinUser("")
     else:
         return render_template('login.html',msg='')
 
+
+
+
 @app.route("/professions",methods=['GET'])
 def fetchprofessions():
+    """Fetch delle professioni
+       Tramite richiesta GET il server fornirà al cliet la lista delle professioni che risiedono nel Database."""
     return buildJsonList(fetchJobs())
 
-#/Login
-#Metodi accettati POST
-#Si
+
+
 @app.route('/login',methods = ['POST'])
+@app.doc(summary='User authentication', tags=['Authentication'],)
+#@app.input({'Username': String(),'Password':String()})
+#@app.output({'logged_in': Boolean(default=False)})
 def login():
+    """Login
+       Tramite richiesta POST, il client dovrà fornire al server una form che comprende le credenziali Username e Password.
+       In base ai dati ricevuti, il server manderà i dati necesssari per mostrare la schermata utente in caso di autenticazione
+       riuscita, per gli utenti mobile sarà fornito un Json con i dati necessari per la prenotazione di una stanza, nei dati
+       verrà compreso un token per l'identificazione dell'utente, gli utenti Web verranno reindirizzati alla schermata di
+       selezione di prenotazione e il token sarà salvato in una variabile di sessione.
+       Nel caso di autenticazione fallita, si verrà reindirizzati alla schermata di Login o un json che comunicherà
+       l'esito negativo."""
     content = request.headers.get("Content-ID")
     msg=''
     if 'username' in request.form and 'password' in request.form:
@@ -130,8 +153,13 @@ def login():
 #testato
 
 @app.route('/logout',methods = ['POST'])
+@app.doc(summary='User logout', tags=['Authentication required'])
 @login_required
 def logout():
+    """Logout
+    Tramite richiesta POST da parte dell'utente, il server chiuderà la sessione, i client Web verranno reindirizzati alla schermata
+    di Login, mentre gli utenti mobile riceveranno l'esito del logout.
+    """
     content=request.headers.get("Content-ID")
     logout_user()
     if content == "Logout-APP":
@@ -142,6 +170,13 @@ def logout():
 #testato
 @app.route("/register", methods = ['GET','POST'])
 def register():
+    """Registrazione utente
+    Tramite richiesta GET, si riceverà la schermata Web del form di registrazione.
+    Tramite richiesta POST, il client dovrà fornire un form contenente i dati necessari, in caso di dati mancanti e/o
+    errati, gli utenti Web verranno reindirizzati alla schermata di registrazione, mentre per gli utenti app verrà
+    inviato un messaggio di esito negativo. Se la registrazione è avvenuta con successo, il Server registrerà il nuovo
+    account nel database e manderà un messaggio per comunicare l'esito positivo all'utente.
+    """
     msg = ''
     signedUp=False
     jobs = fetchJobs()
@@ -192,8 +227,18 @@ def register():
 #testato
 
 @app.route("/update",  methods = ['POST'])
+@app.doc(summary='Room settings update', tags=['Authentication required'])
+#@app.input({'color_val':Integer(required=True),'brightness_val':Integer(required=True),'temp_val':Integer(required=True)},location='json')
+#@app.input({'Content-ID':String(required=False),'token':String(required=True)},location='headers')
+#@app.output({'changes':Boolean(),'digitalTwin': Dict(keys=Str(),values=Raw())})
+#,"room_temperature": 'Integer',"room_brightness": 'String'
 @login_required
 def update():
+    """Aggiornamento dati stanza
+
+
+
+    """
     content=request.headers.get("Content-ID")
     if content == "UPDATE-APP":
         data=request.get_json(silent=True)
@@ -412,7 +457,10 @@ def StartListening():
         fetchedRooms=rooms.query.all()
         for room in fetchedRooms:
             mqtt.subscribe('smartoffice/building_'+str(+room.id_building)+'/room_'+str(room.id_room)+'/sensors/#')
+            mqtt.subscribe('smartoffice/building_' + str(+room.id_building) + '/room_' + str(room.id_room) + '/health/#')
+            #mqtt.subscribe('smartoffice/building_' + str(+room.id_building) + '/room_' + str(room.id_room) + '/status_server/#')
             print("mi sono iscritto al topic "+'smartoffice/building_'+str(+room.id_building)+'/room_'+str(room.id_room)+'/sensors')
+            print("mi sono iscritto al topic " + 'smartoffice/building_' + str(+room.id_building) + '/room_' + str(room.id_room) + '/health')
     return 0
 #testato
 
@@ -439,7 +487,7 @@ def prepareRoom(id_user,id_session,digitalTwin,id_building):
     brightness = data['user_light']
     temperature = data['user_temp']
     timestamp = datetime.datetime.utcnow()
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(digitalTwin.id_room) + '/status_request', "waiting",retain=True)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(digitalTwin.id_room) + '/status', "waiting",retain=True)
     registerAction('color', led_color, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
     registerAction('brightness', brightness, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
     registerAction('temperature', temperature, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
@@ -592,7 +640,7 @@ def tryToFreeRoom(id_user):
 def setRoomToSleepMode(id_room,id_building):
     #weather_data = weather_report(id_room)
     #mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/temperature', round(int(float(weather_data['temperature']))),retain=True)
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/status_request', "closed",retain=True)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/status', "closed")
     digital_twin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
     #digital_twin.set_to_sleep_mode(round(int(float(weather_data['temperature']))))
     return 0
@@ -655,6 +703,25 @@ def registerAction(type, value,session_id,timestamp,id_room,id_building,digitalT
         digitalTwin.led_brightness = value
     db.session.commit()
     return 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -732,12 +799,12 @@ if __name__ =="__main__":
 
 
 
-#TODO RISPARMIO ENERGETICO
+#DONE RISPARMIO ENERGETICO
     #DONE fixare bug monitor (non era un bug, ma un errore della costante di tempo)
-    #TODO stress test del monitor
-    #TODO test bot telegram
-    #TODO test report telegram
-    #TODO vedere se la prima action è lontana dall'inizio
+    #DONE stress test del monitor
+    #DONE test bot telegram
+    #DONE test report telegram
+    #DONE vedere se la prima action è lontana dall'inizio
     #DONE per evitare lunghi tempi di computazione creiamo report giornalieri
     #DONE GRAFICO CONSUMI
     #DONE testare se la dashoard è funzionante

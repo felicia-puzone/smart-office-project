@@ -335,6 +335,3 @@ class telegram(db.Model):
         self.telegram_key=telegram_key
 
 
-
-
-

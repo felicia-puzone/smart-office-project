@@ -1,8 +1,11 @@
 from flask import Flask, request, render_template, session,jsonify
 from flask_cors import CORS
-
+from apiflask import APIFlask, Schema, abort
+from apiflask.fields import Integer, String
+from apiflask.validators import Length, OneOf
 appname="IOT main"
-app = Flask(appname)
+#app = Flask(appname)
+app = APIFlask(appname,docs_ui='rapipdf')
 app.config['SECRET_KEY']='004f2af45d3a4e161a7dd2d17fdae47f'
 cors = CORS(app)
 app.static_folder = 'static'

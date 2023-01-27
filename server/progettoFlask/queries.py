@@ -709,23 +709,29 @@ def buildZoneMonthlyConsumptionReport(buildings):
 
 def fetchMontlhyReport():
     #report dei consumi delle zone di questo mese
-    Report = "Il report consumi del mese scorso:"
+    Report = ""
     timestamp = datetime.datetime.utcnow() - datetime.timedelta(days=(31))
     zones_for_report = db.session.query(zones).all()
     for zone in zones_for_report:
         building_ids = db.session.query(zoneToBuildingAssociation.id_building).filter_by(id_zone=zone.id_zone)
-
         monthly_report = db.session.query(monthlyBuildingconsumptionReport).filter(
         monthlyBuildingconsumptionReport.id_building.in_(building_ids)) \
         .order_by(monthlyBuildingconsumptionReport.timestamp.desc()) \
         .filter(extract('year', monthlyBuildingconsumptionReport.timestamp) == timestamp.year)\
         .filter(extract('month', monthlyBuildingconsumptionReport.timestamp) == timestamp.month).all()
         zone_name = zone.city + " " + zone.state
+        sum=0
         if monthly_report is not None:
-            Report += "Zona id:" + str(zone.id_zone) + " " + zone_name + "\n"
+            #Report += "Zona id:" + str(zone.id_zone) + " " + zone_name + "\n"
             for report_building in monthly_report:
-                amount = str(float(report_building.temperature) + float(report_building.light)) + " Watt\n"
-                building_for_report = db.session.query(buildings).filter_by(id_building=report_building.id_building).first()
-                Report +="EDIFICIO ID:" + str(report_building.id_building) + " Indirizzo" + building_for_report.city + " " + building_for_report.address + ":\n"
-                Report +=amount
+                #amount = str(float(report_building.temperature) + float(report_building.light)) + " Watt\n"
+                #building_for_report = db.session.query(buildings).filter_by(id_building=report_building.id_building).first()
+                #Report +="EDIFICIO ID:" + str(report_building.id_building) + " Indirizzo" + building_for_report.city + " " + building_for_report.address + ":\n"
+                #Report +=amount
+                sum+=float(report_building.temperature) + float(report_building.light)
+        if sum > 0:
+            Report += "\n🏙️ " + zone_name + " 🏙️\n"
+            Report += "Consumo totale: "+str(sum) +" Watt ⚡\n"
+    if Report == "":
+        return "(Al momento non ci sono report di consumi disponibili. Prova più tardi.)"
     return Report

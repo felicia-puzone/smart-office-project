@@ -1,4 +1,3 @@
-import geopy
 from geopy import Nominatim
 
 from utilities import haversine
