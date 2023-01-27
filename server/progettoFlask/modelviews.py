@@ -257,6 +257,7 @@ class BuildingAdmin(sqla.ModelView):
         zone_association = db.session.query(zoneToBuildingAssociation).filter_by(id_building=building.id_building)
         for room in rooms_to_delete:
             mqtt.unsubscribe('smartoffice/building_' + str(+room.id_building) + '/room_' + str(room.id_room) + '/sensors/#')
+            mqtt.unsubscribe('smartoffice/building_' + str(room.id_building) + '/room_' + str(room.id_room) + '/health/#')
             print("mi sono disiscritto dal topic " + 'smartoffice/building_' + str(room.id_building) + '/room_' + str(room.id_room) + '/sensors')
             digital_twins_to_delete=db.session.query(digitalTwinFeed).filter_by(id_room=room.id_room)#ok
             sensorfeed_to_delete=db.session.query(sensorFeeds).filter_by(id_room=room.id_room)#ok
@@ -356,6 +357,7 @@ class RoomAdmin(sqla.ModelView):
                 raise ValidationError('è presente una sessione attiva in questa stanza!')
             else:
                 mqtt.unsubscribe('smartoffice/building_' + str(+room.id_building) + '/room_' + str(room.id_room) + '/sensors/#')
+                mqtt.unsubscribe('smartoffice/building_' + str(+room.id_building) + '/room_' + str(room.id_room) + '/health/#')
                 print("mi sono disiscritto dal topic " + 'smartoffice/building_' + str(room.id_building) + '/room_' + str(room.id_room) + '/sensors')
                 room.set_building(form.buildings.data)
                 building=db.session.query(buildings).filter_by(id_building=form.buildings.data).first()
@@ -372,10 +374,12 @@ class RoomAdmin(sqla.ModelView):
             digital_twin = digitalTwinFeed(model.id_room,0,0,0,0)
             db.session.add(digital_twin)
             db.session.commit()
-        mqtt.subscribe('smartoffice/building_' + str(+model.id_building) + '/room_' + str(model.id_room) + '/sensors/#')
+        mqtt.subscribe('smartoffice/building_' + str(model.id_building) + '/room_' + str(model.id_room) + '/sensors/#')
+        mqtt.subscribe('smartoffice/building_' + str(model.id_building) + '/room_' + str(model.id_room) + '/health/#')
         print("mi sono iscritto dal topic " + 'smartoffice/building_' + str(+model.id_building) + '/room_' + str(model.id_room) + '/sensors')
     def on_model_delete(self, room):
         mqtt.unsubscribe('smartoffice/building_' + str(+room.id_building) + '/room_' + str(room.id_room) + '/sensors/#')
+        mqtt.unsubscribe('smartoffice/building_' + str(+room.id_building) + '/room_' + str(room.id_room) + '/health/#')
         print("mi sono disiscritto dal topic " + 'smartoffice/building_' + str(room.id_building) + '/room_' + str(room.id_room) + '/sensors')
         activeSessionState = db.session.query(sessionStates).filter_by(active=True).filter_by(id_room=room.id_room).first()
         if activeSessionState is not None:
