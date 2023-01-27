@@ -38,7 +38,9 @@
 // Set map's center to target with zoom 14.
       map.setView(target, 9);
   </script>
-
+    {%if admin == 1%}
+	<h2 ><a href="/admin">Apri la schermata Admin</a></h2>
+	{% endif %}
 </body>
 
 </html>

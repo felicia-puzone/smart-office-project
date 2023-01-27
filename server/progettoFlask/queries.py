@@ -1,8 +1,13 @@
 # tested
 import datetime
+import random
+
+from sqlalchemy import extract
+
 import geolog
 from models import sessionStates, rooms, buildings, zones, professions, digitalTwinFeed, User, \
-    zoneToBuildingAssociation, db, sensorFeeds, actuatorFeeds, weatherReport
+    zoneToBuildingAssociation, db, sensorFeeds, actuatorFeeds, weatherReport, dailyRoomconsumptionReport, \
+    monthlyRoomconsumptionReport, dailyBuildingconsumptionReport, monthlyBuildingconsumptionReport, telegram
 import pandas as pd
 import json
 import plotly
@@ -129,7 +134,12 @@ def createAndPopulateDb():
                 dateOfBirth=datetime.datetime.utcnow().date())
     user.super_user = True
     user.admin = True
+
     db.session.add(user)
+    db.session.commit()
+    db.session.refresh(user)
+    telegram_key = telegram(user.id,''.join(random.choice('0123456789') for _ in range(6)))
+    db.session.add(telegram_key)
     db.session.add(User(username="BArfaoui", password="password", profession="Administrator", sex=1,
                         dateOfBirth=datetime.datetime.utcnow().date()))
     # db.session.add(User(username="BArfaoui",password="18121996",profession=8,sex=1,dateOfBirth=datetime.utcnow().date()))
@@ -159,6 +169,10 @@ def createAndPopulateDb():
     # db.session.add(buildings(city="Manzolino",route='via Giovanni archi',number='',state='Italia'))
     db.session.add(rooms(id_building=1))
     db.session.add(digitalTwinFeed(1, 0, 0, 0, 0))
+    db.session.add(rooms(id_building=1))
+    db.session.add(digitalTwinFeed(2, 0, 0, 0, 0))
+    db.session.add(rooms(id_building=1))
+    db.session.add(digitalTwinFeed(3, 0, 0, 0, 0))
     '''    db.session.add(rooms(id_building=1))
        db.session.add(rooms(id_building=1))
        db.session.add(rooms(id_building=1))
@@ -222,6 +236,245 @@ def createAndPopulateDb():
     db.session.add(professions(name="Babysitter", category=4))
     db.session.add(professions(name="Operatore CAF/CISL", category=5))
     db.session.add(professions(name="Operatore NASPI", category=5))
+    db.session.add(dailyBuildingconsumptionReport(1, 20000, 5000, datetime.datetime.strptime("17-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(1, 20000, 5000, datetime.datetime.strptime("16-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(1, 20000, 5000, datetime.datetime.strptime("15-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(1, 20000, 5000, datetime.datetime.strptime("14-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(1, 20000, 5000, datetime.datetime.strptime("13-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(1, 20000, 5000, datetime.datetime.strptime("12-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(1, 20000, 5000, datetime.datetime.strptime("1-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(2, 20000, 5000, datetime.datetime.strptime("17-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(2, 20000, 5000, datetime.datetime.strptime("16-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(2, 20000, 5000, datetime.datetime.strptime("15-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(2, 20000, 5000, datetime.datetime.strptime("14-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(2, 20000, 5000, datetime.datetime.strptime("13-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(2, 20000, 5000, datetime.datetime.strptime("12-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(2, 20000, 5000, datetime.datetime.strptime("1-01-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-12-2023","%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-11-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-10-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-09-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-08-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-07-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-06-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-05-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-04-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-03-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-02-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-01-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-12-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-11-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-10-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-09-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-08-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-07-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-06-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-05-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-04-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-03-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-02-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-01-2023", "%d-%m-%Y")))
+
+
+
+    #EDIFICIO 3
+    db.session.add(dailyBuildingconsumptionReport(3, 20000, 5000, datetime.datetime.strptime("17-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(3, 20000, 5000, datetime.datetime.strptime("16-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(3, 20000, 5000, datetime.datetime.strptime("15-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(3, 20000, 5000, datetime.datetime.strptime("14-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(3, 20000, 5000, datetime.datetime.strptime("13-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(3, 20000, 5000, datetime.datetime.strptime("12-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(3, 20000, 5000, datetime.datetime.strptime("1-01-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-12-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-11-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-10-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-09-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-08-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-07-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-06-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-05-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-04-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-03-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-02-2023", "%d-%m-%Y")))
+    db.session.add(monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-01-2023", "%d-%m-%Y")))
+
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-12-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-11-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-10-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-09-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-08-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-07-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-06-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-05-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-04-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-03-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-02-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyRoomconsumptionReport(1, 20000, 150, datetime.datetime.strptime("16-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyRoomconsumptionReport(1, 20000, 150, datetime.datetime.strptime("17-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyRoomconsumptionReport(1, 20000, 150, datetime.datetime.strptime("18-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyRoomconsumptionReport(2, 20000, 150, datetime.datetime.strptime("19-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyRoomconsumptionReport(1, 20000, 150, datetime.datetime.strptime("20-01-2023", "%d-%m-%Y")))
+    #STANZA 3
+    db.session.add(dailyRoomconsumptionReport(3, 20000, 150, datetime.datetime.strptime("16-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyRoomconsumptionReport(3, 20000, 150, datetime.datetime.strptime("20-01-2023", "%d-%m-%Y")))
+    db.session.add(dailyRoomconsumptionReport(3, 20000, 150, datetime.datetime.strptime("21-01-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-12-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-11-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-10-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-09-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-08-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-07-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-06-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-05-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-04-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-03-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-02-2023", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-01-2023", "%d-%m-%Y")))
+    
+    
+    
+    #2022
+    db.session.add(dailyBuildingconsumptionReport(1, 20000, 5000, datetime.datetime.strptime("17-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(1, 20000, 5000, datetime.datetime.strptime("16-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(1, 20000, 5000, datetime.datetime.strptime("15-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(1, 20000, 5000, datetime.datetime.strptime("14-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(1, 20000, 5000, datetime.datetime.strptime("13-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(1, 20000, 5000, datetime.datetime.strptime("12-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(1, 20000, 5000, datetime.datetime.strptime("1-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(2, 20000, 5000, datetime.datetime.strptime("17-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(2, 20000, 5000, datetime.datetime.strptime("16-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(2, 20000, 5000, datetime.datetime.strptime("15-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(2, 20000, 5000, datetime.datetime.strptime("14-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(2, 20000, 5000, datetime.datetime.strptime("13-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(2, 20000, 5000, datetime.datetime.strptime("12-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(2, 20000, 5000, datetime.datetime.strptime("1-01-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-12-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-11-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-10-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-09-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-08-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-07-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-06-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-05-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-04-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-03-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-02-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(2, 2000000, 5000, datetime.datetime.strptime("28-01-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-12-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-11-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-10-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-09-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-08-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-07-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-06-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-05-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-04-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-03-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-02-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(1, 2000000, 5000, datetime.datetime.strptime("28-01-2022", "%d-%m-%Y")))
+
+    # EDIFICIO 3
+    db.session.add(dailyBuildingconsumptionReport(3, 20000, 5000, datetime.datetime.strptime("17-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(3, 20000, 5000, datetime.datetime.strptime("16-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(3, 20000, 5000, datetime.datetime.strptime("15-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(3, 20000, 5000, datetime.datetime.strptime("14-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(3, 20000, 5000, datetime.datetime.strptime("13-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(3, 20000, 5000, datetime.datetime.strptime("12-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyBuildingconsumptionReport(3, 20000, 5000, datetime.datetime.strptime("1-01-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-12-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-11-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-10-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-09-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-08-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-07-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-06-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-05-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-04-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-03-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-02-2022", "%d-%m-%Y")))
+    db.session.add(
+        monthlyBuildingconsumptionReport(3, 2000000, 5000, datetime.datetime.strptime("28-01-2022", "%d-%m-%Y")))
+
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-12-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-11-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-10-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-09-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-08-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-07-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-06-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-05-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-04-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-03-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-02-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(2, 200000, 150, datetime.datetime.strptime("28-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyRoomconsumptionReport(1, 20000, 150, datetime.datetime.strptime("16-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyRoomconsumptionReport(1, 20000, 150, datetime.datetime.strptime("17-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyRoomconsumptionReport(1, 20000, 150, datetime.datetime.strptime("18-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyRoomconsumptionReport(2, 20000, 150, datetime.datetime.strptime("19-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyRoomconsumptionReport(1, 20000, 150, datetime.datetime.strptime("20-01-2022", "%d-%m-%Y")))
+    # STANZA 3
+    db.session.add(dailyRoomconsumptionReport(3, 20000, 150, datetime.datetime.strptime("16-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyRoomconsumptionReport(3, 20000, 150, datetime.datetime.strptime("20-01-2022", "%d-%m-%Y")))
+    db.session.add(dailyRoomconsumptionReport(3, 20000, 150, datetime.datetime.strptime("21-01-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-12-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-11-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-10-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-09-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-08-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-07-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-06-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-05-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-04-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-03-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-02-2022", "%d-%m-%Y")))
+    db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-01-2022", "%d-%m-%Y")))
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     db.session.commit()
 def buildRoomLightSensorGraph(id_room):
     light_sensor_feed = db.session.query(sensorFeeds).filter_by(id_room=id_room).order_by(
@@ -249,8 +502,6 @@ def buildBuildingLightSensorGraph(rooms_of_building):
     df = {"time": list_times, "values": list_values}
     fig = px.line(df, x="time", y="values", title='Sensore di luce')
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-
-
 def buildRoomTemperatureGraph(session_states):
     temperature_actuator_feed = db.session.query(actuatorFeeds).filter(
         actuatorFeeds.id_session.in_(session_states)).filter_by(type_of_action="temperature") \
@@ -264,7 +515,6 @@ def buildRoomTemperatureGraph(session_states):
     df = {"time": list_times, "values": list_values}
     fig = px.line(df, x="time", y="values", title='Riscaldamento della stanza')
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-
 def buildRoomColorGraph(session_states):
     led_color_query = db.session.query(actuatorFeeds).filter(actuatorFeeds.id_session.in_(session_states)).filter_by(
         type_of_action="color")
@@ -281,8 +531,6 @@ def buildRoomColorGraph(session_states):
     fig = px.bar(df, x="Colors", y="Amount", barmode="group", title='Colori LED')
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-
-
 def buildRoomBrightnessGraph(session_states):
     brightness_actuator_feed = db.session.query(actuatorFeeds).filter(
         actuatorFeeds.id_session.in_(session_states)).filter_by(type_of_action="brightness") \
@@ -297,8 +545,6 @@ def buildRoomBrightnessGraph(session_states):
     df = {"time": list_times, "values": list_values}
     fig = px.line(df, x="time", y="values", title='Intensità del LED')
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-
-
 def buildZoneWeatherGraph(weatherReport_feed):
     list_values = []
     list_times = []
@@ -310,8 +556,6 @@ def buildZoneWeatherGraph(weatherReport_feed):
     df = {"time": list_times, "values": list_values}
     fig = px.line(df, x="time", y="values", title='Temperatura meteo della zona')
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-
-
 def buildZoneWeatherHumidityGraph(weatherReport_feed):
     list_values = []
     list_times = []
@@ -323,10 +567,165 @@ def buildZoneWeatherHumidityGraph(weatherReport_feed):
     df = {"time": list_times, "values": list_values}
     fig = px.line(df, x="time", y="values", title='Umidità nella zona')
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-'''def createRoomSessionConsumptionReport(id_room,id_session):
-    actuator_feed = db.session.query(actuatorFeeds).filter_by(id_session=id_session).order_by(actuatorFeeds.timestamp.desc()).all()
-    id_building =
-    if actuator_feed:
-        session_data = db.session.query(weatherReport).filter(extract('day', weatherReport.timestamp) == timestamp.day)\
-            .filter(extract('month', weatherReport.timestamp)==timestamp.month).filter(extract('year', weatherReport.timestamp)==timestamp.year)\
-            .filter(extract('hour', weatherReport.timestamp)>(timestamp.hour-3)).first()'''
+
+def buildRoomDailyConsumptionReport(id_room):
+    timestamp=datetime.datetime.utcnow()
+    daily_report = db.session.query(dailyRoomconsumptionReport).filter_by(id_room=id_room)\
+    .order_by(dailyRoomconsumptionReport.timestamp.desc()).filter(extract('month', dailyRoomconsumptionReport.timestamp)==timestamp.month)\
+    .filter(extract('year', dailyRoomconsumptionReport.timestamp)==timestamp.year).all()
+    list_values = []
+    list_times = []
+    list_types = []
+    if daily_report is not None:
+        for report in daily_report:
+            list_values.append(float(report.temperature)/1000)
+            list_types.append("AIR CONDITIONING in Kw")
+            list_values.append(float(report.light))
+            list_types.append("LED BRIGHTNESS in W")
+            list_times.append(report.timestamp.strftime("%d-%m-%Y"))
+            list_times.append(report.timestamp.strftime("%d-%m-%Y"))
+    df = pd.DataFrame({
+        "time": list_times,
+        "values": list_values,
+        "type": list_types,
+    })
+    fig = px.bar(df, x="time", y="values",color="type", barmode="group", title='Consumi giornalieri della stanza')
+    return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+def buildRoomMonthlyConsumptionReport(id_room):
+    timestamp = datetime.datetime.utcnow()
+    monthly_report = db.session.query(monthlyRoomconsumptionReport).filter_by(id_room=id_room)\
+    .order_by(monthlyRoomconsumptionReport.timestamp.desc()).filter(extract('year', monthlyRoomconsumptionReport.timestamp)==timestamp.year).all()
+    list_values = []
+    list_times = []
+    list_types = []
+    if monthly_report is not None:
+        for report in monthly_report:
+            list_values.append(float(report.temperature)/1000)
+            list_types.append("AIR CONDITIONING in Kw")
+            list_values.append(float(report.light))
+            list_types.append("LED BRIGHTNESS in W")
+            list_times.append(report.timestamp.strftime("%m-%Y"))
+            list_times.append(report.timestamp.strftime("%m-%Y"))
+    df = pd.DataFrame({
+        "time": list_times,
+        "values": list_values,
+        "type": list_types,
+    })
+    fig = px.bar(df, x="time", y="values",color="type", barmode="group", title='Consumi mensili della stanza')
+    return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+def buildBuildingDailyConsumptionReport(id_building):
+    timestamp = datetime.datetime.utcnow()
+    daily_report = db.session.query(dailyBuildingconsumptionReport).filter_by(id_building=id_building) \
+        .order_by(dailyBuildingconsumptionReport.timestamp.desc()).filter(
+        extract('month', dailyBuildingconsumptionReport.timestamp) == timestamp.month) \
+        .filter(extract('year', dailyBuildingconsumptionReport.timestamp) == timestamp.year).all()
+    list_values = []
+    list_times = []
+    list_types = []
+    if daily_report is not None:
+        for report in daily_report:
+            list_values.append(float(report.temperature)/1000)
+            list_times.append(report.timestamp.strftime("%d-%m-%Y"))
+            list_types.append("AIR CONDITIONING in Kw")
+            list_values.append(float(report.light))
+            list_types.append("LED BRIGHTNESS in W")
+            list_times.append(report.timestamp.strftime("%d-%m-%Y"))
+    df = pd.DataFrame({
+        "time": list_times,
+        "values": list_values,
+        "type": list_types,
+    })
+    fig = px.bar(df, x="time", y="values", color="type", barmode="group", title='Consumi giornalieri dell\'edificio')
+    return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+def buildBuildingMonthlyConsumptionReport(id_building):
+    timestamp = datetime.datetime.utcnow()
+    monthly_report = db.session.query(monthlyBuildingconsumptionReport).filter_by(id_building=id_building) \
+        .order_by(monthlyBuildingconsumptionReport.timestamp.desc())\
+        .filter(extract('year', monthlyBuildingconsumptionReport.timestamp) == timestamp.year).all()
+    list_values = []
+    list_times = []
+    list_types = []
+    if monthly_report is not None:
+        for report in monthly_report:
+            list_values.append(float(report.temperature)/1000)
+            list_types.append("AIR CONDITIONING in KW")
+            list_values.append(float(report.light))
+            list_types.append("LED BRIGHTNESS in W")
+            list_times.append(report.timestamp.strftime("%m-%Y"))
+            list_times.append(report.timestamp.strftime("%m-%Y"))
+    df = pd.DataFrame({
+        "time": list_times,
+        "values": list_values,
+        "type": list_types,
+    })
+    fig = px.bar(df, x="time", y="values", color="type", barmode="group", title='Consumi mensili della stanza')
+    return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+def buildZoneDailyConsumptionReport(buildings):
+    timestamp = datetime.datetime.utcnow()
+    daily_report = db.session.query(dailyBuildingconsumptionReport).filter(dailyBuildingconsumptionReport.id_building.in_(buildings)) \
+        .order_by(dailyBuildingconsumptionReport.timestamp.desc()).filter(
+        extract('month', dailyBuildingconsumptionReport.timestamp) == timestamp.month) \
+        .filter(extract('year', dailyBuildingconsumptionReport.timestamp) == timestamp.year).all()
+    list_values = []
+    list_times = []
+    list_types = []
+    if daily_report is not None:
+        for report in daily_report:
+            list_values.append((float(report.temperature) + float(report.light))/1000)
+            list_times.append(report.timestamp)
+            list_types.append("EDIFICIO ID:" + str(report.id_building))
+    df = pd.DataFrame({
+        "time": list_times,
+        "values": list_values,
+        "type": list_types,
+    })
+    fig = px.bar(df, x="time", y="values", color="type", barmode="group", title='Consumi giornalieri dell\'edificio')
+    return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+def buildZoneMonthlyConsumptionReport(buildings):
+    timestamp = datetime.datetime.utcnow()
+    monthly_report = db.session.query(monthlyBuildingconsumptionReport).filter(monthlyBuildingconsumptionReport.id_building.in_(buildings)) \
+        .order_by(monthlyBuildingconsumptionReport.timestamp.desc())\
+        .filter(extract('year', monthlyBuildingconsumptionReport.timestamp) == timestamp.year).all()
+    list_values = []
+    list_times = []
+    list_types = []
+    if monthly_report is not None:
+        for report in monthly_report:
+            list_values.append((float(report.temperature) + float(report.light))/1000)
+            list_times.append(report.timestamp)
+            list_types.append("EDIFICIO ID:"+str(report.id_building))
+            #list_types.append("AIR CONDITIONING")
+            #list_values.append(float(report.light))
+            #list_types.append("LED BRIGHTNESS")
+            #list_times.append(report.timestamp)
+    df = pd.DataFrame({
+        "time": list_times,
+        "values": list_values,
+        "type": list_types,
+    })
+    fig = px.bar(df, x="time", y="values", color="type", barmode="group", title='Consumi mensili della stanza')
+    return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+
+def fetchMontlhyReport():
+    #report dei consumi delle zone di questo mese
+    Report = "Il report consumi del mese scorso:"
+    timestamp = datetime.datetime.utcnow() - datetime.timedelta(days=(31))
+    zones_for_report = db.session.query(zones).all()
+    for zone in zones_for_report:
+        building_ids = db.session.query(zoneToBuildingAssociation.id_building).filter_by(id_zone=zone.id_zone)
+
+        monthly_report = db.session.query(monthlyBuildingconsumptionReport).filter(
+        monthlyBuildingconsumptionReport.id_building.in_(building_ids)) \
+        .order_by(monthlyBuildingconsumptionReport.timestamp.desc()) \
+        .filter(extract('year', monthlyBuildingconsumptionReport.timestamp) == timestamp.year)\
+        .filter(extract('month', monthlyBuildingconsumptionReport.timestamp) == timestamp.month).all()
+        zone_name = zone.city + " " + zone.state
+        if monthly_report is not None:
+            Report += "Zona id:" + str(zone.id_zone) + " " + zone_name + "\n"
+            for report_building in monthly_report:
+                amount = str(float(report_building.temperature) + float(report_building.light)) + " Watt\n"
+                building_for_report = db.session.query(buildings).filter_by(id_building=report_building.id_building).first()
+                Report +="EDIFICIO ID:" + str(report_building.id_building) + " Indirizzo" + building_for_report.city + " " + building_for_report.address + ":\n"
+                Report +=amount
+    return Report

@@ -1,7 +1,7 @@
-from tkinter.ttk import Label
+import random
 
-from flask import url_for
-from flask_admin import BaseView, expose, AdminIndexView, Admin
+from flask import url_for, abort
+from flask_admin import  expose, AdminIndexView, Admin
 from flask_admin.contrib import sqla
 from flask_admin.model.template import ViewRowAction, EditRowAction, DeleteRowAction
 from flask_login import current_user, login_required
@@ -11,7 +11,7 @@ from wtforms import StringField, BooleanField, SelectField, validators
 
 import geolog
 from models import db, buildings, User, professions, zones, sessionStates, rooms, digitalTwinFeed, sensorFeeds, \
-    sessions, actuatorFeeds, zoneToBuildingAssociation
+    sessions, actuatorFeeds, zoneToBuildingAssociation, telegram
 from werkzeug.routing import ValidationError
 
 from mqtthandler import mqtt
@@ -27,7 +27,7 @@ class ZoneAdmin(sqla.ModelView):
         'city',
         'state',
     )
-    def _format_pay_now(view, context, model, name):
+    def _format_dashboard(view, context, model, name):
         # render a form with a submit button for student, include a hidden field for the student id
         # note how checkout_view method is exposed as a route below
         checkout_url = url_for('dashboardzone')
@@ -41,7 +41,7 @@ class ZoneAdmin(sqla.ModelView):
 
         return Markup(_html)
     column_formatters = {
-        'dashboard': _format_pay_now
+        'dashboard': _format_dashboard
     }
     def on_model_delete(self, zone):
         building_associations = db.session.query(zoneToBuildingAssociation).filter_by(id_zone=zone.id_zone).first()
@@ -50,7 +50,7 @@ class ZoneAdmin(sqla.ModelView):
 
     def is_accessible(self):
         if current_user.is_authenticated:
-            return current_user.is_admin
+            return current_user.is_admin()
         else:
             return False
     def on_model_change(self, form, zones, is_created):
@@ -77,7 +77,7 @@ class UserAdmin(sqla.ModelView):
     }
     def is_accessible(self):
         if current_user.is_authenticated:
-            return current_user.is_admin
+            return current_user.is_admin()
         else:
             return False
     def get_list_row_actions(self):
@@ -91,7 +91,42 @@ class UserAdmin(sqla.ModelView):
                 raise ValidationError('Can\'t revoke permissions from Super User Admin')
             if form.super_user.data == True:
                 model.admin = True
+                model.super_user = True
+                codes=db.session.query(telegram).filter_by(id_user=model.id)
+                if codes is not None:
+                    codes.delete(synchronize_session='fetch')
+                    db.session.commit()
+                unique = False
+                while unique is False:
+                    pin = ''.join(random.choice('0123456789') for _ in range(6))
+                    telegram_check = db.session.query(telegram).filter_by(telegram_key=pin).first()
+                    if telegram_check is None:
+                        unique = True
+                        db.session.add(telegram(model.id,pin))
+            elif form.admin.data == True:
+                model.admin = True
+                model.super_user = False
+                codes = db.session.query(telegram).filter_by(id_user=model.id)
+                if codes is not None:
+                    codes.delete(synchronize_session='fetch')
+                    db.session.commit()
+                unique = False
+                while unique is False:
+                    pin = ''.join(random.choice('0123456789') for _ in range(6))
+                    telegram_check = db.session.query(telegram).filter_by(telegram_key=pin).first()
+                    if telegram_check is None:
+                        unique = True
+                        db.session.add(telegram(model.id, pin))
                 print(model.profession)
+            else: #revoca Admin False e Super False
+                model.admin = False
+                model.super_user = False
+                codes = db.session.query(telegram).filter_by(id_user=model.id)
+                if codes is not None:
+                    codes.delete(synchronize_session='fetch')
+            db.session.commit()
+            print("-------------------------------------------------")
+
     # def get_query(self):
     #   return (self.session.query(User).join(professions,User.profession==professions.id_profession))
 class JobAdmin(sqla.ModelView):
@@ -111,7 +146,7 @@ class JobAdmin(sqla.ModelView):
 
     def is_accessible(self):
         if current_user.is_authenticated:
-            return current_user.is_admin
+            return current_user.is_admin()
         else:
             return False
 
@@ -143,7 +178,7 @@ class BuildingAdmin(sqla.ModelView):
         'route':  StringField('route'),
         'number': StringField('number'),
     }
-    def _format_pay_now(view, context, model, name):
+    def _format_dashboard(view, context, model, name):
         # render a form with a submit button for student, include a hidden field for the student id
         # note how checkout_view method is exposed as a route below
         checkout_url = url_for('dashboardbuilding')
@@ -157,11 +192,11 @@ class BuildingAdmin(sqla.ModelView):
 
         return Markup(_html)
     column_formatters = {
-        'dashboard': _format_pay_now
+        'dashboard': _format_dashboard
     }
     def is_accessible(self):
         if current_user.is_authenticated:
-            return current_user.is_admin
+            return current_user.is_admin()
         else:
             return False
     def on_form_prefill(self, form, id):
@@ -255,6 +290,10 @@ class MyHomeView(AdminIndexView):
         arg1 = 'Hello'
         return self.render('admin/index.html',buildings=buildJsonList(getFreeBuildings()), msg='')
 
+    def is_accessible(self):
+        if current_user.is_authenticated:
+            return current_user.is_admin()
+        return False
 
 
 #DONE testing eliminazione a cascata
@@ -271,7 +310,7 @@ class RoomAdmin(sqla.ModelView):
     }
 
     form_columns = ('room','buildings','available')
-    def _format_pay_now(view, context, model, name):
+    def _format_dashboard(view, context, model, name):
         # render a form with a submit button for student, include a hidden field for the student id
         # note how checkout_view method is exposed as a route below
         checkout_url = url_for('dashboardroom')
@@ -286,7 +325,7 @@ class RoomAdmin(sqla.ModelView):
         return Markup(_html)
 
     column_formatters = {
-        'dashboard': _format_pay_now
+        'dashboard': _format_dashboard
     }
     def on_form_prefill(self, form, id):
         #with app.app_context():
@@ -307,7 +346,7 @@ class RoomAdmin(sqla.ModelView):
 
     def is_accessible(self):
         if current_user.is_authenticated:
-            return current_user.is_admin
+            return current_user.is_admin()
         else:
             return False
     def on_model_change(self, form, room, is_created):
@@ -354,4 +393,22 @@ class RoomAdmin(sqla.ModelView):
             sensorfeed_to_delete.delete(synchronize_session='fetch')
             digital_twins_to_delete.delete(synchronize_session='fetch')
             db.session.commit()
+
+
+#L'eliminazione e modifica non sono permesse
+#idea, assegnare alla promozione ad admin una key (Fatto)
+class TelegramAdmin(sqla.ModelView):
+    column_list = ('id_user', 'telegram_key')
+    can_create = False
+    can_delete = False
+    def is_accessible(self):
+        if current_user.is_authenticated:
+            return current_user.is_admin()
+        else:
+            return False
+
+
+    def get_query(self):
+        return self.session.query(self.model).filter(self.model.id_user == current_user.id)
+
 

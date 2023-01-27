@@ -4,12 +4,14 @@
 
 {% block body %}
 <h7>Schermata Home Admin</h7>
+<div>
   <form action="{{ url_for('logout') }}" method="post">
       <input type="submit" class="btn" value="Logout"></br></br>
   </form>
   <form action="{{ url_for('homepage') }}" method="post">
       <input type="submit" class="btn" value="Torna alla homepage"></br></br>
   </form>
+</div>
 {% endblock body %}
 
 
