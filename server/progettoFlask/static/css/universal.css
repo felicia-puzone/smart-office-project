@@ -2,7 +2,3 @@ body {
     padding: 0;
     margin: 0;
 }
-html, body, #map {
-    width:650px; /* or whatever width you want. */
-    height:450px; /* or whatever width you want. */
-}

@@ -15,15 +15,28 @@
   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
   crossorigin=""></script>
   <style>
-        body {
-         background-image: url({{ url_for('static', filename='Files/pic2-transformed.jpeg')}});
-         background-color: #cccccc;
-         background-size: 100% 100%;
-        background-repeat: no-repeat;
-         min-height: 100%;
-        height: 100%;
-          width: 100%;
-        }
+
+    html, body{
+      min-height: 100%;
+    }
+
+html, body{
+padding: 0;
+margin: 0;
+}
+html{
+height: 100%;
+}
+    body {
+      background-image: url({{ url_for('static', filename='Files/pic2-transformed.jpeg')}});
+      background-color: #cccccc;
+      background-size: 100% 100%;
+     background-repeat: no-repeat;
+      min-height: 100%;
+      min-width: 100%;
+      height: 100%;
+      width: 100%;
+     }
         input[type=button], input[type=submit], input[type=reset] {
           background-color: #04AA6D;
           border: none;
@@ -33,54 +46,75 @@
           margin: 4px 2px;
           cursor: pointer;
         }
-        .container {
-          display: flex;
-          justify-content: center;
-           top: 0;
-          left: 0;
-          height: 100%;
-          width: 100%;
-        }
-        #map {
-            margin-left: auto !important;
-            margin-right: auto !important;
-            margin-top: 10% !important;
-        }
 
-  </style>
+        #map {
+          width: 850px;
+          /* or whatever width you want. */
+          height: 450px;
+          /* or whatever width you want. */
+      }
+
+        
+      </style>
 </head>
 
 <body>
-<div class="container">
-    <div id="map" class="center" ></div></br></br>
-    <form action="{{ url_for('logout') }}" method="post">
-        <input type="submit" class="btn" value="Logout"></br></br>
-    </form>
-                {%if admin == 1%}</br>
-                      <form action="/admin">
-                          <input type="submit" class="btn" value="Schermata Admin" />
-                      </form></br></br>
-                  {% endif %}
 
-  <script src="{{ url_for('static', filename='js/universal.js') }}" /></script>
-  <script>
+  <div class="container" style = "padding: 30px">
 
-    {% for building in buildings %}
-      	var popupContent1 = '<form action={{url_for("occupyRoom") }} method=post><p>{{building.city}} {{ building.address }}</p><button type=submit name=building id=building value={{ building.id_building }}>Prenota</button></form>';
-        popup1 = new L.Popup();
-        popup1.setLatLng([{{building.lat }}, {{ building.lon }}]);
-        popup1.setContent(popupContent1);
-        popup1.offset = new L.Point(0, 20);
-      L.marker([{{ building.lat }}, {{ building.lon }}]).addTo(map)
-      .bindPopup(popup1)
-      .openPopup();
-    {% endfor %}
-	 //var target = L.latLng('47.50737', '19.04611');
-
-// Set map's center to target with zoom 14.
-      map.setView(target, 9);
-  </script>
+<div class="d-flex justify-content-center" style = "margin-bottom: 30px">
+<h2> Seleziona la stanza </h2>
 </div>
+
+<div class="d-flex justify-content-center" style = "margin-top: 50px">
+  <div id="map" >
+
+    <script src="{{ url_for('static', filename='js/universal.js') }}" /></script>
+    
+    <script>
+  
+      {% for building in buildings %}
+          var popupContent1 = '<form action={{url_for("occupyRoom") }} method=post><p>{{building.city}} {{ building.address }}</p><button type=submit name=building id=building value={{ building.id_building }}>Prenota</button></form>';
+          popup1 = new L.Popup();
+          popup1.setLatLng([{{building.lat }}, {{ building.lon }}]);
+          popup1.setContent(popupContent1);
+          popup1.offset = new L.Point(0, 20);
+        L.marker([{{ building.lat }}, {{ building.lon }}]).addTo(map)
+        .bindPopup(popup1)
+        .openPopup();
+      {% endfor %}
+  
+  // Set map's center to target with zoom 14.
+        map.setView(target, 9);
+    </script>
+  </div>
+
+</div>
+
+
+
+  <div class="d-flex justify-content-center" style = "margin-top: 50px">
+    
+    <form action="{{ url_for('logout') }}" method="post">
+      <div class="center">
+      <input type="submit" class="btn" value="Logout"></br></br>
+    </div>
+    </form>
+
+{%if admin == 1%}
+      <form action="/admin">
+        <div class="center">
+          <input type="submit" class="btn" value="Schermata Admin" />
+        </div>
+      </form>
+  {% endif %}
+
+
+
+    </div>
+
+
+  </div>
 </body>
 
 </html>
