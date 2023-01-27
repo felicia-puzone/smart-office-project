@@ -306,7 +306,7 @@ def dashboardroom():
     id_room = request.form['id_room']
     graphs=[]
     link="/admin/rooms"
-    header="Dashboard della stanza con id:" + str(id_room)
+    header="Dashboard della stanza con ID:" + str(id_room)
     start_date = datetime.datetime.today() - datetime.timedelta(days = 30)
     session_states = db.session.query(sessionStates.id_session).filter_by(id_room=id_room).filter_by(active=False)
     sessions_to_plot = db.session.query(sessions.id).filter(
@@ -333,7 +333,7 @@ def dashboardbuilding():
     id_building = request.form['building_id']
     graphs=[]
     link = "/admin/buildings"
-    header="Dashboard dell'edificio' con id:" + str(id_building)
+    header="Dashboard dell'edificio' con ID:" + str(id_building)
     start_date = datetime.datetime.today() - datetime.timedelta(days = 30)
     rooms_of_building = db.session.query(rooms.id_building).filter_by(id_building=id_building)
     session_states = db.session.query(sessionStates.id_session).filter_by(active=False).filter(
@@ -364,7 +364,7 @@ def dashboardzone():
     id_zone = request.form['zone_id']
     graphs=[]
     link = "/admin/zones"
-    header="Dashboard della zona con id:" + str(id_zone)
+    header="Dashboard della zona con ID:" + str(id_zone)
     id_buildings = db.session.query(zoneToBuildingAssociation.id_building).filter_by(id_zone=id_zone)
     start_date = datetime.datetime.today() - datetime.timedelta(days = 30)
     rooms_of_zone = db.session.query(rooms.id_room).filter(rooms.id_building.in_(id_buildings))
@@ -539,7 +539,8 @@ def getAIdata(id_user,digitalTwin):
 
 def renderHomeWeb(id_room):
     digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
-    return render_template('index.html', digitalTwin=digitalTwin, username=current_user.get_username(),admin=int(current_user.is_admin()))
+    weather_data = weather_report(id_room)
+    return render_template('index.html', digitalTwin=digitalTwin, username=current_user.get_username(),admin=int(current_user.is_admin()),weather=weather_data)
 
 def renderHomeApp(id_room):
     digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
