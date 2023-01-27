@@ -14,11 +14,11 @@ class Bridge():
 	def __init__(self):
 		self.config = configparser.ConfigParser()
 		self.config.read('config.ini')
-		self.setupSerial()
-		self.setupMQTT()
   
 		self.building_id = '1'
 		self.room_id = '1'
+		self.setupSerial()
+		self.setupMQTT()
 		
 
 	def setupSerial(self):
@@ -54,7 +54,7 @@ class Bridge():
 		self.clientMQTT = mqtt.Client()
 		self.clientMQTT.on_connect = self.on_connect
 		self.clientMQTT.on_message = self.on_message
-		self.clientMQTT.will_set('smartoffice/building_%s/room_%s/health', payload='Bad', qos=0, retain=False)
+		self.clientMQTT.will_set('smartoffice/building_%s/room_%s/health' % (self.building_id, self.room_id), payload='Bad', qos=0, retain=True)
 		print("connecting to MQTT broker...")
 		self.clientMQTT.connect(
 			self.config.get("MQTT","Server", fallback= "localhost"),
@@ -74,11 +74,9 @@ class Bridge():
 		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/actuators/color' % (self.building_id, self.room_id))
 		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/actuators/brightness' % (self.building_id, self.room_id))
 		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/actuators/temperature' % (self.building_id, self.room_id))
-		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/status_request' % (self.building_id, self.room_id))
-		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/health' % (self.building_id, self.room_id))
+		self.clientMQTT.subscribe('smartoffice/building_%s/room_%s/status' % (self.building_id, self.room_id))
   
-		
-		self.clientMQTT.publish('smartoffice/building_%s/room_%s/health' % (self.building_id, self.room_id),'Good')
+		self.clientMQTT.publish('smartoffice/building_%s/room_%s/health' % (self.building_id, self.room_id),'Good', retain=True)
 
   
 
@@ -94,9 +92,7 @@ class Bridge():
 
 			time.sleep(1)
    
-		if msg.topic=='smartoffice/building_%s/room_%s/status_request' % (self.building_id, self.room_id):
-      
-			print('Sono dentro status request')
+		if msg.topic=='smartoffice/building_%s/room_%s/status' % (self.building_id, self.room_id):
 				
 			if(msg.payload.decode("utf-8") == 'closed'):
 				
@@ -245,6 +241,9 @@ class Bridge():
 
 if __name__ == '__main__':
 	br=Bridge()
-	br.loop()
+ 
+	try:
+		br.loop()	
+	except: print('')
 
 
