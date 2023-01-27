@@ -464,18 +464,10 @@ def createAndPopulateDb():
     db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-03-2022", "%d-%m-%Y")))
     db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-02-2022", "%d-%m-%Y")))
     db.session.add(monthlyRoomconsumptionReport(3, 200000, 150, datetime.datetime.strptime("28-01-2022", "%d-%m-%Y")))
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     db.session.commit()
+
+
+
 def buildRoomLightSensorGraph(id_room):
     light_sensor_feed = db.session.query(sensorFeeds).filter_by(id_room=id_room).order_by(
         sensorFeeds.timestamp.desc()).all()
@@ -486,7 +478,7 @@ def buildRoomLightSensorGraph(id_room):
             list_values.append(1000 - int(light_sensor.value))
             list_times.append(light_sensor.timestamp)
     df = {"time": list_times, "values": list_values}
-    fig = px.line(df, x="time", y="values", title='Sensore di luce')
+    fig = px.line(df, x="time", y="values", title='Sensore di luce',)
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
 def buildBuildingLightSensorGraph(rooms_of_building):
@@ -514,6 +506,7 @@ def buildRoomTemperatureGraph(session_states):
             list_times.append(temperature_actuator.timestamp)
     df = {"time": list_times, "values": list_values}
     fig = px.line(df, x="time", y="values", title='Riscaldamento della stanza')
+    fig.update_layout(plot_bgcolor = "rgba(0,0,0,0)")
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 def buildRoomColorGraph(session_states):
     led_color_query = db.session.query(actuatorFeeds).filter(actuatorFeeds.id_session.in_(session_states)).filter_by(
@@ -580,8 +573,8 @@ def buildRoomDailyConsumptionReport(id_room):
         for report in daily_report:
             list_values.append(float(report.temperature)/1000)
             list_types.append("AIR CONDITIONING in Kw")
-            list_values.append(float(report.light))
-            list_types.append("LED BRIGHTNESS in W")
+            list_values.append(float(report.light)/1000)
+            list_types.append("LED BRIGHTNESS in Kw")
             list_times.append(report.timestamp.strftime("%d-%m-%Y"))
             list_times.append(report.timestamp.strftime("%d-%m-%Y"))
     df = pd.DataFrame({
@@ -602,8 +595,8 @@ def buildRoomMonthlyConsumptionReport(id_room):
         for report in monthly_report:
             list_values.append(float(report.temperature)/1000)
             list_types.append("AIR CONDITIONING in Kw")
-            list_values.append(float(report.light))
-            list_types.append("LED BRIGHTNESS in W")
+            list_values.append(float(report.light)/1000)
+            list_types.append("LED BRIGHTNESS in Kw")
             list_times.append(report.timestamp.strftime("%m-%Y"))
             list_times.append(report.timestamp.strftime("%m-%Y"))
     df = pd.DataFrame({
@@ -627,8 +620,8 @@ def buildBuildingDailyConsumptionReport(id_building):
             list_values.append(float(report.temperature)/1000)
             list_times.append(report.timestamp.strftime("%d-%m-%Y"))
             list_types.append("AIR CONDITIONING in Kw")
-            list_values.append(float(report.light))
-            list_types.append("LED BRIGHTNESS in W")
+            list_values.append(float(report.light)/1000)
+            list_types.append("LED BRIGHTNESS in Kw")
             list_times.append(report.timestamp.strftime("%d-%m-%Y"))
     df = pd.DataFrame({
         "time": list_times,
@@ -648,9 +641,9 @@ def buildBuildingMonthlyConsumptionReport(id_building):
     if monthly_report is not None:
         for report in monthly_report:
             list_values.append(float(report.temperature)/1000)
-            list_types.append("AIR CONDITIONING in KW")
-            list_values.append(float(report.light))
-            list_types.append("LED BRIGHTNESS in W")
+            list_types.append("AIR CONDITIONING in Kw")
+            list_values.append(float(report.light)/1000)
+            list_types.append("LED BRIGHTNESS in Kw")
             list_times.append(report.timestamp.strftime("%m-%Y"))
             list_times.append(report.timestamp.strftime("%m-%Y"))
     df = pd.DataFrame({
@@ -673,7 +666,7 @@ def buildZoneDailyConsumptionReport(buildings):
         for report in daily_report:
             list_values.append((float(report.temperature) + float(report.light))/1000)
             list_times.append(report.timestamp)
-            list_types.append("EDIFICIO ID:" + str(report.id_building))
+            list_types.append("CONSUMO IN Kw EDIFICIO ID:" + str(report.id_building))
     df = pd.DataFrame({
         "time": list_times,
         "values": list_values,
@@ -693,7 +686,7 @@ def buildZoneMonthlyConsumptionReport(buildings):
         for report in monthly_report:
             list_values.append((float(report.temperature) + float(report.light))/1000)
             list_times.append(report.timestamp)
-            list_types.append("EDIFICIO ID:"+str(report.id_building))
+            list_types.append("CONSUMO IN Kw EDIFICIO ID:"+str(report.id_building))
             #list_types.append("AIR CONDITIONING")
             #list_values.append(float(report.light))
             #list_types.append("LED BRIGHTNESS")

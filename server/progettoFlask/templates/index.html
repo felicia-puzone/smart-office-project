@@ -22,11 +22,12 @@
         }</style>
     </head>
     <body></br></br></br></br></br>
+	<h1 class="word" align="center""">Benvenuto {{username}}</h1>
         <div align="center">
           <div align="center" class="border">
              <div class="header">
-                <h1 class="word">Benvenuto {{username}}</h1>
-		<h1 class="word">Dati utente</h1>
+		<h1>Temperatura esterna: {{weather['temperature']}}</h1>
+		<h1>Umidità esterna: {{weather['humidity']}}%</h1>
 		<p>Stanza occupata:{{digitalTwin.id_room}}</p>
 		<form action="{{ url_for('update') }}" method="post">
 			<p>Colore luce:</p>
