@@ -10,6 +10,8 @@ BOT_TOKEN = '5701459800:AAG5zIMCLbL-14go0kgR7feZh6rRUCGkfi4'
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
+private_key = ''
+
 authUsers = []
 
 @bot.message_handler(commands=['start', 'hello'])
@@ -26,6 +28,7 @@ def sign_handler(message):
 
 def auth_handler(message):
     key = message.text
+    private_key = key
     response = check_auth(key)
     
     if response['status'] == 'AUTHENTICATED': 
@@ -42,7 +45,7 @@ def auth_handler(message):
 @bot.message_handler(commands=['receivelastreport'])
 def sign_handler(message):
     if message.from_user.id in authUsers:
-        response = send_report()
+        response = send_report(private_key)
         if response.status_code == 200: bot.send_message(message.chat.id, 'L\'ultimo report mensile dei consumi è: ' + response.json()['report'], parse_mode="Markdown")
         else: bot.send_message(message.chat.id, 'ERROR ' + response.status_code , parse_mode="Markdown")
     else: bot.send_message(message.chat.id, 'Utente non autorizzato.' , parse_mode="Markdown")
