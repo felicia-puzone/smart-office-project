@@ -116,9 +116,9 @@ class buildings(db.Model):
     lon = db.Column(db.String(100))
     available = db.Column(db.Boolean)
     dashboard = db.Column(db.String(100))
-    __table_args__ = (
+    '''    __table_args__ = (
         db.UniqueConstraint(lat, lon,address,city),
-    )
+    )'''
     def __init__(self,city,route,number,state):
         street=""
         if route:
@@ -144,21 +144,23 @@ class buildings(db.Model):
 
 class zones(db.Model):
     id_zone = db.Column('ID_ZONE', db.Integer, primary_key=True,autoincrement=True)
+    id_admin = db.Column(db.Integer)
     city = db.Column(db.String(100))
     state = db.Column(db.String(100))
     lat = db.Column(db.String(100))
     lon = db.Column(db.String(100))
     dashboard = db.Column(db.String(100))
     __table_args__ = (
-        db.UniqueConstraint(city, state),
-        db.UniqueConstraint(lat, lon),
+        db.UniqueConstraint(city, state,id_admin),
+        db.UniqueConstraint(lat, lon,id_admin),
     )
-    def __init__(self,city,state):
+    def __init__(self,city,state,id_admin):
         marker = geolog.geoMarker(formatName(city), "", state)
         self.city = formatName(city)
         self.state=formatName(state)
         self.lon=marker['lon']
         self.lat = marker['lat']
+        self.id_admin=id_admin
         self.dashboard=""
     def serialize(self):
         return {"city": self.city,"lat": self.lat,"lon": self.lon}
@@ -333,5 +335,8 @@ class telegram(db.Model):
     def __init__(self, id_user, telegram_key):
         self.id_user=id_user
         self.telegram_key=telegram_key
+
+
+
 
 

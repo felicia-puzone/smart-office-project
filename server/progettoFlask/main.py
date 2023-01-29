@@ -35,8 +35,8 @@ login_manager.init_app(app)
 fb_app = firebase.FirebaseApplication('https://smartoffice-4eb51-default-rtdb.europe-west1.firebasedatabase.app/', None)
 db.init_app(app)
 mqtt.init_app(app)
-'''with app.app_context():
-    createAndPopulateDb()'''
+with app.app_context():
+    createAndPopulateDb()
 
 admin = Admin(app, name='Spazio Admin',index_view=MyHomeView())
 admin.add_view(ZoneAdmin(zones, db.session))
@@ -397,15 +397,21 @@ def dashboardzone():
 def auth():
     key = request.json['key']
     key_check = db.session.query(telegram).filter_by(telegram_key=key).first()
-    if key_check is not None:
+    if key_check is not None:#,'id_user':key_check.id_user
         return jsonify({'status': 'AUTHENTICATED'})
     else:
         return jsonify({'status': 'NOT-AUTHENTICATED'})
 
 
-@app.route('/botReport', methods=['GET'])
+@app.route('/botReport', methods=['POST'])
 def report():
-    return jsonify({'report': fetchMontlhyReport()})
+    key = request.json['key']
+    key_check = db.session.query(telegram).filter_by(telegram_key=key).first()
+    if key_check is not None:
+        return jsonify({'status': 'AUTHENTICATED','report': fetchMontlhyReport(key_check.id_user)})
+    else:
+        return jsonify({'status': 'NOT-AUTHENTICATED'})
+
 #################################################################################
 
 
@@ -814,15 +820,29 @@ if __name__ =="__main__":
     #DONE script che calcola il consumo energetico ogni giorno
     #DONE scrive azione e manda messaggio mqtt
 # DONE fixare l'intensità del led perchè passo una stringa
-#TODO verificare che i topic mqtt corrispondono
-#TODO fixare le view
-    # TODO togliere librerie inutilizzate
-    # TODO sistemare lo zoom nella mappa di selezione, magari la media delle zone
-    # TODO gestione mancanza dati form (se serve)
-    # TODO mettere un buon css
-    #TODO trovare una soluzione per la homepage dell'admin (Magari un div di bottoni per azione che può fare selezione/home logout)
-    #TODO sistemare view della dashboard
+#DONE verificare che i topic mqtt corrispondono
+#DONE fixare le view
+    # CANCELED sistemare lo zoom nella mappa di selezione, magari la media delle zone
+    # DONE mettere un buon css
+    #Canceled trovare una soluzione per la homepage dell'admin (Magari un div di bottoni per azione che può fare selezione/home logout)
+    #DONE sistemare view della dashboard
+# TODO togliere librerie inutilizzate
 # TODO commentare
+# TODO gestione mancanza dati form e JSON(se serve)
+# TODO testing Auth telegram
+# TODO testing Report telegram
+# TODO Stress test
+#DONE Visuale Admin
+    #DONE testing le zone sono associate a un Admin
+    #DONE testing problema associazione, gli Admin devono poter avere zone uguali
+    #DONE testing visione Palazzi
+    #DONE testing inserimento palazzo
+        #DONE testing assegnamento palazzo alla zona associata all'admin
+        #DONE testing modifica a zona dell'admin
+        #DONE inserimento stanza, mostrare solo i palazzi che gestiamo
+    #DONE testing visione Stanze
+    #CANCELED Vedere se la dashboard rimane uguale
+    #DONE testing inserimento stanze, non fornire palazzi che non appartengono all'Admin
 #DONE AI locale impostare un If else
 #DONE dati default, la temperatura la mettiamo vicino a quella d'ambiente
 #DONE COMUNICAZIONE CON L'AI

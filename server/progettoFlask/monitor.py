@@ -14,7 +14,7 @@ import paho.mqtt.client as mqtt
 #caso 1: tutto nella norma
 #caso 2: over
 #caso 3: tutto normale, ma in questo caso vedere come se la cava dopo aver preso provvedimenti
-#caso 4: over di nuovo
+9#caso 4: over di nuovo
 #caso 5: tutto nella norma
 #caso 6: vedere se il reset è fatto bene
 def on_connect(client, userdata, flags, rc):
@@ -42,9 +42,9 @@ room_size = 5 * 5 * 2.5
 #number_of_rooms=1
 #max_consumption_rate = 2000 * number_of_rooms #Scritto in w
 #max_consumption = max_consumption_rate * 24  #Scritto in w
-original_max=60000
+original_max=170000
 consumption_leakage=0.03
-reduction_constant=0.5
+reduction_constant=9.5
 max_consumption = original_max
 max_consumption_rate=max_consumption/24
 time_constant=  1*60*2 #espresso in ore
@@ -82,7 +82,8 @@ def hour_count():
     " ORDER BY timestamp DESC").fetchone()
     number_of_rooms_query=fetchZoneNumberOfrooms().fetchone()
     if weather_query is not None and number_of_rooms_query is not None:
-        weather_temperature=int(float(weather_query[0]))
+        #weather_temperature=int(float(weather_query[0]))
+        weather_temperature=5
         if iterations == 0: #SETUP INIZIO ITERAZIONI
             '''print("Iterazione iniziale, ricalcolo...")
             number_of_rooms = int(float(number_of_rooms_query[0]))
@@ -384,9 +385,11 @@ def adjustConsumption(over_consumption):
                 if int(line[0]) == id_session:
                     deltaT=float(line[1])
             room_temp = weather_temperature - deltaT
-            denominator=AC_consumption*(deltaT*consumption_leakage + 1)
-            new_DeltaT = round((consumption_reduction /denominator)*reduction_constant)
-            print("#Temperatura precendente della sessione: "+str(room_temp))
+            real_consumption_reduction=temp_consumption-consumption_reduction
+            new_room_temp=(real_consumption_reduction/AC_consumption -1 + 0.03*weather_temperature)/0.03
+            #denominator=AC_consumption*(deltaT*consumption_leakage + 1)
+           # new_DeltaT = round((consumption_reduction /denominator)*reduction_constant)
+            '''print("#Temperatura precendente della sessione: "+str(room_temp))
             print("#New_Delta "+str(new_DeltaT))
             print("#Vecchio deltaT "+str(deltaT))
             if deltaT > 0:#fuori è più freddo
@@ -396,7 +399,8 @@ def adjustConsumption(over_consumption):
             else:#fuori è più caldo,
                 print("#Abbassiamo la temperatura")
                 #aumento la temperatura (RISCALDAMENTO)
-                new_room_temp = room_temp - new_DeltaT
+                new_room_temp = room_temp - new_DeltaT'''
+
             if new_room_temp < 17:
                 new_room_temp=17
             elif new_room_temp >30:
