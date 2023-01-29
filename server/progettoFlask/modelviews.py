@@ -22,7 +22,7 @@ from utilities import formatName, createABuildingtupleList, buildJsonList
 class ZoneAdmin(sqla.ModelView):
     can_edit = False
     column_list = ('city', 'state','dashboard')
-    column_exclude_list = [ 'lat', 'lon']
+    column_exclude_list = [ 'id_admin','lat', 'lon']
     form_columns = (
         'city',
         'state',
@@ -60,8 +60,12 @@ class ZoneAdmin(sqla.ModelView):
             zones.set_lon(marker["lon"])
             zones.city = formatName(form.city.data)
             zones.state = formatName(form.state.data)
+            zones.id_admin=current_user.id
         else:
             raise ValidationError('Indirizzo non valido')
+
+    def get_query(self):
+        return self.session.query(self.model).filter(self.model.id_admin==current_user.id)
 class UserAdmin(sqla.ModelView):
     column_list = ('username', 'profession', 'admin', 'super_user')
     column_exclude_list = ['id', 'password']
@@ -81,7 +85,7 @@ class UserAdmin(sqla.ModelView):
         else:
             return False
     def get_list_row_actions(self):
-        if current_user.is_authenticated and current_user.is_super:
+        if current_user.is_authenticated and current_user.is_super():
             return (ViewRowAction(), EditRowAction())
         else:
             return ()
@@ -126,9 +130,13 @@ class UserAdmin(sqla.ModelView):
                     codes.delete(synchronize_session='fetch')
             db.session.commit()
             print("-------------------------------------------------")
+    def get_query(self):
+        if current_user.is_authenticated and current_user.is_super():
+            print("im super")
+            return self.session.query(self.model)
+        elif current_user.is_authenticated:
+            return self.session.query(self.model).filter_by(id = current_user.id)
 
-    # def get_query(self):
-    #   return (self.session.query(User).join(professions,User.profession==professions.id_profession))
 class JobAdmin(sqla.ModelView):
     column_list = ('name', 'category')
     column_exclude_list = ['id_profession']
@@ -157,7 +165,11 @@ class JobAdmin(sqla.ModelView):
         if job.name == "Administrator":
             raise ValidationError('Impossibile eliminare questa professione')
 
-
+    def get_list_row_actions(self):
+        if current_user.is_authenticated and current_user.is_super():
+            return (ViewRowAction(), EditRowAction())
+        else:
+            return ()
 # inserimento edifici
 # se non ha stanze non viene mostrato in getfree buildings
 # DONE testing Inserimento (state,city,route,number) da calcolare(lat,lon,id_zone) da ingnorare(id_building)
@@ -199,11 +211,12 @@ class BuildingAdmin(sqla.ModelView):
             return current_user.is_admin()
         else:
             return False
-    def on_form_prefill(self, form, id):
+    def on_form_prefill(self, form, id):#prefill da per scontato che la stanza ha gia una zona assegnata
         building = db.session.query(buildings).filter_by(id_building=id).first()
-        zone_candidates = db.session.query(zones).filter_by(city=building.city)
-        zone= geolog.geoNearest(zone_candidates, building)
+        zone_first = db.session.query(zoneToBuildingAssociation).filter_by(id_building=building.id_building).first().id_zone
+        zone = db.session.query(zones).filter_by(id_zone=zone_first).first()
         form.state.data=zone.state
+
     def on_model_change(self, form, building, is_created):
         if form.city.data is None:
             raise ValidationError('Indirizzo non valido')
@@ -225,12 +238,13 @@ class BuildingAdmin(sqla.ModelView):
             building.address = marker['route'] + " ("+formatName(form.state.data)+")"
             building.set_availability(form.available.data)
     def after_model_change(self, form, model, is_created):
-         zone = db.session.query(zones).filter_by(city=formatName(form.city.data)).filter_by(state=formatName(form.state.data))
+         zone = db.session.query(zones).filter_by(city=formatName(form.city.data)).filter_by(state=formatName(form.state.data)).filter_by(id_admin=current_user.id)
          if zone.first() is None:
-            zone =  zones(formatName(form.city.data),formatName(form.state.data))
+            zone =  zones(formatName(form.city.data),formatName(form.state.data),current_user.id)
             db.session.add(zone)
             db.session.commit()
             db.session.refresh(zone)
+            db.session.commit()
             if not is_created:
                 association_to_delete = db.session.query(zoneToBuildingAssociation).filter_by(id_building=model.id_building)
                 association_to_delete.delete(synchronize_session='fetch')
@@ -242,6 +256,7 @@ class BuildingAdmin(sqla.ModelView):
                 association_to_delete = db.session.query(zoneToBuildingAssociation).filter_by(id_building=model.id_building)
                 association_to_delete.delete(synchronize_session='fetch')
                 db.session.commit()
+            #da fixare
             zone_nearest=geolog.geoNearest(zone, model)
             db.session.add(zoneToBuildingAssociation(zone_nearest.id_zone,model.id_building))
             db.session.commit()
@@ -275,10 +290,14 @@ class BuildingAdmin(sqla.ModelView):
         zone_association.delete(synchronize_session='fetch')
         db.session.commit()
 
+    def get_query(self):
+        zoneids=db.session.query(zones.id_zone).filter_by(id_admin=current_user.id)
+        building_ids=db.session.query(zoneToBuildingAssociation.id_building).filter(zoneToBuildingAssociation.id_zone.in_(zoneids))
+        return self.session.query(self.model).filter(self.model.id_building.in_(building_ids))
 
 # DONE convertire profession alla stringa
 # DONE mettere il controllo d'inserimento della zona
-# TODO inserimento palazzi
+# DONE inserimento palazzi
 # DONE inserimento stanza/digitaltwin
 
 
@@ -333,14 +352,18 @@ class RoomAdmin(sqla.ModelView):
             room = db.session.query(rooms).filter_by(id_room=id).first()
             form.room.render_kw = {'disabled': True}
             form.room.data=room.id_room
-            buildingsForForm = db.session.query(buildings)
+            zone_ids=db.session.query(zones.id_zone).filter_by(id_admin=current_user.id)
+            building_ids=db.session.query(zoneToBuildingAssociation.id_building).filter(zoneToBuildingAssociation.id_zone.in_(zone_ids))
+            buildingsForForm = db.session.query(buildings).filter(buildings.id_building.in_(building_ids))
             choices = createABuildingtupleList(buildingsForForm)
             form.buildings.choices = choices
     def create_form(self,obj=None):
        form = super(RoomAdmin, self).create_form(obj=obj)
        form.room.render_kw = {'disabled': True}
        form.room.data = "(Data not required)"
-       buildingsForForm = db.session.query(buildings)
+       zone_ids = db.session.query(zones.id_zone).filter_by(id_admin=current_user.id)
+       building_ids = db.session.query(zoneToBuildingAssociation.id_building).filter(zoneToBuildingAssociation.id_zone.in_(zone_ids))
+       buildingsForForm = db.session.query(buildings).filter(buildings.id_building.in_(building_ids))
        choices=createABuildingtupleList(buildingsForForm)
        form.buildings.choices = choices
        return form
@@ -397,7 +420,10 @@ class RoomAdmin(sqla.ModelView):
             sensorfeed_to_delete.delete(synchronize_session='fetch')
             digital_twins_to_delete.delete(synchronize_session='fetch')
             db.session.commit()
-
+    def get_query(self):
+        zoneids=db.session.query(zones.id_zone).filter_by(id_admin=current_user.id)
+        building_ids=db.session.query(zoneToBuildingAssociation.id_building).filter(zoneToBuildingAssociation.id_zone.in_(zoneids))
+        return self.session.query(self.model).filter(self.model.id_building.in_(building_ids))
 
 #L'eliminazione e modifica non sono permesse
 #idea, assegnare alla promozione ad admin una key (Fatto)
