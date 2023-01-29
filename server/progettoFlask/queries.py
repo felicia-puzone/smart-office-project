@@ -25,11 +25,11 @@ def getFreeBuildings():
     return freeBuildings
 
 
-def tryToAssignZone(city, state):
+def tryToAssignZone(city, state,id_user):
     zone = db.session.query(zones).filter_by(city=city, state=state).first()
     # se la zona non esiste, la creiamo
     if zone is None:
-        zone = zones(city, state)
+        zone = zones(city, state,id_user)
         db.session.add(zone)
         db.session.commit()
         if zone.id_zone is None:
@@ -154,7 +154,7 @@ def createAndPopulateDb():
     # db.session.add(User(username="Nicolò", password="11223344", profession=1, sex=3,
     #                       dateOfBirth=datetime.strptime("2000-12-1","%Y-%m-%d")))
     building = buildings(city="Modena", route='', number='', state='Italia')
-    zone = tryToAssignZone("Modena", "Italia")
+    zone = tryToAssignZone("Modena", "Italia",user.id)
     db.session.add(building)
     db.session.commit()
     db.session.refresh(building)
@@ -700,11 +700,11 @@ def buildZoneMonthlyConsumptionReport(buildings):
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
 
-def fetchMontlhyReport():
+def fetchMontlhyReport(id_user):
     #report dei consumi delle zone di questo mese
     Report = ""
     timestamp = datetime.datetime.utcnow() - datetime.timedelta(days=(31))
-    zones_for_report = db.session.query(zones).all()
+    zones_for_report = db.session.query(zones).filter_by(id_admin=id_user).all()
     for zone in zones_for_report:
         building_ids = db.session.query(zoneToBuildingAssociation.id_building).filter_by(id_zone=zone.id_zone)
         monthly_report = db.session.query(monthlyBuildingconsumptionReport).filter(
