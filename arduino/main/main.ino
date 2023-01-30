@@ -20,12 +20,7 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 #define PIN_NEO_PIXEL 8  // Arduino pin that connects to NeoPixel
 #define NUM_PIXELS 62    // The number of LEDs (pixels) on NeoPixel
 
-<<<<<<< HEAD
-const int buttonPin = 9;
-int buttonState = 0;  //to check the state of the button
-=======
 Adafruit_NeoPixel strip(NUM_PIXELS, PIN_NEO_PIXEL, NEO_GRB + NEO_KHZ800);
->>>>>>> app
 
 /* Duty cycle management for Serial Instructions Reading */
 unsigned long startMillisSensors = 0;
@@ -105,13 +100,6 @@ void setup() {
   strip.show();             // Turn OFF all pixels ASAP
   strip.setBrightness(50);  // Set BRIGHTNESS to about 1/5 (max = 255)
   strip.clear();
-<<<<<<< HEAD
-
-
-
-
-=======
->>>>>>> app
 
   /* LCD Initialization */
   lcd.begin(16, 2);
@@ -126,8 +114,6 @@ void setup() {
 
 void loop() {
 
-<<<<<<< HEAD
-=======
   /* CHECKING FOR SERIAL MESSAGES */
   checkSerialMessage();
 
@@ -137,136 +123,9 @@ void loop() {
   if (occupiedState == 1 && enteredState == 0) {
 
     setRoomWaiting();
->>>>>>> app
 
     /* Waiting for the user to enter the room */
 
-<<<<<<< HEAD
-  /*** RECEIVING THE MESSAGE ***/
-
-  if (Serial.available() > 0) {
-    // read the incoming bytes:
-    int rlen = Serial.readBytesUntil(255, serial_buf, BUFFER_SIZE);
-
-    // prints the received data [to see them on Realterm]
-    for (int i = 0; i < rlen; i++)
-      Serial.write(serial_buf[i]);
-
-
-    //MATRIX CHANGE
-
-    if (serial_buf[0] == 0) {
-
-      if (serial_buf[1] == 0) {
-
-        loggedState = 0;
-        lcd.clear();
-        lcd.print(String("logged: ") + String(loggedState));
-      } else if (serial_buf[1] == 1) {
-        loggedState = 1;
-      } else if (serial_buf[1] == 2) {
-        //faccina
-      }
-    }
-    //     //LED COLOR CHANGE
-    if (serial_buf[0] == 1) {
-
-      currentColor = serial_buf[1];
-      changeStripColor(currentColor);
-    }
-
-    //LED BRIGHTNESS CHANGE
-    if (serial_buf[0] == 2) {
-
-      currentBrightness = serial_buf[1];
-      changeStripBrightness(currentBrightness);
-    }
-
-    //LCD CHANGE
-    if (serial_buf[0] == 3) {
-
-      currentTemperature = serial_buf[1];
-
-      changeTemperature(currentTemperature);
-    }
-  }
-
-
-  // /** If logged and Triggered by ultrasonic sensor = Activate room  **/
-
-
-  // if (loggedState == 1 && enteredState == 0) {
-
-  //   setRoomWaiting();
-  //   //lcd.print("waiting");
-
-  //   //Waiting for the user to enter the room
-
-  //   Serial.print("Distance in cm: ");
-  //   distance_read = (uint8_t)ultrasonic.distanceRead();
-  //   Serial.println(distance_read);
-
-  //   if (distance_read >= 3 && distance_read <= 10)
-  //   {
-
-  //     enteredState = 1;
-  //   }
-  // }
-
-
-  //   if (enteredState == 1 && loggedState==1) {
-
-  //   activateRoom();
-
-  //     //** CHECK IF BUTTON IS PRESSED TO SHUT DOWN **//
-
-  //   buttonState = digitalRead(buttonPin);
-
-  //   // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-  //     if (buttonState == HIGH) {
-  //       Serial.println("Bottone cliccato");
-  //       enteredState = 0;
-  //       initializedRoomState = 0;
-  //       shutDownRoom();
-
-  //     }
-
-  //   }
-
-
-  //   //Se logout, spegni stanza
-
-  //   if(loggedState == 0){
-  //     shutDownRoom();
-  //     enteredState = 0;
-  //     initializedRoomState = 0;
-  //   }
-
-
-
-
-  /******** SENSORI ***********/
-  //LETTURA SENSORE LUCE
-
-
-  currentMillis = millis();                   //get the current time
-  if (currentMillis - startMillis >= period)  //test whether the period has elapsed
-  {
-
-    //Light Sensor Retrieve
-    light_sensor_read = analogRead(A0);
-
-    // Serial.println(light_sensor_read);
-
-    Serial.write(255);
-    Serial.write(ID_SENSOR_LIGHT);
-    Serial.write(2);  //data size
-    Serial.write(highByte(light_sensor_read));
-    Serial.write(lowByte(light_sensor_read));
-    Serial.write(254);  // /xfe
-
-    //LETTURA SENSORE RUMORE
-=======
     if (distance_read >= 3 && distance_read <= 10) {
 
       /* If user has crossed the door, change state */
@@ -318,23 +177,9 @@ void loop() {
       Serial.write(254);  // /xfe
 
     /* Noise Sensor Reading */
->>>>>>> app
 
     soundSensorData = digitalRead(soundSensorPin);
 
-<<<<<<< HEAD
-    Serial.write(255);
-    Serial.write(ID_SENSOR_NOISE);
-    Serial.write(1);  //data size
-    Serial.write(soundSensorData);
-    Serial.write(254);  // /xfe
-
-    startMillis = currentMillis;
-  }
-
-
-  /****************************/
-=======
       Serial.write(255);
       Serial.write(ID_SENSOR_NOISE);
       Serial.write(1);  //data size
@@ -344,13 +189,10 @@ void loop() {
       startMillisSensors = currentMillisSensors;
     }
   }
->>>>>>> app
 }
 
 /* SERIAL INSTRUCTIONS READING FUNCTION */
 
-<<<<<<< HEAD
-=======
 int checkSerialMessage() {
 
   if (Serial.available() > 0) {
@@ -401,7 +243,6 @@ int checkSerialMessage() {
 
 /* ACTUATORS DRIVING FUNCTIONS */
 
->>>>>>> app
 void changeStripColor(int color) {
   for (int i = 0; i < strip.numPixels(); i++) {  // For each pixel in strip...
     switch (color) {
@@ -451,42 +292,7 @@ void changeStripColor(int color) {
       default:
         strip.clear();
     }
-<<<<<<< HEAD
-
-      strip.show();
-  }
-
-}
-
-void changeStripBrightness(int brightness) {
-  switch (brightness) {
-    case BRIGHTNESS_LOW:
-      strip.setBrightness(10);
-      strip.show();
-      break;
-    case BRIGHTNESS_MEDIUM:
-      strip.setBrightness(30);
-      strip.show();
-      break;
-    case BRIGHTNESS_HIGH:
-      strip.setBrightness(50);
-      strip.show();
-      break;
-  }
-}
-
-void changeTemperature(int temperature) {
-  lcd.clear();
-  lcd.setCursor(0, 1);
-  lcd.print(String("Temperatura: ") + String(temperature) + String(" C°"));
-}
-
-void shutDownRoom() {
-  for (int i = 0; i < strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(0, 0, 0));
-=======
     strip.show();
->>>>>>> app
   }
 }
 
@@ -522,31 +328,13 @@ void shutDownRoom() {
 
   strip.show();
   lcd.clear();
-<<<<<<< HEAD
-  lcd.print("Shut down");
-=======
   lcd.print("OFF");
 
->>>>>>> app
   matrix.clear();
   matrix.writeDisplay();
 }
 
 void setRoomWaiting() {
-<<<<<<< HEAD
-  //init LED strip
-  changeStripColor(NO_COLOR);
-
-  //init LCD
-  lcd.setCursor(0, 1);
-  lcd.print("WAITING");
-
-  //init Matrix
-
-  matrix.setRotation(1);
-  matrix.drawBitmap(0, 0, smile_bmp, 8, 8, LED_ON);
-  matrix.writeDisplay();
-=======
   changeStripColor(NO_COLOR);
 
   lcd.clear();
@@ -554,20 +342,16 @@ void setRoomWaiting() {
   lcd.print("WAITING");
 
   waitingAnimationMatrix();
->>>>>>> app
 }
 
 void activateRoom() {
   changeTemperature(currentTemperature);
   changeStripBrightness(currentBrightness);
   changeStripColor(currentColor);
-<<<<<<< HEAD
-=======
 
   matrix.clear();
   matrix.drawBitmap(0, 0, smile_bmp, 8, 8, LED_ON);
   matrix.writeDisplay();
->>>>>>> app
 }
 
 /* OTHER UTILITIES */
@@ -583,13 +367,6 @@ void waitingAnimationMatrix() {
   currentMillisLedMatrix = millis();
   if (currentMillisLedMatrix - startMillisLedMatrix >= periodLedMatrix) {
 
-<<<<<<< HEAD
-
-    strip.rainbow();
-    strip.show();
-
-
-=======
     matrix.clear();
 
     switch (currentFrame) {
@@ -631,5 +408,4 @@ void waitingAnimationMatrix() {
     /* Timer step updating */
     startMillisLedMatrix = currentMillisLedMatrix;
   }
->>>>>>> app
 }
