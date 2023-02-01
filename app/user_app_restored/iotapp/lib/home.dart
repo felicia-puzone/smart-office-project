@@ -43,12 +43,12 @@ Future<int> mqttConnect() async {
   /// client identifier, any supplied username/password and clean session,
   /// an example of a specific one below.
   final connMess = MqttConnectMessage()
-      .withClientIdentifier('Mqtt_MyClientUniqueId')
-      .withWillTopic('willtopic') // If you set this you must set a will message
-      .withWillMessage('My Will message')
+      .withClientIdentifier('app_unique_id')
+      .withWillTopic('appWillTopic') // If you set this you must set a will message
+      .withWillMessage('App disconnected')
       .startClean() // Non persistent session for testing
       .withWillQos(MqttQos.atLeastOnce);
-  print('EXAMPLE::Mosquitto client connecting....');
+  print('MQTT::Client connecting....');
   client.connectionMessage = connMess;
 
   /// Connect the client, any errors here are communicated by raising of the appropriate exception. Note
@@ -58,27 +58,25 @@ Future<int> mqttConnect() async {
     await client.connect();
   } on NoConnectionException catch (e) {
     // Raised by the client when connection fails.
-    print('EXAMPLE::client exception - $e');
+    print('MQTT::client exception - $e');
     client.disconnect();
   } on SocketException catch (e) {
     // Raised by the socket layer
-    print('EXAMPLE::socket exception - $e');
+    print('MQTT::socket exception - $e');
     client.disconnect();
   }
 
   /// Check we are connected
   if (client.connectionStatus!.state == MqttConnectionState.connected) {
-    print('EXAMPLE::Mosquitto client connected');
+    print('MQTT::Client connected');
   } else {
     /// Use status here rather than state if you also want the broker return code.
     print(
-        'EXAMPLE::ERROR Mosquitto client connection failed - disconnecting, status is ${client.connectionStatus}');
+        'MQTT::Client connection failed - disconnecting, status is ${client.connectionStatus}');
     client.disconnect();
     exit(-1);
   }
 
-  /// Ok, lets try a subscription
-  print('EXAMPLE::Subscribing to the test/lol topic');
 
   String id_edificio = GlobalValues.userSession!.id_edificio.toString();
   String id_room = GlobalValues.userSession!.id_room.toString();
@@ -122,15 +120,6 @@ Future<int> mqttConnect() async {
   //  print(
   //      'EXAMPLE::Published notification:: topic is ${message.variableHeader!.topicName}, with Qos ${message.header!.qos}');
   //});
-
-  /// Lets publish to our topic
-  /// Use the payload builder rather than a raw buffer
-  /// Our known topic to publish to
-
-  /// Ok, we will now sleep a while, in this gap you will see ping request/response
-  /// messages being exchanged by the keep alive mechanism.
-  //print('EXAMPLE::Sleeping....');
-  //await MqttUtilities.asyncSleep(60);
 
   /// Finally, unsubscribe and exit gracefully
   //print('EXAMPLE::Unsubscribing');
