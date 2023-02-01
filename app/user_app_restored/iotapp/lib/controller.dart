@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'models.dart';
 
-const IPSERVER = 'http://44.204.42.245:5000/';
+const IPSERVER = 'http://192.168.51.91:5000/';
 
 class GlobalValues {
   static UserSession? userSession;
