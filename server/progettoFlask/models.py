@@ -131,7 +131,7 @@ class rooms(db.Model):
         self.id_building=building
     def set_availability(self,availability):
         self.available = availability
-#TODO testing
+
 class buildings(db.Model):
     id_building = db.Column('ID_BUILDING', db.Integer, primary_key=True)
     city = db.Column(db.String(100))
@@ -140,9 +140,9 @@ class buildings(db.Model):
     lon = db.Column(db.String(100))
     available = db.Column(db.Boolean)
     dashboard = db.Column(db.String(100))
-    __table_args__ = (
+    '''    __table_args__ = (
         db.UniqueConstraint(lat, lon,address,city),
-    )
+    )'''
     def __init__(self,city,route,number,state):
         street=""
         if route:
@@ -165,24 +165,26 @@ class buildings(db.Model):
                 "city": self.city,
                 "lat":self.lat,
                 "lon":self.lon,"address":self.address}
-#TODO testing
+
 class zones(db.Model):
     id_zone = db.Column('ID_ZONE', db.Integer, primary_key=True,autoincrement=True)
+    id_admin = db.Column(db.Integer)
     city = db.Column(db.String(100))
     state = db.Column(db.String(100))
     lat = db.Column(db.String(100))
     lon = db.Column(db.String(100))
     dashboard = db.Column(db.String(100))
     __table_args__ = (
-        db.UniqueConstraint(city, state),
-        db.UniqueConstraint(lat, lon),
+        db.UniqueConstraint(city, state,id_admin),
+        db.UniqueConstraint(lat, lon,id_admin),
     )
-    def __init__(self,city,state):
+    def __init__(self,city,state,id_admin):
         marker = geolog.geoMarker(formatName(city), "", state)
         self.city = formatName(city)
         self.state=formatName(state)
         self.lon=marker['lon']
         self.lat = marker['lat']
+        self.id_admin=id_admin
         self.dashboard=""
     def serialize(self):
         return {"city": self.city,"lat": self.lat,"lon": self.lon}
@@ -313,11 +315,16 @@ class weatherReport(db.Model):
                 "timestamp":self.timestamp
                 }
 
-class dailyconsumptionReport(db.Model):
-    id_building = db.Column('ID_BUILDING', db.Integer, primary_key=True)
-    temperature = db.Column(db.String(20), primary_key=True)
-    light = db.Column(db.String(20), primary_key=True)
-    timestamp = db.Column(db.DateTime(timezone=True), nullable=True, default=datetime.datetime.utcnow, primary_key=True)
+
+
+
+class dailyBuildingconsumptionReport(db.Model):
+
+    __tablename__ = 'dailyBuildingconsumptionReport'
+    id_building = db.Column( db.Integer, primary_key=True)
+    temperature = db.Column(db.String(20))
+    light = db.Column(db.String(20))
+    timestamp = db.Column(db.Date(), nullable=True, default=datetime.datetime.utcnow, primary_key=True)
 
     def __init__(self, id_building, temperature, light, timestamp):
         self.timestamp = timestamp
@@ -325,17 +332,13 @@ class dailyconsumptionReport(db.Model):
         self.light = light
         self.id_building = id_building
 
-    def serialize(self):
-        return {"id_room": self.id_building,
-                "light": self.light,
-                "temperature": self.temperature,
-                "timestamp": self.timestamp
-                }
-class session_consumption_report(db.Model):
-    id_session = db.Column('ID_BUILDING', db.Integer, primary_key=True)
-    temperature = db.Column(db.String(20), primary_key=True)
-    light = db.Column(db.String(20), primary_key=True)
-    timestamp = db.Column(db.DateTime(timezone=True), nullable=True, default=datetime.datetime.utcnow, primary_key=True)
+class monthlyBuildingconsumptionReport(db.Model):
+
+    __tablename__ = 'monthlyBuildingconsumptionReport'
+    id_building = db.Column( db.Integer, primary_key=True)
+    temperature = db.Column(db.String(20))
+    light = db.Column(db.String(20))
+    timestamp = db.Column(db.Date(), nullable=True, default=datetime.datetime.utcnow, primary_key=True)
 
     def __init__(self, id_building, temperature, light, timestamp):
         self.timestamp = timestamp
@@ -343,14 +346,39 @@ class session_consumption_report(db.Model):
         self.light = light
         self.id_building = id_building
 
-    def serialize(self):
-        return {"id_room": self.id_building,
-                "light": self.light,
-                "temperature": self.temperature,
-                "timestamp": self.timestamp
-                }
-#class monthlyConsumption()
-#class actuatorReport(db.Model):
+class dailyRoomconsumptionReport(db.Model):
+    __tablename__ = 'dailyRoomconsumptionReport'
+    id_room = db.Column( db.Integer, primary_key=True)
+    temperature = db.Column(db.String(20))
+    light = db.Column(db.String(20))
+    timestamp = db.Column(db.Date(), nullable=True, default=datetime.datetime.utcnow, primary_key=True)
+
+    def __init__(self, id_room, temperature, light, timestamp):
+        self.timestamp = timestamp
+        self.temperature = temperature
+        self.light = light
+        self.id_room = id_room
+
+class monthlyRoomconsumptionReport(db.Model):
+    __tablename__ = 'monthlyRoomconsumptionReport'
+    id_room = db.Column( db.Integer, primary_key=True)
+    temperature = db.Column(db.String(20))
+    light = db.Column(db.String(20))
+    timestamp = db.Column(db.Date(), nullable=True, default=datetime.datetime.utcnow, primary_key=True)
+
+    def __init__(self, id_room, temperature, light, timestamp):
+        self.timestamp = timestamp
+        self.temperature = temperature
+        self.light = light
+        self.id_room = id_room
+
+
+class telegram(db.Model):
+    id_user=db.Column( db.Integer, primary_key=True)
+    telegram_key=db.Column( db.String(6), primary_key=True)
+    def __init__(self, id_user, telegram_key):
+        self.id_user=id_user
+        self.telegram_key=telegram_key
 
 
 

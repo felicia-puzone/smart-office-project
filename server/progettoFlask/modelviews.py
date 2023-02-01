@@ -1,7 +1,7 @@
-from tkinter.ttk import Label
+import random
 
-from flask import url_for
-from flask_admin import BaseView, expose, AdminIndexView, Admin
+from flask import url_for, abort
+from flask_admin import  expose, AdminIndexView, Admin
 from flask_admin.contrib import sqla
 from flask_admin.model.template import ViewRowAction, EditRowAction, DeleteRowAction
 from flask_login import current_user, login_required
@@ -11,7 +11,7 @@ from wtforms import StringField, BooleanField, SelectField, validators
 
 import geolog
 from models import db, buildings, User, professions, zones, sessionStates, rooms, digitalTwinFeed, sensorFeeds, \
-    sessions, actuatorFeeds, zoneToBuildingAssociation
+    sessions, actuatorFeeds, zoneToBuildingAssociation, telegram
 from werkzeug.routing import ValidationError
 
 from mqtthandler import mqtt
@@ -22,12 +22,12 @@ from utilities import formatName, createABuildingtupleList, buildJsonList
 class ZoneAdmin(sqla.ModelView):
     can_edit = False
     column_list = ('city', 'state','dashboard')
-    column_exclude_list = [ 'lat', 'lon']
+    column_exclude_list = [ 'id_admin','lat', 'lon']
     form_columns = (
         'city',
         'state',
     )
-    def _format_pay_now(view, context, model, name):
+    def _format_dashboard(view, context, model, name):
         # render a form with a submit button for student, include a hidden field for the student id
         # note how checkout_view method is exposed as a route below
         checkout_url = url_for('dashboardzone')
@@ -41,7 +41,7 @@ class ZoneAdmin(sqla.ModelView):
 
         return Markup(_html)
     column_formatters = {
-        'dashboard': _format_pay_now
+        'dashboard': _format_dashboard
     }
     def on_model_delete(self, zone):
         building_associations = db.session.query(zoneToBuildingAssociation).filter_by(id_zone=zone.id_zone).first()
@@ -50,7 +50,7 @@ class ZoneAdmin(sqla.ModelView):
 
     def is_accessible(self):
         if current_user.is_authenticated:
-            return current_user.is_admin
+            return current_user.is_admin()
         else:
             return False
     def on_model_change(self, form, zones, is_created):
@@ -60,8 +60,12 @@ class ZoneAdmin(sqla.ModelView):
             zones.set_lon(marker["lon"])
             zones.city = formatName(form.city.data)
             zones.state = formatName(form.state.data)
+            zones.id_admin=current_user.id
         else:
             raise ValidationError('Indirizzo non valido')
+
+    def get_query(self):
+        return self.session.query(self.model).filter(self.model.id_admin==current_user.id)
 class UserAdmin(sqla.ModelView):
     column_list = ('username', 'profession', 'admin', 'super_user')
     column_exclude_list = ['id', 'password']
@@ -77,11 +81,11 @@ class UserAdmin(sqla.ModelView):
     }
     def is_accessible(self):
         if current_user.is_authenticated:
-            return current_user.is_admin
+            return current_user.is_admin()
         else:
             return False
     def get_list_row_actions(self):
-        if current_user.is_authenticated and current_user.is_super:
+        if current_user.is_authenticated and current_user.is_super():
             return (ViewRowAction(), EditRowAction())
         else:
             return ()
@@ -91,9 +95,48 @@ class UserAdmin(sqla.ModelView):
                 raise ValidationError('Can\'t revoke permissions from Super User Admin')
             if form.super_user.data == True:
                 model.admin = True
+                model.super_user = True
+                codes=db.session.query(telegram).filter_by(id_user=model.id)
+                if codes is not None:
+                    codes.delete(synchronize_session='fetch')
+                    db.session.commit()
+                unique = False
+                while unique is False:
+                    pin = ''.join(random.choice('0123456789') for _ in range(6))
+                    telegram_check = db.session.query(telegram).filter_by(telegram_key=pin).first()
+                    if telegram_check is None:
+                        unique = True
+                        db.session.add(telegram(model.id,pin))
+            elif form.admin.data == True:
+                model.admin = True
+                model.super_user = False
+                codes = db.session.query(telegram).filter_by(id_user=model.id)
+                if codes is not None:
+                    codes.delete(synchronize_session='fetch')
+                    db.session.commit()
+                unique = False
+                while unique is False:
+                    pin = ''.join(random.choice('0123456789') for _ in range(6))
+                    telegram_check = db.session.query(telegram).filter_by(telegram_key=pin).first()
+                    if telegram_check is None:
+                        unique = True
+                        db.session.add(telegram(model.id, pin))
                 print(model.profession)
-    # def get_query(self):
-    #   return (self.session.query(User).join(professions,User.profession==professions.id_profession))
+            else: #revoca Admin False e Super False
+                model.admin = False
+                model.super_user = False
+                codes = db.session.query(telegram).filter_by(id_user=model.id)
+                if codes is not None:
+                    codes.delete(synchronize_session='fetch')
+            db.session.commit()
+            print("-------------------------------------------------")
+    def get_query(self):
+        if current_user.is_authenticated and current_user.is_super():
+            print("im super")
+            return self.session.query(self.model)
+        elif current_user.is_authenticated:
+            return self.session.query(self.model).filter_by(id = current_user.id)
+
 class JobAdmin(sqla.ModelView):
     column_list = ('name', 'category')
     column_exclude_list = ['id_profession']
@@ -111,7 +154,7 @@ class JobAdmin(sqla.ModelView):
 
     def is_accessible(self):
         if current_user.is_authenticated:
-            return current_user.is_admin
+            return current_user.is_admin()
         else:
             return False
 
@@ -122,7 +165,11 @@ class JobAdmin(sqla.ModelView):
         if job.name == "Administrator":
             raise ValidationError('Impossibile eliminare questa professione')
 
-
+    def get_list_row_actions(self):
+        if current_user.is_authenticated and current_user.is_super():
+            return (ViewRowAction(), EditRowAction())
+        else:
+            return ()
 # inserimento edifici
 # se non ha stanze non viene mostrato in getfree buildings
 # DONE testing Inserimento (state,city,route,number) da calcolare(lat,lon,id_zone) da ingnorare(id_building)
@@ -143,7 +190,7 @@ class BuildingAdmin(sqla.ModelView):
         'route':  StringField('route'),
         'number': StringField('number'),
     }
-    def _format_pay_now(view, context, model, name):
+    def _format_dashboard(view, context, model, name):
         # render a form with a submit button for student, include a hidden field for the student id
         # note how checkout_view method is exposed as a route below
         checkout_url = url_for('dashboardbuilding')
@@ -157,18 +204,19 @@ class BuildingAdmin(sqla.ModelView):
 
         return Markup(_html)
     column_formatters = {
-        'dashboard': _format_pay_now
+        'dashboard': _format_dashboard
     }
     def is_accessible(self):
         if current_user.is_authenticated:
-            return current_user.is_admin
+            return current_user.is_admin()
         else:
             return False
-    def on_form_prefill(self, form, id):
+    def on_form_prefill(self, form, id):#prefill da per scontato che la stanza ha gia una zona assegnata
         building = db.session.query(buildings).filter_by(id_building=id).first()
-        zone_candidates = db.session.query(zones).filter_by(city=building.city)
-        zone= geolog.geoNearest(zone_candidates, building)
+        zone_first = db.session.query(zoneToBuildingAssociation).filter_by(id_building=building.id_building).first().id_zone
+        zone = db.session.query(zones).filter_by(id_zone=zone_first).first()
         form.state.data=zone.state
+
     def on_model_change(self, form, building, is_created):
         if form.city.data is None:
             raise ValidationError('Indirizzo non valido')
@@ -190,12 +238,13 @@ class BuildingAdmin(sqla.ModelView):
             building.address = marker['route'] + " ("+formatName(form.state.data)+")"
             building.set_availability(form.available.data)
     def after_model_change(self, form, model, is_created):
-         zone = db.session.query(zones).filter_by(city=formatName(form.city.data)).filter_by(state=formatName(form.state.data))
+         zone = db.session.query(zones).filter_by(city=formatName(form.city.data)).filter_by(state=formatName(form.state.data)).filter_by(id_admin=current_user.id)
          if zone.first() is None:
-            zone =  zones(formatName(form.city.data),formatName(form.state.data))
+            zone =  zones(formatName(form.city.data),formatName(form.state.data),current_user.id)
             db.session.add(zone)
             db.session.commit()
             db.session.refresh(zone)
+            db.session.commit()
             if not is_created:
                 association_to_delete = db.session.query(zoneToBuildingAssociation).filter_by(id_building=model.id_building)
                 association_to_delete.delete(synchronize_session='fetch')
@@ -207,6 +256,7 @@ class BuildingAdmin(sqla.ModelView):
                 association_to_delete = db.session.query(zoneToBuildingAssociation).filter_by(id_building=model.id_building)
                 association_to_delete.delete(synchronize_session='fetch')
                 db.session.commit()
+            #da fixare
             zone_nearest=geolog.geoNearest(zone, model)
             db.session.add(zoneToBuildingAssociation(zone_nearest.id_zone,model.id_building))
             db.session.commit()
@@ -222,6 +272,7 @@ class BuildingAdmin(sqla.ModelView):
         zone_association = db.session.query(zoneToBuildingAssociation).filter_by(id_building=building.id_building)
         for room in rooms_to_delete:
             mqtt.unsubscribe('smartoffice/building_' + str(+room.id_building) + '/room_' + str(room.id_room) + '/sensors/#')
+            mqtt.unsubscribe('smartoffice/building_' + str(room.id_building) + '/room_' + str(room.id_room) + '/health/#')
             print("mi sono disiscritto dal topic " + 'smartoffice/building_' + str(room.id_building) + '/room_' + str(room.id_room) + '/sensors')
             digital_twins_to_delete=db.session.query(digitalTwinFeed).filter_by(id_room=room.id_room)#ok
             sensorfeed_to_delete=db.session.query(sensorFeeds).filter_by(id_room=room.id_room)#ok
@@ -239,10 +290,14 @@ class BuildingAdmin(sqla.ModelView):
         zone_association.delete(synchronize_session='fetch')
         db.session.commit()
 
+    def get_query(self):
+        zoneids=db.session.query(zones.id_zone).filter_by(id_admin=current_user.id)
+        building_ids=db.session.query(zoneToBuildingAssociation.id_building).filter(zoneToBuildingAssociation.id_zone.in_(zoneids))
+        return self.session.query(self.model).filter(self.model.id_building.in_(building_ids))
 
 # DONE convertire profession alla stringa
 # DONE mettere il controllo d'inserimento della zona
-# TODO inserimento palazzi
+# DONE inserimento palazzi
 # DONE inserimento stanza/digitaltwin
 
 
@@ -255,6 +310,10 @@ class MyHomeView(AdminIndexView):
         arg1 = 'Hello'
         return self.render('admin/index.html',buildings=buildJsonList(getFreeBuildings()), msg='')
 
+    def is_accessible(self):
+        if current_user.is_authenticated:
+            return current_user.is_admin()
+        return False
 
 
 #DONE testing eliminazione a cascata
@@ -271,7 +330,7 @@ class RoomAdmin(sqla.ModelView):
     }
 
     form_columns = ('room','buildings','available')
-    def _format_pay_now(view, context, model, name):
+    def _format_dashboard(view, context, model, name):
         # render a form with a submit button for student, include a hidden field for the student id
         # note how checkout_view method is exposed as a route below
         checkout_url = url_for('dashboardroom')
@@ -286,28 +345,32 @@ class RoomAdmin(sqla.ModelView):
         return Markup(_html)
 
     column_formatters = {
-        'dashboard': _format_pay_now
+        'dashboard': _format_dashboard
     }
     def on_form_prefill(self, form, id):
         #with app.app_context():
             room = db.session.query(rooms).filter_by(id_room=id).first()
             form.room.render_kw = {'disabled': True}
             form.room.data=room.id_room
-            buildingsForForm = db.session.query(buildings)
+            zone_ids=db.session.query(zones.id_zone).filter_by(id_admin=current_user.id)
+            building_ids=db.session.query(zoneToBuildingAssociation.id_building).filter(zoneToBuildingAssociation.id_zone.in_(zone_ids))
+            buildingsForForm = db.session.query(buildings).filter(buildings.id_building.in_(building_ids))
             choices = createABuildingtupleList(buildingsForForm)
             form.buildings.choices = choices
     def create_form(self,obj=None):
        form = super(RoomAdmin, self).create_form(obj=obj)
        form.room.render_kw = {'disabled': True}
        form.room.data = "(Data not required)"
-       buildingsForForm = db.session.query(buildings)
+       zone_ids = db.session.query(zones.id_zone).filter_by(id_admin=current_user.id)
+       building_ids = db.session.query(zoneToBuildingAssociation.id_building).filter(zoneToBuildingAssociation.id_zone.in_(zone_ids))
+       buildingsForForm = db.session.query(buildings).filter(buildings.id_building.in_(building_ids))
        choices=createABuildingtupleList(buildingsForForm)
        form.buildings.choices = choices
        return form
 
     def is_accessible(self):
         if current_user.is_authenticated:
-            return current_user.is_admin
+            return current_user.is_admin()
         else:
             return False
     def on_model_change(self, form, room, is_created):
@@ -317,6 +380,7 @@ class RoomAdmin(sqla.ModelView):
                 raise ValidationError('è presente una sessione attiva in questa stanza!')
             else:
                 mqtt.unsubscribe('smartoffice/building_' + str(+room.id_building) + '/room_' + str(room.id_room) + '/sensors/#')
+                mqtt.unsubscribe('smartoffice/building_' + str(+room.id_building) + '/room_' + str(room.id_room) + '/health/#')
                 print("mi sono disiscritto dal topic " + 'smartoffice/building_' + str(room.id_building) + '/room_' + str(room.id_room) + '/sensors')
                 room.set_building(form.buildings.data)
                 building=db.session.query(buildings).filter_by(id_building=form.buildings.data).first()
@@ -333,10 +397,12 @@ class RoomAdmin(sqla.ModelView):
             digital_twin = digitalTwinFeed(model.id_room,0,0,0,0)
             db.session.add(digital_twin)
             db.session.commit()
-        mqtt.subscribe('smartoffice/building_' + str(+model.id_building) + '/room_' + str(model.id_room) + '/sensors/#')
+        mqtt.subscribe('smartoffice/building_' + str(model.id_building) + '/room_' + str(model.id_room) + '/sensors/#')
+        mqtt.subscribe('smartoffice/building_' + str(model.id_building) + '/room_' + str(model.id_room) + '/health/#')
         print("mi sono iscritto dal topic " + 'smartoffice/building_' + str(+model.id_building) + '/room_' + str(model.id_room) + '/sensors')
     def on_model_delete(self, room):
         mqtt.unsubscribe('smartoffice/building_' + str(+room.id_building) + '/room_' + str(room.id_room) + '/sensors/#')
+        mqtt.unsubscribe('smartoffice/building_' + str(+room.id_building) + '/room_' + str(room.id_room) + '/health/#')
         print("mi sono disiscritto dal topic " + 'smartoffice/building_' + str(room.id_building) + '/room_' + str(room.id_room) + '/sensors')
         activeSessionState = db.session.query(sessionStates).filter_by(active=True).filter_by(id_room=room.id_room).first()
         if activeSessionState is not None:
@@ -354,4 +420,25 @@ class RoomAdmin(sqla.ModelView):
             sensorfeed_to_delete.delete(synchronize_session='fetch')
             digital_twins_to_delete.delete(synchronize_session='fetch')
             db.session.commit()
+    def get_query(self):
+        zoneids=db.session.query(zones.id_zone).filter_by(id_admin=current_user.id)
+        building_ids=db.session.query(zoneToBuildingAssociation.id_building).filter(zoneToBuildingAssociation.id_zone.in_(zoneids))
+        return self.session.query(self.model).filter(self.model.id_building.in_(building_ids))
+
+#L'eliminazione e modifica non sono permesse
+#idea, assegnare alla promozione ad admin una key (Fatto)
+class TelegramAdmin(sqla.ModelView):
+    column_list = ('id_user', 'telegram_key')
+    can_create = False
+    can_delete = False
+    def is_accessible(self):
+        if current_user.is_authenticated:
+            return current_user.is_admin()
+        else:
+            return False
+
+
+    def get_query(self):
+        return self.session.query(self.model).filter(self.model.id_user == current_user.id)
+
 
