@@ -2,6 +2,10 @@ import datetime
 import re
 import random
 
+import face_recognition
+import cv2
+import numpy as np
+
 from apiflask import Schema, PaginationSchema, pagination_builder
 from itsdangerous import BadSignature
 import requests as requests
@@ -118,37 +122,41 @@ def fetchprofessions():
 
 
 
-@app.route('/login',methods = ['POST'])
-@app.doc(summary='User authentication', tags=['Authentication'],)
-#@app.input({'Username': String(),'Password':String()})
-#@app.output({'logged_in': Boolean(default=False)})
-def login():
-    """Login
-       Tramite richiesta POST, il client dovrà fornire al server una form che comprende le credenziali Username e Password.
-       In base ai dati ricevuti, il server manderà i dati necesssari per mostrare la schermata utente in caso di autenticazione
-       riuscita, per gli utenti mobile sarà fornito un Json con i dati necessari per la prenotazione di una stanza, nei dati
-       verrà compreso un token per l'identificazione dell'utente, gli utenti Web verranno reindirizzati alla schermata di
-       selezione di prenotazione e il token sarà salvato in una variabile di sessione.
-       Nel caso di autenticazione fallita, si verrà reindirizzati alla schermata di Login o un json che comunicherà
-       l'esito negativo."""
+@app.route('/loginFaceID', methods = ['POST'])
+@app.doc(summary='User authentication with Face ID', tags=['Authentication'],)
+def loginFaceID():
     content = request.headers.get("Content-ID")
-    msg=''
-    if 'username' in request.form and 'password' in request.form:
-        username = request.form['username']
-        password = request.form['password']
-        account = db.session.query(User).filter_by(username=username).first()
-        if account and account.verify_password(password) :
-            login_user(account)
-            token=account.get_auth_token(username,account.password)
-            return handleAuthenticatedUserResponse(content,token)
+    data=request.get_json(silent=True)
+    encoding=data['encoding']
+    print(encoding)
+    
+    ##DB ^v^v^v^v^ FETCH LIST OF ALL USER ENCODINGS and IDs (oppure USERNAME)
+    db_encodings = []
+    user_ids = [] #Questi due array devono corrispondere elemento per elemento
+
+    for face_encoding in db_encodings:
+            # See if the face is a match for the known face(s)
+        matches = face_recognition.compare_faces(encoding, face_encoding)
+        user_id = "Unknown"
+
+            # # If a match was found in known_face_encodings, just use the first one.
+        if True in matches:
+            first_match_index = matches.index(True)
+            user_id = user_ids[first_match_index]
+
+            # Or instead, use the known face with the smallest distance to the new face
+        else: 
+            face_distances = face_recognition.face_distance(db_encodings, encoding)
+            best_match_index = np.argmin(face_distances)
+            if matches[best_match_index]:
+                user_id = db_encodings[best_match_index]
+                
+        if(user_id == "Unknown"): return jsonify(logged_in=False)
+        
         else:
-            msg = 'Incorrect username / password !'
-    else:
-        msg='Riempire i campi!'
-    if content!="LOGIN-APP":
-        return render_template('login.html',msg=msg)
-    else:
-        return jsonify(logged_in=False)
+        ## ^v^v^v^v^ LOG THE USER WITH the RESULTING user_id
+            return handleAuthenticatedUserResponse(content,token)
+  
 
 #testato
 
