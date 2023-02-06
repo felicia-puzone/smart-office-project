@@ -517,9 +517,9 @@ def getAIdata(id_user,digitalTwin):
                   'ext_temp': weather_data["temperature"], 'ext_humidity': weather_data["humidity"],
                   'ext_light': external_light}
     try:
-        res_temp = requests.post('http://54.86.207.49:5000/getUserTemp/',data=json.dumps(dataToSend),timeout=10)
-        res_brightness = requests.post('http://54.86.207.49:5000/getUserLight/', data=json.dumps(dataToSend),timeout=10)
-        res_color = requests.post('http://54.86.207.49:5000/getUserColor/', data=json.dumps(dataToSend),timeout=10)
+        res_temp = requests.post('http://44.207.238.133:5000/getUserTemp/',data=json.dumps(dataToSend),timeout=20)
+        res_brightness = requests.post('http://44.207.238.133:5000/getUserLight/', data=json.dumps(dataToSend),timeout=20)
+        res_color = requests.post('http://44.207.238.133:5000/getUserColor/', data=json.dumps(dataToSend),timeout=20)
         print('response from server:', res_temp.text)
         print('response from server:', res_brightness.text)
         print('response from server:', res_color.text)
@@ -552,6 +552,8 @@ def renderHomeApp(id_room):
     digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
     id_building = db.session.query(rooms).filter_by(id_room=digitalTwin.id_room).first().id_building
     weather_data = weather_report(id_room)
+    print("##################################################")
+    print(digitalTwin.serializedActuators())
     return jsonify(logged_in=True, outcome="Active", digitalTwin=digitalTwin.serializedActuators(),
                    id_edificio=id_building, id_room=id_room, username=current_user.get_username(),weather=weather_data)
 
@@ -565,6 +567,8 @@ def renderHomeAppOnAuth(id_room,token):
     digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
     id_building = db.session.query(rooms).filter_by(id_room=digitalTwin.id_room).first().id_building
     weather_data = weather_report(id_room)
+    print("##################################################")
+    print(digitalTwin.serializedActuators())
     return jsonify(token=token, logged_in=True, outcome="Active", digitalTwin=digitalTwin.serializedActuators(),
                    id_edificio=id_building, id_room=digitalTwin.id_room, username=current_user.get_username(),weather=weather_data)
 
