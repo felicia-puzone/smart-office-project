@@ -1,8 +1,3 @@
-# sample11
-# objects
-#pip install flask-sqlalchemy
-
-
 from flask import Flask, request
 from flask import  jsonify
 
@@ -38,5 +33,4 @@ def test():
 
 if __name__ == '__main__':
     port = 5001
-    interface = '0.0.0.0'
-    app.run(host=interface,port=port)
+    app.run(port=port)

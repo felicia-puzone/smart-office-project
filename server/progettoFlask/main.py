@@ -1,14 +1,8 @@
 import datetime
 import re
-import random
-
-from apiflask import Schema, PaginationSchema, pagination_builder
 from itsdangerous import BadSignature
 import requests as requests
 from flask import  render_template, session, json
-from marshmallow.fields import List, Nested, Integer, String, Boolean, Dict, Str, Raw
-from marshmallow.validate import Range
-
 from werkzeug.exceptions import HTTPException
 from apphandler import app
 from models import db, digitalTwinFeed, sessions, sessionStates, rooms, professions, actuatorFeeds, buildings, \
@@ -35,8 +29,8 @@ login_manager.init_app(app)
 fb_app = firebase.FirebaseApplication('https://smartoffice-4eb51-default-rtdb.europe-west1.firebasedatabase.app/', None)
 db.init_app(app)
 mqtt.init_app(app)
-with app.app_context():
-    createAndPopulateDb()
+'''with app.app_context():
+    createAndPopulateDb()'''
 
 admin = Admin(app, name='Spazio Admin',index_view=MyHomeView())
 admin.add_view(ZoneAdmin(zones, db.session))
@@ -106,22 +100,12 @@ def homepage():
         return handleLoggedinUser("")
     else:
         return render_template('login.html',msg='')
-
-
-
-
 @app.route("/professions",methods=['GET'])
 def fetchprofessions():
     """Fetch delle professioni
        Tramite richiesta GET il server fornirà al cliet la lista delle professioni che risiedono nel Database."""
     return buildJsonList(fetchJobs())
-
-
-
 @app.route('/login',methods = ['POST'])
-@app.doc(summary='User authentication', tags=['Authentication'],)
-#@app.input({'Username': String(),'Password':String()})
-#@app.output({'logged_in': Boolean(default=False)})
 def login():
     """Login
        Tramite richiesta POST, il client dovrà fornire al server una form che comprende le credenziali Username e Password.
@@ -149,11 +133,7 @@ def login():
         return render_template('login.html',msg=msg)
     else:
         return jsonify(logged_in=False)
-
-#testato
-
 @app.route('/logout',methods = ['POST'])
-@app.doc(summary='User logout', tags=['Authentication required'])
 @login_required
 def logout():
     """Logout
@@ -223,14 +203,11 @@ def register():
             return jsonify(jobs=jobs)
         else:
             return render_template('register.html', msg=msg, jobs=jobs)
-######################################################################################################################
-#testato
+
+
+
 
 @app.route("/update",  methods = ['POST'])
-@app.doc(summary='Room settings update', tags=['Authentication required'])
-#@app.input({'color_val':Integer(required=True),'brightness_val':Integer(required=True),'temp_val':Integer(required=True)},location='json')
-#@app.input({'Content-ID':String(required=False),'token':String(required=True)},location='headers')
-#@app.output({'changes':Boolean(),'digitalTwin': Dict(keys=Str(),values=Raw())})
 #,"room_temperature": 'Integer',"room_brightness": 'String'
 @login_required
 def update():
@@ -240,41 +217,53 @@ def update():
 
     """
     content=request.headers.get("Content-ID")
+    id_user = current_user.get_id()
     if content == "UPDATE-APP":
         data=request.get_json(silent=True)
-        id_user = current_user.get_id()
-        color=data['color_val']
-        brightness=data['brightness_val']
-        temperature=data['temp_val']
-        digitalTwin=updateDigitalTwinActuators(id_user,color,brightness,temperature)
-        return jsonify(changes=True,digitalTwin=digitalTwin.serializedActuators())
-    else:
-        id_user = current_user.get_id()
-        color = colors[int(request.form['color'])]
-        brightness = brightness_values[int(request.form['brightness'])]
-        temperature = int(request.form['temperature'])
-        digitalTwin=updateDigitalTwinActuators(id_user, color, brightness, temperature)
-        return render_template('index.html',digitalTwin=digitalTwin,username=current_user.get_username(),admin=int(current_user.is_admin()))
+        if 'color_val' in data and 'brightness_val' in data and 'temp_val' in data:
 
+            color=data['color_val']
+            brightness=data['brightness_val']
+            temperature=data['temp_val']
+            digitalTwin=updateDigitalTwinActuators(id_user,color,brightness,temperature)
+            return jsonify(changes=True,digitalTwin=digitalTwin.serializedActuators())
+        actualSession = db.session.query(sessionStates).filter_by(id_user=id_user, active=True).first()
+        IdRoomOfActualSession = actualSession.id_room
+        digitalTwin = db.session.query(digitalTwinFeed).filter_by(id_room=IdRoomOfActualSession).first()
+        return jsonify(changes=False, digitalTwin=digitalTwin.serializedActuators())
+    else:
+        if 'color' in request.form and 'brightness' in request.form and 'temperature' in request.form:
+            color = colors[int(request.form['color'])]
+            brightness = brightness_values[int(request.form['brightness'])]
+            temperature = int(request.form['temperature'])
+            digitalTwin=updateDigitalTwinActuators(id_user, color, brightness, temperature)
+            weather_data = weather_report(digitalTwin.id_room)
+            return render_template('index.html',digitalTwin=digitalTwin,username=current_user.get_username(),admin=int(current_user.is_admin()),weather=weather_data)
+        else:
+            return handleLoggedinUser("")
 #testato
 
 @app.route("/selectRoom",methods = ['POST'])
 @login_required
 def occupyRoom():
     content=request.headers.get("Content-ID")
-    #id_room=-1
     id_user=0
     building=0
     if content == "SELECT-APP":
         data = request.get_json(silent=True)
-        id_user = current_user.get_id()
-        building = data['building_id']
+        if 'building_id' in data:
+            id_user = current_user.get_id()
+            building = data['building_id']
+        else:
+            jsonify(outcome="Full", buildings=buildJsonList(getFreeBuildings()))
     else:
-        #prendo dati dal form e sessione
-        building = request.form['building']
-        id_user=current_user.get_id()
-        #id_room = tryToAssignRoom(session['id_user'], building)
+        if 'building' in request.form:
+            building = request.form['building']
+            id_user=current_user.get_id()
+        else:
+            return render_template('newselect.html', buildings=buildJsonList(getFreeBuildings()), msg='errore di assegnamento', admin=int(current_user.is_admin()))
     return handleRoomAssignment(id_user,content,building)
+
 
 
 
@@ -303,7 +292,10 @@ def dashboardroom():
     if not handleViewPermission():
         print("current user is not Admin")
         return handleLoggedinUser("")
+    if 'id_room' not in request.form:
+        return handleLoggedinUser("")
     id_room = request.form['id_room']
+    digitalTwin=db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
     graphs=[]
     link="/admin/rooms"
     header="Dashboard della stanza con ID:" + str(id_room)
@@ -322,13 +314,14 @@ def dashboardroom():
     # GRAFICO CONSUMI
     graphs.append(buildRoomDailyConsumptionReport(id_room))
     graphs.append(buildRoomMonthlyConsumptionReport(id_room))
-    return render_template('dashboard.html', graphsJSON=graphs, header=header,link=link)
-
+    return render_template('dashboard_room.html', graphsJSON=graphs, header=header,link=link,digitaltwin=digitalTwin.serializedActuators_plus_noise())
 @app.route("/dashboardbuilding",methods=['POST'])
 @login_required
 def dashboardbuilding():
     if not handleViewPermission():
         print("current user is not Admin")
+        return handleLoggedinUser("")
+    if 'building_id' not in request.form:
         return handleLoggedinUser("")
     id_building = request.form['building_id']
     graphs=[]
@@ -352,14 +345,13 @@ def dashboardbuilding():
     graphs.append(buildBuildingDailyConsumptionReport(id_building))
     graphs.append(buildBuildingMonthlyConsumptionReport(id_building))
     return render_template('dashboard.html', graphsJSON=graphs, header=header,link=link)
-
-
-
 @app.route("/dashboardzone",methods=['POST'])
 @login_required
 def dashboardzone():
     if not handleViewPermission():
         print("current user is not Admin")
+        return handleLoggedinUser("")
+    if 'zone_id' not in request.form:
         return handleLoggedinUser("")
     id_zone = request.form['zone_id']
     graphs=[]
@@ -395,23 +387,31 @@ def dashboardzone():
 
 @app.route('/botAuth', methods=['POST'])
 def auth():
-    key = request.json['key']
-    key_check = db.session.query(telegram).filter_by(telegram_key=key).first()
-    if key_check is not None:#,'id_user':key_check.id_user
-        return jsonify({'status': 'AUTHENTICATED'})
+    if 'key' in request.json:
+        key = request.json['key']
+        key_check = db.session.query(telegram).filter_by(telegram_key=key).first()
+        if key_check is not None:#,'id_user':key_check.id_user
+            print("BOT AUTENTICATO")
+            return jsonify({'status': 'AUTHENTICATED'})
+        else:
+            print("BOT NON AUTENTICATO")
+            return jsonify({'status': 'NOT-AUTHENTICATED'})
     else:
         return jsonify({'status': 'NOT-AUTHENTICATED'})
-
 
 @app.route('/botReport', methods=['POST'])
 def report():
-    key = request.json['key']
-    key_check = db.session.query(telegram).filter_by(telegram_key=key).first()
-    if key_check is not None:
-        return jsonify({'status': 'AUTHENTICATED','report': fetchMontlhyReport(key_check.id_user)})
+    if 'key' in request.json:
+        key = request.json['key']
+        key_check = db.session.query(telegram).filter_by(telegram_key=key).first()
+        if key_check is not None:
+            print("BOT AUTENTICATO")
+            return jsonify({'status': 'AUTHENTICATED','report': fetchMontlhyReport(key_check.id_user)})
+        else:
+            print("BOT NON AUTENTICATO")
+            return jsonify({'status': 'NOT-AUTHENTICATED'})
     else:
         return jsonify({'status': 'NOT-AUTHENTICATED'})
-
 #################################################################################
 
 
@@ -493,7 +493,7 @@ def prepareRoom(id_user,id_session,digitalTwin,id_building):
     brightness = data['user_light']
     temperature = data['user_temp']
     timestamp = datetime.datetime.utcnow()
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(digitalTwin.id_room) + '/status', "waiting",retain=True)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(digitalTwin.id_room) + '/status', "waiting",retain=True,qos=1)
     registerAction('color', led_color, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
     registerAction('brightness', brightness, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
     registerAction('temperature', temperature, id_session, timestamp, digitalTwin.id_room, id_building, digitalTwin)
@@ -517,9 +517,9 @@ def getAIdata(id_user,digitalTwin):
                   'ext_temp': weather_data["temperature"], 'ext_humidity': weather_data["humidity"],
                   'ext_light': external_light}
     try:
-        res_temp = requests.post('http://54.86.207.49:5000/getUserTemp/',data=json.dumps(dataToSend))
-        res_brightness = requests.post('http://54.86.207.49:5000/getUserLight/', data=json.dumps(dataToSend))
-        res_color = requests.post('http://54.86.207.49:5000/getUserColor/', data=json.dumps(dataToSend))
+        res_temp = requests.post('http://54.86.207.49:5000/getUserTemp/',data=json.dumps(dataToSend),timeout=10)
+        res_brightness = requests.post('http://54.86.207.49:5000/getUserLight/', data=json.dumps(dataToSend),timeout=10)
+        res_color = requests.post('http://54.86.207.49:5000/getUserColor/', data=json.dumps(dataToSend),timeout=10)
         print('response from server:', res_temp.text)
         print('response from server:', res_brightness.text)
         print('response from server:', res_color.text)
@@ -527,7 +527,7 @@ def getAIdata(id_user,digitalTwin):
     except requests.exceptions.RequestException as e:
         print("c'è stato un errore! Prenderò i dati dall'AI locale!")
         try:
-            res = requests.post('http://localhost:5001/AI', json=dataToSend)
+            res = requests.post('http://localhost:5001/AI', json=dataToSend,timeout=10)
             print('response from server:', res.text)
             dataFromServer = res.json()
             print(dataFromServer)
@@ -589,7 +589,7 @@ def tryToAssignRoom(id_user,building):
         return {"outcome":-2,"session_state":actual_sessionState} #sessione esistente
     else:
         active_sessionStates = db.session.query(sessionStates.id_room).filter_by(active=True)  # stati attivi
-        room = db.session.query(rooms).filter(rooms.id_room.notin_(active_sessionStates)).filter_by(id_building=building).first()  # stanze libere
+        room = db.session.query(rooms).filter(rooms.id_room.notin_(active_sessionStates)).filter_by(id_building=building).filter_by(available=True).first()  # stanze libere
         if room:
             now = datetime.datetime.utcnow()
             db.session.add(sessions(timestamp_begin=now))
@@ -632,22 +632,23 @@ def tryToGetAssignedRoom(id_user):
 #testato
 def tryToFreeRoom(id_user):
     active_sessionState = db.session.query(sessionStates).filter_by(id_user=id_user, active=True).first()
-    active_session=db.session.query(sessions).filter_by(id=active_sessionState.id_session).first()
-    room = db.session.query(rooms).filter_by(id_room=active_sessionState.id_room).first()
-    user = db.session.query(User).filter_by(id=id_user).first()
-    now = datetime.datetime.utcnow()
-    active_sessionState.active=False
-    active_session.timestamp_end=now
-    db.session.commit()
-    data=buildSessionData(user,room,active_session)
-    setRoomToSleepMode(room.id_room,room.id_building)
-    feedAIData(data)
+    if active_sessionState is not None:
+        active_session=db.session.query(sessions).filter_by(id=active_sessionState.id_session).first()
+        room = db.session.query(rooms).filter_by(id_room=active_sessionState.id_room).first()
+        user = db.session.query(User).filter_by(id=id_user).first()
+        now = datetime.datetime.utcnow()
+        active_sessionState.active=False
+        active_session.timestamp_end=now
+        db.session.commit()
+        data=buildSessionData(user,room,active_session)
+        setRoomToSleepMode(room.id_room,room.id_building)
+        feedAIData(data)
     return 0
 
 def setRoomToSleepMode(id_room,id_building):
     #weather_data = weather_report(id_room)
     #mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/temperature', round(int(float(weather_data['temperature']))),retain=True)
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/status', "closed")
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/status', "closed",qos=1)
     digital_twin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
     #digital_twin.set_to_sleep_mode(round(int(float(weather_data['temperature']))))
     return 0
@@ -668,7 +669,6 @@ def buildSessionData(user,room,active_session):
             'ext_humidity':weather_data["humidity"],'ext_light':digitalTwin.light_sensor,
             'user_temp': preValentTemperature, 'user_color': preValentColor, 'user_light': preValentBrightness}
     return data
-
 #Testat0o
 def DataHistoryAccountFetch(id_session,type):
     maxDuration=0
@@ -690,17 +690,14 @@ def DataHistoryAccountFetch(id_session,type):
                 maxValue=action.value
     print("The actuator " + type + " had the value:" + str(maxValue) + " for the most time! " + str(maxDuration) + "seconds!")
     return maxValue
-
-
 #tested
 def feedAIData(data):
     fb_app.post('/sessionHistory',data)
     return 0
-
 #tested
 def registerAction(type, value,session_id,timestamp,id_room,id_building,digitalTwin):
     db.session.add(actuatorFeeds(session_id, type, value, timestamp))
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_'+str(id_room)+'/actuators/'+type, value,retain=True)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_'+str(id_room)+'/actuators/'+type, value,retain=True,qos=1)
     print('smartoffice/building_' + str(id_building) + '/room_'+str(id_room)+'/actuators/'+type)
     if type=="temperature":
         digitalTwin.temperature_actuator = value
@@ -826,12 +823,23 @@ if __name__ =="__main__":
     # DONE mettere un buon css
     #Canceled trovare una soluzione per la homepage dell'admin (Magari un div di bottoni per azione che può fare selezione/home logout)
     #DONE sistemare view della dashboard
-# TODO togliere librerie inutilizzate
+# DONE togliere librerie inutilizzate
+# TODO mandare una richiesta di raggiungibilità al Server AI
 # TODO commentare
-# TODO gestione mancanza dati form e JSON(se serve)
-# TODO testing Auth telegram
-# TODO testing Report telegram
 # TODO Stress test
+# TODO creare un power saving mode per il monitor
+# TODO gestione mancanza dati form e JSON
+    #TODO testare /update [web DONE] [vedere come gestisce l'errore]
+    #TODO testare /selectRoom [web DONE] [vedere come gestisce l'errore]
+    #TODO testare /dashboardroom [web DONE] [vedere come gestisce l'errore]
+    #TODO testare /dashboardbuilding [web DONE] [vedere come gestisce l'errore]
+    #TODO testare /dashboardzone [web DONE] [vedere come gestisce l'errore]
+    #TODO testare /freeroom [web DONE] [vedere come gestisce l'errore]
+    #TODO testare /botauth [vedere come gestisce l'errore]
+    #TODO testare /botreport [vedere come gestisce l'errore]
+# DONE testing Auth telegram
+# DONE testing Report telegram
+
 #DONE Visuale Admin
     #DONE testing le zone sono associate a un Admin
     #DONE testing problema associazione, gli Admin devono poter avere zone uguali
