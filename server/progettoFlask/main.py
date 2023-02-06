@@ -120,19 +120,83 @@ def fetchprofessions():
        Tramite richiesta GET il server fornirà al cliet la lista delle professioni che risiedono nel Database."""
     return buildJsonList(fetchJobs())
 
-
+@app.route('/registerFaceID', methods = ['GET', 'POST'])
+@app.doc(summary='User registration with Face ID', tags=['Authentication'],)
+def registerFaceID():
+    """Registrazione utente
+    Tramite richiesta GET, si riceverà la schermata Web del form di registrazione.
+    Tramite richiesta POST, il client dovrà fornire un form contenente i dati necessari, in caso di dati mancanti e/o
+    errati, gli utenti Web verranno reindirizzati alla schermata di registrazione, mentre per gli utenti app verrà
+    inviato un messaggio di esito negativo. Se la registrazione è avvenuta con successo, il Server registrerà il nuovo
+    account nel database e manderà un messaggio per comunicare l'esito positivo all'utente.
+    """
+    msg = ''
+    signedUp=False
+    jobs = fetchJobs()
+    content=request.headers.get("Content-ID")
+    if request.method == 'POST':
+        print(request.form['encoding'])
+        if 'username' in request.form and 'password'in request.form and 'birthday'in request.form and 'sex'in request.form and 'profession'in request.form and 'encoding' in request.form:
+            username = request.form['username']
+            password = request.form['password']
+            birthday= request.form['birthday']
+            sex = request.form['sex']
+            profession=request.form['profession']
+            encoding=request.form['encoding']
+            account=db.session.query(User).filter_by(username=username).first()
+            job = db.session.query(professions).filter_by(id_profession=profession).first()
+            if account:
+                msg = 'Utente esistente!'
+            elif job is None:
+                msg = 'Professione non esistente!'
+            elif not re.match(r'[A-Za-z0-9]+',username):
+                msg='L\'username deve solo contenere lettere e numeri!'
+            elif len(password)<8:
+                msg = 'inserire almeno 8 caratteri nella password!'
+            elif not username or not password:
+                msg='Riempire i campi obbligatori!'
+            else:
+                #hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
+                if (datetime.datetime.utcnow()-datetime.datetime.strptime(birthday,"%Y-%m-%d")).days/365.25 < 18:
+                    birthday=datetime.datetime.utcnow() - datetime.timedelta(days=(18*366))
+                    account = User(username=username,password=password,profession=job.name,sex=sex,dateOfBirth=birthday, encoding = encoding)
+                else:
+                    account = User(username=username,password=password,profession=job.name,sex=sex,dateOfBirth=datetime.datetime.strptime(birthday,"%Y-%m-%d"), encoding = encoding)
+                db.session.add(account)
+                db.session.commit()
+                msg = 'Ti sei registrato con successo!'
+                signedUp=True
+        else:
+            msg = 'Riempire i campi obbligatori!'
+        if content == "REGISTER-APP":
+            return jsonify(signedUp=signedUp,msg=msg)
+        else:
+            return render_template('register.html', msg=msg, jobs=jobs)
+    else:
+        if content == "REGISTER-APP":
+            jobs = buildJsonList(jobs)
+            return jsonify(jobs=jobs)
+        else:
+            return render_template('register.html', msg=msg, jobs=jobs)
+        
 
 @app.route('/loginFaceID', methods = ['POST'])
 @app.doc(summary='User authentication with Face ID', tags=['Authentication'],)
 def loginFaceID():
+
+    
     content = request.headers.get("Content-ID")
     data=request.get_json(silent=True)
-    encoding=data['encoding']
+    
+    encoding=np.fromstring(data['encoding'].replace('\n', '') , dtype='float64', sep=' ')
+    encoding = np.expand_dims(encoding, axis=0)
     print(encoding)
     
     ##DB ^v^v^v^v^ FETCH LIST OF ALL USER ENCODINGS and IDs (oppure USERNAME)
+    ##GLI encoding saranno salvati sotto forma di stringa, quindi all'aggiunta bisogna fare una decodifica con np.fromstring
     db_encodings = []
-    user_ids = [] #Questi due array devono corrispondere elemento per elemento
+    db_encodings.append(encoding)
+    user_ids = [0] #Questi due array devono corrispondere elemento per elemento
 
     for face_encoding in db_encodings:
             # See if the face is a match for the known face(s)
