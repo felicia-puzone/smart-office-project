@@ -337,6 +337,15 @@ class telegram(db.Model):
         self.telegram_key=telegram_key
 
 
+class encodings(db.Model):
+    id_user=db.Column( db.Integer, primary_key=True)
+    encoding=db.Column( db.String, primary_key=True)
+    def __init__(self, id_user, encoding):
+        self.id_user=id_user
+        self.encoding=encoding
 
+
+#db_encodings = db.session.query(encodings).all()
+#for encoding in db_encodings
 
 
