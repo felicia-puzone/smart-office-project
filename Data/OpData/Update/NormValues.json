@@ -1,0 +1,12 @@
+{
+    "norm_values": [
+        {
+            "tot_ages": 37,
+            "tot_sexes": 3,
+            "tot_tasks": 15,
+            "tot_elight": 6,
+            "tot_etemp": 33.0,
+            "tot_ehum": 4545
+        }
+    ]
+}
