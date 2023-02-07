@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'controller.dart';
 import 'home.dart';
 import 'package:iotapp/rooms_map.dart';
@@ -7,21 +6,6 @@ import 'package:iotapp/rooms_map.dart';
 final userTextController = TextEditingController();
 final pwdTextController = TextEditingController();
 
-=======
-import 'register.dart';
-import 'main.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'home.dart';
-import 'userSession.dart';
-import 'edificio.dart';
-
-//////////////// REQUEST
-final userTextController = TextEditingController();
-final pwdTextController = TextEditingController();
-
-
->>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
 class MyLogin extends StatefulWidget {
   const MyLogin({Key? key}) : super(key: key);
 
@@ -30,33 +14,14 @@ class MyLogin extends StatefulWidget {
 }
 
 class _MyLoginState extends State<MyLogin> {
-<<<<<<< HEAD
   late Future<String> futureUserSession;
 
   @override
   void initState() {
-=======
-
-  
-  @override
-  void initState() {
-    print('INIT CALLED');
->>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
     super.initState();
   }
 
   @override
-<<<<<<< HEAD
-=======
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    //userTextController.dispose();
-    //pwdTextController.dispose();
-    //super.dispose();
-  }
-
-  @override
->>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -127,7 +92,6 @@ class _MyLoginState extends State<MyLogin> {
                                 backgroundColor: Color(0xff4c505b),
                                 child: IconButton(
                                     color: Colors.white,
-<<<<<<< HEAD
                                     onPressed: () async {
                                       String result = await fetchUserSession(
                                           userTextController.text,
@@ -167,27 +131,12 @@ class _MyLoginState extends State<MyLogin> {
                                       }
                                     },
                                     icon: const Icon(
-=======
-                                    onPressed: () {
-                                      
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  UserHome()));
-                                    },
-                                    icon: Icon(
->>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
                                       Icons.arrow_forward,
                                     )),
                               ),
                             ],
                           ),
-<<<<<<< HEAD
                           const SizedBox(
-=======
-                          SizedBox(
->>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
                             height: 40,
                           ),
                           Row(

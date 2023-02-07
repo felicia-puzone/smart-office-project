@@ -103,7 +103,7 @@ packages:
       name: flutter_map_location_marker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.2.0+2"
+    version: "5.1.0+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -127,14 +127,14 @@ packages:
       name: geolocator_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.1.7"
+    version: "4.1.4"
   geolocator_apple:
     dependency: transitive
     description:
       name: geolocator_apple
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.5"
+    version: "2.2.3"
   geolocator_platform_interface:
     dependency: transitive
     description:
