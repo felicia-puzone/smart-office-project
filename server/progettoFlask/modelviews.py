@@ -1,13 +1,12 @@
 import random
 
-from flask import url_for, abort
-from flask_admin import  expose, AdminIndexView, Admin
+from flask import url_for
+from flask_admin import  expose, AdminIndexView
 from flask_admin.contrib import sqla
-from flask_admin.model.template import ViewRowAction, EditRowAction, DeleteRowAction
+from flask_admin.model.template import ViewRowAction, EditRowAction
 from flask_login import current_user, login_required
 from markupsafe import Markup
-from sqlalchemy import join
-from wtforms import StringField, BooleanField, SelectField, validators
+from wtforms import StringField, SelectField
 
 import geolog
 from models import db, buildings, User, professions, zones, sessionStates, rooms, digitalTwinFeed, sensorFeeds, \
@@ -136,7 +135,6 @@ class UserAdmin(sqla.ModelView):
             return self.session.query(self.model)
         elif current_user.is_authenticated:
             return self.session.query(self.model).filter_by(id = current_user.id)
-
 class JobAdmin(sqla.ModelView):
     column_list = ('name', 'category')
     column_exclude_list = ['id_profession']
@@ -152,11 +150,10 @@ class JobAdmin(sqla.ModelView):
     def on_form_prefill(self, form, id):
         form.name.render_kw = {'readonly': True}
 
-    def is_accessible(self):
-        if current_user.is_authenticated:
-            return current_user.is_admin()
-        else:
-            return False
+    def on_model_change(self, form, model, is_created):
+        if not current_user.is_super():
+            raise ValidationError('Operazione non autorizzata!')
+
 
     def on_model_delete(self, job):
         users = db.session.query(User).filter_by(profession=job.name).first()
@@ -294,15 +291,6 @@ class BuildingAdmin(sqla.ModelView):
         zoneids=db.session.query(zones.id_zone).filter_by(id_admin=current_user.id)
         building_ids=db.session.query(zoneToBuildingAssociation.id_building).filter(zoneToBuildingAssociation.id_zone.in_(zoneids))
         return self.session.query(self.model).filter(self.model.id_building.in_(building_ids))
-
-# DONE convertire profession alla stringa
-# DONE mettere il controllo d'inserimento della zona
-# DONE inserimento palazzi
-# DONE inserimento stanza/digitaltwin
-
-
-
-
 class MyHomeView(AdminIndexView):
     @expose('/')
     @login_required
@@ -314,14 +302,6 @@ class MyHomeView(AdminIndexView):
         if current_user.is_authenticated:
             return current_user.is_admin()
         return False
-
-
-#DONE testing eliminazione a cascata
-#DONE testing creazione e edit
-#DONE gestione del digitalTwin
-#DONE gestione accessibilità
-#inserimento,modifica ed eliminazione stanze
-#gestione del digital twin
 class RoomAdmin(sqla.ModelView):
     column_list = ('id_room','description','available','dashboard')
     form_extra_fields = {
@@ -394,7 +374,7 @@ class RoomAdmin(sqla.ModelView):
 
     def after_model_change(self, form, model, is_created):
         if is_created:
-            digital_twin = digitalTwinFeed(model.id_room,0,0,0,0)
+            digital_twin = digitalTwinFeed(model.id_room,0,0,0,0,0)
             db.session.add(digital_twin)
             db.session.commit()
         mqtt.subscribe('smartoffice/building_' + str(model.id_building) + '/room_' + str(model.id_room) + '/sensors/#')
@@ -424,7 +404,6 @@ class RoomAdmin(sqla.ModelView):
         zoneids=db.session.query(zones.id_zone).filter_by(id_admin=current_user.id)
         building_ids=db.session.query(zoneToBuildingAssociation.id_building).filter(zoneToBuildingAssociation.id_zone.in_(zoneids))
         return self.session.query(self.model).filter(self.model.id_building.in_(building_ids))
-
 #L'eliminazione e modifica non sono permesse
 #idea, assegnare alla promozione ad admin una key (Fatto)
 class TelegramAdmin(sqla.ModelView):

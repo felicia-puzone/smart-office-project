@@ -39,10 +39,11 @@ client.connect("broker.hivemq.com",1883)
 client.loop_start()
 iterations = 0
 room_size = 5 * 5 * 2.5
+
 #number_of_rooms=1
 #max_consumption_rate = 2000 * number_of_rooms #Scritto in w
 #max_consumption = max_consumption_rate * 24  #Scritto in w
-original_max=170000
+original_max=158400
 consumption_leakage=0.03
 reduction_constant=9.5
 max_consumption = original_max
@@ -56,21 +57,22 @@ db_report=sqlalchemy.create_engine('sqlite:///instance/monitor_database.db') # e
 
 
 brightness_tuple = ('LOW','MEDIUM','HIGH')
-ZONE_ID=1
+city="Modena"
+state="Italia"
 ACTIVE_SESSION_REPORT=[]
 weather_temperature=0
+power_saving_mode=False
 #db_report.execute("CREATE TABLE deltaT ( id_session  int, value int,PRIMARY KEY (id_session))")
 #db_report.execute("CREATE TABLE active_session_report ( id_session  int)")
 #db_report.execute("DROP TABLE active_session_report")
 #db_report.execute("CREATE TABLE active_session_report ( id_session  int, id_room int, id_building int, temperature VARCHAR (20), light VARCHAR (20), PRIMARY KEY (id_session))")
 #ogni 24 iterazioni la disponibilità viene resettata
-def hour_count():
+def hour_monitor():
     global iterations
     global begin_timestamp
     global end_timestamp
     global max_consumption
     global max_consumption_rate
-    global ZONE_ID
     global weather_temperature
     global number_of_rooms
     db_report.execute("DELETE FROM active_session_report")
@@ -78,12 +80,13 @@ def hour_count():
     hour_consumption = 0
     print("I'm working...")
     end_timestamp = datetime.datetime.utcnow() # calcolo ultimo istante da controllare
-    weather_query= db.execute("SELECT temperature FROM weather_report WHERE ID_ZONE="+str(ZONE_ID)+
-    " ORDER BY timestamp DESC").fetchone()
-    number_of_rooms_query=fetchZoneNumberOfrooms().fetchone()
+    weather_query= db.execute("SELECT temperature FROM weather_report WHERE ID_ZONE IN (select ID_ZONE from zones "
+    " WHERE city='"+city + "' AND state='"+state+"') ORDER BY timestamp DESC").fetchone()
+    number_of_rooms_query=int(fetchZoneNumberOfrooms().fetchone()[0])
+    print(number_of_rooms_query)
     if weather_query is not None and number_of_rooms_query is not None:
         #weather_temperature=int(float(weather_query[0]))
-        weather_temperature=5
+        weather_temperature=10
         if iterations == 0: #SETUP INIZIO ITERAZIONI
             '''print("Iterazione iniziale, ricalcolo...")
             number_of_rooms = int(float(number_of_rooms_query[0]))
@@ -93,6 +96,7 @@ def hour_count():
             print("Max consumption rate iniziale:" + str(max_consumption_rate))'''
             max_consumption=original_max
             max_consumption_rate=max_consumption/24
+            power_saving_mode=False
         else:#AGGIORNAMENTO DATI PER ITERAZIONI
             '''print("ratio di consumo attuale:" + str(max_consumption_rate))
             print("max consumption attuale:"+str(max_consumption))
@@ -141,6 +145,7 @@ def hour_count():
             print("ALERT! ABBIAMO SFORATO IL CONSUMO MASSIMO GIORNALIERO!!!!")
             print("ALERT! ABBIAMO SFORATO IL CONSUMO MASSIMO GIORNALIERO!!!!")
             print("ALERT! ABBIAMO SFORATO IL CONSUMO MASSIMO GIORNALIERO!!!!")
+            power_saving_mode=True
             iterations=23
     db_report.execute("DELETE FROM active_session_report")
     db_report.execute("DELETE FROM deltaT")
@@ -315,7 +320,7 @@ def fetchBrightnessActions():
     'join sessions ON (sessions.id_session = actuator_feeds.id_session AND sessions.id_session=session_states.id_session)'
     'join zone_to_building_association ON (rooms.id_building=zone_to_building_association.id_building)'
     'where (actuator_feeds.timestamp BETWEEN "'+str(begin_timestamp)+'" AND "'+str(end_timestamp)+'")'
-    'AND zone_to_building_association.id_zone='+str(ZONE_ID)+' '
+    'AND zone_to_building_association.id_zone IN (SELECT ID_ZONE FROM zones WHERE city="'+city+'" AND state="'+state+'" )'
     'AND actuator_feeds.type_of_action!="color" AND actuator_feeds.type_of_action!="temperature"')
 
 
@@ -330,7 +335,7 @@ def fetchTemperatureActions():
     'join sessions ON (sessions.id_session = actuator_feeds.id_session AND sessions.id_session=session_states.id_session)'
     'join zone_to_building_association ON (rooms.id_building=zone_to_building_association.id_building)'
     'where (actuator_feeds.timestamp BETWEEN "'+str(begin_timestamp)+'" AND "'+str(end_timestamp)+'")'
-    'AND zone_to_building_association.id_zone='+str(ZONE_ID)+' '
+    'AND zone_to_building_association.id_zone IN (SELECT ID_ZONE FROM zones WHERE city="'+city+'" AND state="'+state+'" )'
     'AND actuator_feeds.type_of_action!="color" AND actuator_feeds.type_of_action!="brightness"')
 
 
@@ -345,7 +350,7 @@ def fetchPastActions():#se fai un azione nel range non prende il resto
      ' WHERE timestamp <"' + str(begin_timestamp) + '" AND active=TRUE AND actuator_feeds.type_of_action!="color"'
      ' AND session_states.id_session NOT IN (SELECT id_session '
      ' FROM actuator_feeds WHERE type_of_action!="color" AND timestamp BETWEEN "'+str(begin_timestamp)+'" AND "'+str(end_timestamp)+'")'
-     ' AND zone_to_building_association.id_zone='+str(ZONE_ID)+' '
+     ' AND zone_to_building_association.id_zone IN (SELECT ID_ZONE FROM zones WHERE city="'+city+'" AND state="'+state+'" )'
      ' GROUP BY session_states.id_session,type_of_action')
 
 
@@ -353,7 +358,9 @@ def fetchZoneNumberOfrooms():
     return db.execute(" SELECT COUNT(*) FROM rooms WHERE id_building IN "
                       "(SELECT zone_to_building_association.id_building FROM zone_to_building_association "
                       " JOIN  buildings ON (zone_to_building_association.id_building = buildings.id_building)"
-                      " WHERE id_zone="+str(ZONE_ID)+" AND  available=True) AND  available=True")
+                      " WHERE id_zone  IN "
+                      " (select ID_ZONE from zones WHERE city='"+city + "' AND state='"+state+"') AND  available=True) "
+                      " AND  available=True")
 def adjustConsumption(over_consumption):
     print("#Abbiamo sforato di "+str(over_consumption))
     consumption_session_reports=db_report.execute("SELECT * FROM active_session_report").fetchall()
@@ -417,7 +424,7 @@ def fetchLastAction(id_session,timestamp,type):
                       ' JOIN zone_to_building_association ON (rooms.id_building=zone_to_building_association.id_building)'
                       ' WHERE timestamp <"' + str(begin_timestamp) + '" AND actuator_feeds.type_of_action!="color" AND actuator_feeds.type_of_action!="brightness"'
                       ' AND session_states.id_session='+str(id_session)+
-                      ' AND zone_to_building_association.id_zone=' + str(ZONE_ID) +
+                      ' AND zone_to_building_association.id_zone IN (SELECT ID_ZONE FROM zones WHERE city="'+city+'" AND state="'+state+'" )'
                       ' GROUP BY session_states.id_session,type_of_action').fetchone()
         if query is not None:
             print("#Azione trovata")
@@ -439,7 +446,7 @@ def fetchLastAction(id_session,timestamp,type):
                       ' JOIN zone_to_building_association ON (rooms.id_building=zone_to_building_association.id_building)'
                       ' WHERE timestamp <"' + str(begin_timestamp) + '" AND actuator_feeds.type_of_action!="color" AND actuator_feeds.type_of_action!="temperature"'
                       ' AND session_states.id_session='+str(id_session)+
-                      ' AND zone_to_building_association.id_zone=' + str(ZONE_ID) +
+                      ' AND zone_to_building_association.id_zone IN (SELECT ID_ZONE FROM zones WHERE city="'+city+'" AND state="'+state+'" )'
                       ' GROUP BY session_states.id_session,type_of_action').fetchone()
         if query is not None:
             print("#Azione trovata")
@@ -460,7 +467,7 @@ def fetchLastAction(id_session,timestamp,type):
 
 
 
-schedule.every(30).seconds.do(hour_count)
+schedule.every(30).seconds.do(hour_monitor)
 
 #schedule.every(60/time_constant).minutes.do(hour_count)
 while True:

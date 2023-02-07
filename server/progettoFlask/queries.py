@@ -168,11 +168,11 @@ def createAndPopulateDb():
     # db.session.add(buildings(city="Genova",route='',number='',state='Italia'))
     # db.session.add(buildings(city="Manzolino",route='via Giovanni archi',number='',state='Italia'))
     db.session.add(rooms(id_building=1))
-    db.session.add(digitalTwinFeed(1, 0, 0, 0, 0))
+    db.session.add(digitalTwinFeed(1, 0,0, 0, 0, 0))
     db.session.add(rooms(id_building=1))
-    db.session.add(digitalTwinFeed(2, 0, 0, 0, 0))
+    db.session.add(digitalTwinFeed(2, 0, 0, 0, 0, 0))
     db.session.add(rooms(id_building=1))
-    db.session.add(digitalTwinFeed(3, 0, 0, 0, 0))
+    db.session.add(digitalTwinFeed(3, 0, 0, 0, 0, 0))
     '''    db.session.add(rooms(id_building=1))
        db.session.add(rooms(id_building=1))
        db.session.add(rooms(id_building=1))
@@ -651,7 +651,7 @@ def buildBuildingMonthlyConsumptionReport(id_building):
         "values": list_values,
         "type": list_types,
     })
-    fig = px.bar(df, x="time", y="values", color="type", barmode="group", title='Consumi mensili della stanza')
+    fig = px.bar(df, x="time", y="values", color="type", barmode="group", title='Consumi mensili dell\'edificio')
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 def buildZoneDailyConsumptionReport(buildings):
     timestamp = datetime.datetime.utcnow()
@@ -672,7 +672,7 @@ def buildZoneDailyConsumptionReport(buildings):
         "values": list_values,
         "type": list_types,
     })
-    fig = px.bar(df, x="time", y="values", color="type", barmode="group", title='Consumi giornalieri dell\'edificio')
+    fig = px.bar(df, x="time", y="values", color="type", barmode="group", title='Consumi giornalieri della zona')
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 def buildZoneMonthlyConsumptionReport(buildings):
     timestamp = datetime.datetime.utcnow()
@@ -696,7 +696,7 @@ def buildZoneMonthlyConsumptionReport(buildings):
         "values": list_values,
         "type": list_types,
     })
-    fig = px.bar(df, x="time", y="values", color="type", barmode="group", title='Consumi mensili della stanza')
+    fig = px.bar(df, x="time", y="values", color="type", barmode="group", title='Consumi mensili della zona')
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
 
@@ -705,6 +705,8 @@ def fetchMontlhyReport(id_user):
     Report = ""
     timestamp = datetime.datetime.utcnow() - datetime.timedelta(days=(31))
     zones_for_report = db.session.query(zones).filter_by(id_admin=id_user).all()
+    print(id_user)
+    print(zones_for_report)
     for zone in zones_for_report:
         building_ids = db.session.query(zoneToBuildingAssociation.id_building).filter_by(id_zone=zone.id_zone)
         monthly_report = db.session.query(monthlyBuildingconsumptionReport).filter(

@@ -33,7 +33,6 @@
             <h2 class="word">
                 <form action="{{ url_for('register') }}" method="post">
                   <div class="msg">{{ msg }}</div>
-<<<<<<< HEAD
                     <input id="username" name="username" type="text" placeholder="Enter Your Username" class="textbox" required/></br></br>
                     <input id="password" name="password" type="password" placeholder="Enter Your Password" class="textbox" required/></br></br></br>
 		    <input type="date" id="birthday" name="birthday" required/>
@@ -43,9 +42,6 @@
       			<option value=3>Altro</option>
 		    </select>
 		    <select id="profession" name="profession" value=1 required>
-=======
-		    <select id="building" name="building" value=1 required>
->>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
 			{% for job in jobs%}
       				<option value={{job.id_profession}}>{{job.name}}</option>
   			{% endfor %}
@@ -53,11 +49,7 @@
 		    <input type="submit" class="btn" value="Registrati"></br>
                 </form>
             </h2>
-<<<<<<< HEAD
             <p class="bottom">Hai già un account?  <a class="bottom" href="{{url_for('homepage')}}">Accedi qui</a></p>
-=======
-            <p class="bottom">Hai già un account?  <a class="bottom" href="{{url_for('login')}}">Accedi qui</a></p>
->>>>>>> 211ed61d3cb06cf4b567dbe2af230f1e4f4796fd
           </div>
         </div>
     </body>

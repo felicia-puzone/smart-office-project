@@ -1,9 +1,6 @@
 import requests
 import datetime
-from time import strftime
-
 from sqlalchemy import extract
-
 from models import db, weatherReport, zoneToBuildingAssociation, rooms, zones, buildings
 
 

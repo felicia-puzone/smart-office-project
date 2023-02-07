@@ -54,13 +54,16 @@ def setRoomAvailability(id_room,status):
         db.session.commit()
 
 def updateDigitalTwinSensors(id_room,sensor,value):
-    if sensor != "noise_sensor":
-        with app.app_context():
+    with app.app_context():
             digitalTwin=db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
             timestamp=datetime.datetime.utcnow()
             sensorFeed = sensorFeeds(digitalTwin.id_room,sensor,value,timestamp)
             if sensor == "light_sensor":
                 digitalTwin.light_sensor=value
+                db.session.add(sensorFeed)
+                db.session.commit()
+            if sensor == "noise_sensor":
+                digitalTwin.noise_sensor = value
                 db.session.add(sensorFeed)
                 db.session.commit()
     return 0

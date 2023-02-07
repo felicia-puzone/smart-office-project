@@ -79,6 +79,7 @@ class Bridge():
   
 		
 		self.clientMQTT.publish('smartoffice/building_%s/room_%s/health' % (self.building_id, self.room_id),'Good')
+		time.sleep(1)
 
   
 
@@ -89,7 +90,7 @@ class Bridge():
 	def on_message(self, client, userdata, msg):
 		print(msg.topic + " " + str(msg.payload))
 		if msg.topic=='smartoffice/building_%s/room_%s/actuators/temperature' % (self.building_id, self.room_id):
-				
+			time.sleep(1)	
 			self.ser.write(b'\x03'+ (int(msg.payload.decode("utf-8"))).to_bytes(1, 'big') + b'\xff') 
 
 			time.sleep(1)
@@ -213,21 +214,24 @@ class Bridge():
 		# I have received a packet from the serial port. I can use it
 		if len(self.inbuffer)<2:   # at least header, size, footer
 			return False
-		# split parts
+		# If first byte is not START BYTE, exit
 		if self.inbuffer[0] != b'\xff':
 			return False
 		
+		#ID sensor
 		sensor_id = int.from_bytes(self.inbuffer[1], byteorder="little")
 		sensor_name = ''
 		match sensor_id:
 			case 1: sensor_name = 'light_sensor'
 			case 2: sensor_name = 'noise_sensor'
    
+		#Data LENGHT
 		numval = int.from_bytes(self.inbuffer[2], byteorder="little")
 		data = b''
 		for i in range (numval):
       
 			#val.append(int.from_bytes(self.inbuffer[i+2], byteorder='little'))
+			#RETRIVING DATA BYTES
 			data += self.inbuffer[i+3]
    
 			#strval = "Sensor %d: %d " % (i, val)

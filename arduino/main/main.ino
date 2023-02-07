@@ -77,7 +77,6 @@ byte serial_buf[BUFFER_SIZE];
 /* FSA Variables */
 int occupiedState = 0;
 int enteredState = 0;
-int initializedRoomState = 0;
 
 /* Current Actuators values variables */
 int currentColor = NO_COLOR;
@@ -125,39 +124,29 @@ void loop() {
     setRoomWaiting();
 
     /* Waiting for the user to enter the room */
-
+    distance_read = (uint8_t)ultrasonic.distanceRead();
     if (distance_read >= 3 && distance_read <= 10) {
 
       /* If user has crossed the door, change state */
       enteredState = 1;
+      activateRoom();
     }
-  }
-
-  /* If the user has entered the room, activate it with data given by server through MQTT */
-  if (enteredState == 1 && occupiedState == 1 && initializedRoomState == 0) {
-
-    activateRoom();
-
-    /* Change state */
-    initializedRoomState = 1;
   }
 
   /* If the room is not occupied anymore, shut down and change other states */
   if (occupiedState == 0) {
     shutDownRoom();
     enteredState = 0;
-    initializedRoomState = 0;
   }
 
   /* If the room has been activated, check if the button is pressed and send sensors data to the bridge */
-  if (enteredState == 1 && occupiedState == 1 && initializedRoomState == 1) {
+  if (enteredState == 1 && occupiedState == 1) {
 
     /* Read button state and check the state. If it is pressed (HIGH), set the room in WAITING state */
     buttonState = digitalRead(buttonPin);
 
     if (buttonState == HIGH) {
       enteredState = 0;
-      initializedRoomState = 0;
       setRoomWaiting();
     }
 
@@ -219,14 +208,14 @@ int checkSerialMessage() {
     if (serial_buf[0] == 1) {
 
       currentColor = serial_buf[1];
-      if (initializedRoomState == 1) changeStripColor(currentColor);
+      if (enteredState == 1) changeStripColor(currentColor);
     }
 
     /* ID byte 2: LED Strip actuator BRIGHTNESS change value */
     if (serial_buf[0] == 2) {
 
       currentBrightness = serial_buf[1];
-      if (initializedRoomState == 1) changeStripBrightness(currentBrightness);
+      if (enteredState == 1) changeStripBrightness(currentBrightness);
     }
 
     /* ID byte 3: LCD actuator TEMPERATURE change value */
@@ -234,7 +223,7 @@ int checkSerialMessage() {
 
       currentTemperature = serial_buf[1];
 
-      if (initializedRoomState == 1) changeTemperature(currentTemperature);
+      if (enteredState == 1) changeTemperature(currentTemperature);
     }
     return 1;
   }
@@ -286,7 +275,7 @@ void changeStripColor(int color) {
         break;
       case NYAN_CAT:
 
-        rainbow(10);
+        rainbow();
         break;
 
       default:
