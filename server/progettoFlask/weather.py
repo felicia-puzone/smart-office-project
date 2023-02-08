@@ -14,7 +14,7 @@ def weather_report(id_room):
     timestamp = datetime.datetime.utcnow()
     report= db.session.query(weatherReport).filter_by(id_zone=id_zone).filter(extract('day', weatherReport.timestamp) == timestamp.day)\
         .filter(extract('month', weatherReport.timestamp)==timestamp.month).filter(extract('year', weatherReport.timestamp)==timestamp.year)\
-        .filter(extract('hour', weatherReport.timestamp)>(timestamp.hour-3)).first()
+        .filter(extract('hour', weatherReport.timestamp)>(timestamp.hour-1)).first()
     if report is None:
         url = "http://api.openweathermap.org/data/2.5/weather?lat="+str(lat)+"&lon="+str(lon)+"&APPID=32df44a05a6ca0cb568e21166cf9cd2a&units=metric"
         response = requests.request("GET", url)

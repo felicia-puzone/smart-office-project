@@ -470,7 +470,7 @@ def createAndPopulateDb():
 
 def buildRoomLightSensorGraph(id_room):
     light_sensor_feed = db.session.query(sensorFeeds).filter_by(id_room=id_room).order_by(
-        sensorFeeds.timestamp.desc()).all()
+        sensorFeeds.timestamp.desc()).filter_by(type_of_sensor="light_sensor").all()
     list_values = []
     list_times = []
     if light_sensor_feed is not None:
@@ -480,10 +480,9 @@ def buildRoomLightSensorGraph(id_room):
     df = {"time": list_times, "values": list_values}
     fig = px.line(df, x="time", y="values", title='Sensore di luce',)
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-
 def buildBuildingLightSensorGraph(rooms_of_building):
     light_sensor_feed = db.session.query(sensorFeeds).order_by(
-        sensorFeeds.timestamp.desc()).filter(
+        sensorFeeds.timestamp.desc()).filter_by(type_of_sensor="light_sensor").filter(
         sensorFeeds.id_room.in_(rooms_of_building)).all()
     list_values = []
     list_times = []
@@ -528,13 +527,14 @@ def buildRoomBrightnessGraph(session_states):
     brightness_actuator_feed = db.session.query(actuatorFeeds).filter(
         actuatorFeeds.id_session.in_(session_states)).filter_by(type_of_action="brightness") \
         .order_by(actuatorFeeds.timestamp.desc()).all()
+    print(brightness_actuator_feed)
     list_values = []
     list_times = []
     if brightness_actuator_feed is not None:
         for brightness_actuator in brightness_actuator_feed:
             list_values.append(brightness_values.index(brightness_actuator.value))
             list_times.append(brightness_actuator.timestamp)
-
+    print(list_values)
     df = {"time": list_times, "values": list_values}
     fig = px.line(df, x="time", y="values", title='Intensità del LED')
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)

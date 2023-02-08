@@ -185,7 +185,7 @@ class BuildingAdmin(sqla.ModelView):
     form_extra_fields = {
         'state': StringField('state'),
         'route':  StringField('route'),
-        'number': StringField('number'),
+        #'number': StringField('number'),
     }
     def _format_dashboard(view, context, model, name):
         # render a form with a submit button for student, include a hidden field for the student id
@@ -212,10 +212,10 @@ class BuildingAdmin(sqla.ModelView):
         building = db.session.query(buildings).filter_by(id_building=id).first()
         zone_first = db.session.query(zoneToBuildingAssociation).filter_by(id_building=building.id_building).first().id_zone
         zone = db.session.query(zones).filter_by(id_zone=zone_first).first()
-'''        form.state.data=zone.state
-        form.number.data==
-        form.city.data=
-        form.route.data=building.address'''
+        form.state.data = zone.state
+        form.route.data=building.address
+        #form.city.data
+        '''        form.number.data==form.city.data=form.route.data=building.address'''
     def on_model_change(self, form, building, is_created):
         if form.city.data is None:
             raise ValidationError('Indirizzo non valido')
@@ -223,9 +223,9 @@ class BuildingAdmin(sqla.ModelView):
             raise ValidationError('Indirizzo non valido')
         street = ""
         if form.route.data is not None and form.route.data != '':
-            if form.number.data is not None:
-                street = formatName(form.route.data + " " + form.number.data)
-            else:
+            #if form.number.data is not None:
+            #    street = formatName(form.route.data + " " + form.number.data)
+            #else:
                 street = formatName(form.route.data)
         marker = geolog.geoMarker(formatName(form.city.data),street,formatName(form.state.data))
         print("Nuovo edificio:")
@@ -236,7 +236,7 @@ class BuildingAdmin(sqla.ModelView):
             building.city=formatName(form.city.data)
             building.lon = marker['lon']
             building.lat = marker['lat']
-            building.address = marker['route'] + " ("+formatName(form.state.data)+")"
+            building.address = marker['route'] + " "
             building.set_availability(form.available.data)
     def after_model_change(self, form, model, is_created):
          zone = db.session.query(zones).filter_by(city=formatName(form.city.data)).filter_by(state=formatName(form.state.data)).filter_by(id_admin=current_user.id)

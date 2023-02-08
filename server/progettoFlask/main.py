@@ -29,8 +29,6 @@ login_manager.init_app(app)
 fb_app = firebase.FirebaseApplication('https://smartoffice-4eb51-default-rtdb.europe-west1.firebasedatabase.app/', None)
 db.init_app(app)
 mqtt.init_app(app)
-'''with app.app_context():
-    createAndPopulateDb()'''
 
 admin = Admin(app, name='Spazio Admin',index_view=MyHomeView())
 admin.add_view(ZoneAdmin(zones, db.session))
@@ -70,9 +68,12 @@ def token_check(token):
         username = data[0]
         password_hash = data[1]
         found_user = db.session.query(User).filter_by(username=username).first()
-        found_password = found_user.password
-        if found_user and found_password == password_hash:
-            return found_user
+        if found_user is not None:
+            found_password = found_user.password
+            if found_user and found_password == password_hash:
+                return found_user
+            else:
+                return None
         else:
             return None
     except BadSignature as e:
@@ -300,7 +301,7 @@ def dashboardroom():
     link="/admin/rooms"
     header="Dashboard della stanza con ID:" + str(id_room)
     start_date = datetime.datetime.today() - datetime.timedelta(days = 30)
-    session_states = db.session.query(sessionStates.id_session).filter_by(id_room=id_room).filter_by(active=False)
+    session_states = db.session.query(sessionStates.id_session).filter_by(id_room=id_room)
     sessions_to_plot = db.session.query(sessions.id).filter(
         sessions.id.in_(session_states)).filter(sessions.timestamp_end >= start_date)
     ##GRAFICO SENSORE DI LUCE
@@ -328,11 +329,13 @@ def dashboardbuilding():
     link = "/admin/buildings"
     header="Dashboard dell'edificio' con ID:" + str(id_building)
     start_date = datetime.datetime.today() - datetime.timedelta(days = 30)
-    rooms_of_building = db.session.query(rooms.id_building).filter_by(id_building=id_building)
-    session_states = db.session.query(sessionStates.id_session).filter_by(active=False).filter(
-        sessionStates.id_room.in_(rooms_of_building))
+    rooms_of_building = db.session.query(rooms.id_room).filter_by(id_building=id_building)
+    session_states = db.session.query(sessionStates.id_session).filter(sessionStates.id_room.in_(rooms_of_building))
     sessions_to_plot = db.session.query(sessions.id).filter(
         sessions.id.in_(session_states)).filter(sessions.timestamp_end >= start_date)
+    print(rooms_of_building.all())
+    print(session_states.all())
+    print(sessions_to_plot.all())
     ##GRAFICO SENSORE DI LUCE
     graphs.append(buildBuildingLightSensorGraph(rooms_of_building))
     #GRAFICO COLORI
@@ -357,16 +360,19 @@ def dashboardzone():
     graphs=[]
     link = "/admin/zones"
     header="Dashboard della zona con ID:" + str(id_zone)
+    zone = db.session.query(zones).filter_by(id_zone=id_zone).first()
+    zones_for_weather=db.session.query(zones.id_zone).filter_by(state=zone.state).filter_by(city=zone.city)
     id_buildings = db.session.query(zoneToBuildingAssociation.id_building).filter_by(id_zone=id_zone)
     start_date = datetime.datetime.today() - datetime.timedelta(days = 30)
     rooms_of_zone = db.session.query(rooms.id_room).filter(rooms.id_building.in_(id_buildings))
-    session_states = db.session.query(sessionStates.id_session).filter_by(active=False).filter(
-        sessionStates.id_room.in_(rooms_of_zone))
+    session_states = db.session.query(sessionStates.id_session).filter(sessionStates.id_room.in_(rooms_of_zone))
     sessions_to_plot = db.session.query(sessions.id).filter(
         sessions.id.in_(session_states)).filter(sessions.timestamp_end >= start_date)
 
-    weatherReport_feed = db.session.query(weatherReport).filter_by(id_zone=id_zone) \
+    weatherReport_feed = db.session.query(weatherReport).filter(weatherReport.id_zone.in_(zones_for_weather))\
         .filter(weatherReport.timestamp >= start_date).order_by(weatherReport.timestamp.desc()).all()
+    #print(zones_for_weather)
+    print(weatherReport_feed)
     #GRAFICO TEMPERATURA METEO
     graphs.append(buildZoneWeatherGraph(weatherReport_feed))
     #GRAFICO UMIDITA'
@@ -523,7 +529,12 @@ def getAIdata(id_user,digitalTwin):
         print('response from server:', res_temp.text)
         print('response from server:', res_brightness.text)
         print('response from server:', res_color.text)
-        dataFromServer = {'user_temp':int(res_temp.text),'user_color':colors[int(res_color.text)],'user_light':brightness_values[int(res_brightness.text)]}
+        brightness = int(res_brightness.text)
+        if brightness > 2:
+            brightness=2
+        if brightness < 0:
+            brightness= 0
+        dataFromServer = {'user_temp':int(res_temp.text),'user_color':colors[int(res_color.text)],'user_light':brightness_values[brightness]}
     except requests.exceptions.RequestException as e:
         print("c'è stato un errore! Prenderò i dati dall'AI locale!")
         try:
@@ -630,7 +641,13 @@ def tryToGetAssignedRoom(id_user):
     if actualSessions:
         #session["id_room"] = actualSessions.id_room
         #session["building"] = db.session.query(rooms).filter_by(id_room=actualSessions.id_room).first().id_building
-        return actualSessions.id_room
+        welfare_check=db.session.query(sessions).filter_by(id=actualSessions.id_session).first()
+        if welfare_check is not None:
+            return actualSessions.id_room
+        else:
+            actualSessions.active=False
+            db.session.commit()
+            return -1
     else:
         return -1  #sessione non esistente
 #testato
@@ -638,15 +655,21 @@ def tryToFreeRoom(id_user):
     active_sessionState = db.session.query(sessionStates).filter_by(id_user=id_user, active=True).first()
     if active_sessionState is not None:
         active_session=db.session.query(sessions).filter_by(id=active_sessionState.id_session).first()
-        room = db.session.query(rooms).filter_by(id_room=active_sessionState.id_room).first()
-        user = db.session.query(User).filter_by(id=id_user).first()
-        now = datetime.datetime.utcnow()
-        active_sessionState.active=False
-        active_session.timestamp_end=now
-        db.session.commit()
-        data=buildSessionData(user,room,active_session)
-        setRoomToSleepMode(room.id_room,room.id_building)
-        feedAIData(data)
+        if active_session is not None:
+            room = db.session.query(rooms).filter_by(id_room=active_sessionState.id_room).first()
+            user = db.session.query(User).filter_by(id=id_user).first()
+            now = datetime.datetime.utcnow()
+            active_sessionState.active=False
+            active_session.timestamp_end=now
+            db.session.commit()
+            data=buildSessionData(user,room,active_session)
+            setRoomToSleepMode(room.id_room,room.id_building)
+            feedAIData(data)
+        else:
+            room = db.session.query(rooms).filter_by(id_room=active_sessionState.id_room).first()
+            active_sessionState.active=False
+            setRoomToSleepMode(room.id_room, room.id_building)
+            db.session.commit()
     return 0
 
 def setRoomToSleepMode(id_room,id_building):
