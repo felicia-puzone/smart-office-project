@@ -3,7 +3,7 @@ import schedule
 
 def update():
     try:
-        requests.post('http://127.0.0.1:5000/systemUpdate/')
+        requests.post('http://127.0.0.1:5000/systemUpdate/',data={'pippo':2})
     except requests.exceptions.RequestException as e:
         print("Non ho aggiornato")
 

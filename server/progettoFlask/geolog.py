@@ -7,12 +7,15 @@ def geoMarker(city,route,state):
     geolocator = Nominatim(user_agent='smartoffice')
     address=""
     if  route == "":
-        address=city+","+state
+        print("111111Via non trovata")
+        address=city.strip()+" "+state.strip()
     else:
-        address=city+","+route+","+state
+        address=city.strip()+" "+route.strip()+" "+state.strip()
+    print("mando all'API questo indirizzo:"+address)
     location = geolocator.geocode(address, exactly_one=True)
     if location is None:
-        address = city + "," + state
+        print("Via non trovata")
+        address = city.strip() + " " + state.strip()
         location = geolocator.geocode(address, exactly_one=True)
         if location is None:
             return None
