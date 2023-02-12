@@ -7,7 +7,7 @@ def check_auth(key: str) -> dict:
     key:str - Manager secret key
     Return:dict - JSON data
     """
-    url = "http://127.0.0.1:5000/botAuth"
+    url = "http://34.199.236.138:5000/botAuth"
     params = {"key": key}
     response = requests.post(url, json = params)
 
@@ -17,7 +17,7 @@ def send_report(key: str) -> dict:
     """Get energy consumption report
     Return:dict - JSON data
     """
-    url = "http://127.0.0.1:5000/botReport"
+    url = "http://34.199.236.138:5000/botReport"
     params = {"key": key}
     response = requests.post(url, json = params)
 

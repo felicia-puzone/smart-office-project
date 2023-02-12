@@ -304,6 +304,8 @@ def dashboardroom():
     session_states = db.session.query(sessionStates.id_session).filter_by(id_room=id_room)
     sessions_to_plot = db.session.query(sessions.id).filter(
         sessions.id.in_(session_states)).filter(sessions.timestamp_end >= start_date)
+    print("###################àSessioni da plottare#################")
+    print(sessions_to_plot.all())
     ##GRAFICO SENSORE DI LUCE
     graphs.append(buildRoomLightSensorGraph(id_room))
     #GRAFICO COLORI
@@ -675,7 +677,7 @@ def tryToFreeRoom(id_user):
 def setRoomToSleepMode(id_room,id_building):
     #weather_data = weather_report(id_room)
     #mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/actuators/temperature', round(int(float(weather_data['temperature']))),retain=True)
-    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/status', "closed",qos=1)
+    mqtt.publish('smartoffice/building_' + str(id_building) + '/room_' + str(id_room) + '/status', "closed",qos=1,retain=True)
     digital_twin = db.session.query(digitalTwinFeed).filter_by(id_room=id_room).first()
     #digital_twin.set_to_sleep_mode(round(int(float(weather_data['temperature']))))
     return 0

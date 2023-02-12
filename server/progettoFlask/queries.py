@@ -524,9 +524,12 @@ def buildRoomColorGraph(session_states):
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
 def buildRoomBrightnessGraph(session_states):
+    print("printo di nuovo le sessioni")
+    print(session_states.all())
     brightness_actuator_feed = db.session.query(actuatorFeeds).filter(
         actuatorFeeds.id_session.in_(session_states)).filter_by(type_of_action="brightness") \
         .order_by(actuatorFeeds.timestamp.desc()).all()
+    print("#####LISTA ATTUATORI DI LUMINOSITà")
     print(brightness_actuator_feed)
     list_values = []
     list_times = []
