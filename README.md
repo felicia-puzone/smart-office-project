@@ -22,6 +22,13 @@ Here's why:
 * ...
 * ... :smile:
 
+### System Design
+<div align="center">
+  <a href="https://github.com/othneildrew/Best-README-Template">
+    <img src="smart_office_doc/design_schema.png" alt="design">
+  </a>
+ </div>
+
 
 <br>
 
@@ -37,8 +44,6 @@ This section should list any major frameworks/libraries used to bootstrap your p
 * [![Laravel][Laravel.com]][Laravel-url]
 * [![Bootstrap][Bootstrap.com]][Bootstrap-url]
 * [![JQuery][JQuery.com]][JQuery-url]
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
