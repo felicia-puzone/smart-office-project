@@ -15,8 +15,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Lorem Ipsum 
-
+ばか ばか ばか
 Here's why:
 * ...
 * ...
