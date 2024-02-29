@@ -15,11 +15,11 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-ばか ばか ばか
-Here's why:
-* ...
-* ...
-* ... :smile:
+ばか ばか ばか <br>
+Main Contributors:
+* Felicia
+* Bilel
+* Vince
 
 ### System Design
 <div align="center">
