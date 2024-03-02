@@ -18,8 +18,11 @@
 ばか ばか ばか <br>
 Main Contributors:
 * Felicia
-* Bilel
+  - Building electronic prototipe, cabling, wiring, Arduino C code and MQTT protocol API both on MCU, python server-side and mobile application, Flutter app developement, CSS styling of the web app, telegram API connection, power consumption algorithm
+* Bilel (BillyArfaoui ex account now NakajimaAkemi)
+  - Back-end Flask developement, SQL database building, management and queries, Firebase database connection and management, web application, AWS EC2 containers management, Openweather and geolocalization APIs, power consumption algorithm
 * Vince
+  - Data preprocessing, machine learning algorithms
 
 ### System Design
 <div align="center">
@@ -33,16 +36,17 @@ Main Contributors:
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
+* [![Python][python-badge]][python-url]
+* [![Flutter][flutter-badge]][flutter-url]
+* [![AWS][aws-badge]][aws-url]
+* [![Arduino][arduino-badge]][arduino-url]
+* [![HiveMQ][hivemq-badge]][hivemq-url]
+* [![Flask][flask-badge]][flask-url]
+* [![HTML5][html-badge]][html-url]
+* [![CSS][css-badge]][css-url]
+* [![Firebase][firebase-badge]][firebase-url]
+* [![Telegram API][telegram-badge]][telegram-url]
+* [![SQL Alchemy][sqlalchemy-badge]][sqlalchemy-url]
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
@@ -57,22 +61,26 @@ This section should list any major frameworks/libraries used to bootstrap your p
 [issues-url]: https://github.com/othneildrew/Best-README-Template/issues
 [license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/othneildrew
 [product-screenshot]: images/screenshot.png
-[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
-[Next-url]: https://nextjs.org/
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
-[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
-[Svelte-url]: https://svelte.dev/
-[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
-[Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
+[flutter-badge]: https://img.shields.io/badge/Flutter-badge?style=for-the-badge&logo=flutter&labelColor=%2302569B&color=%2302569B
+[flutter-url]: https://flutter.dev/
+[flask-badge]: https://img.shields.io/badge/Flask-badge?style=for-the-badge&logo=flask&labelColor=%23000000&color=%23000000&logoColor=%23FAFAFA
+[flask-url]: https://flask.palletsprojects.com/en/3.0.x/
+[aws-badge]: https://img.shields.io/badge/AWS-badge?style=for-the-badge&logo=amazonec2&labelColor=%23FF9900&color=%23FF9900&logoColor=%23FAFAFA
+[aws-url]: https://www.aboutamazon.eu/
+[python-badge]: https://img.shields.io/badge/Python-badge?style=for-the-badge&logo=python&labelColor=%233776AB&color=%233776AB&logoColor=%23FAFAFA
+[python-url]: https://www.python.org/
+[hivemq-badge]: https://img.shields.io/badge/HiveMQ-badge?style=for-the-badge&logo=hivemq&labelColor=%23FFC000&color=%23FFC000&logoColor=%23FAFAFA
+[hivemq-url]: https://www.hivemq.com/
+[firebase-badge]: https://img.shields.io/badge/firebase-badge?style=for-the-badge&logo=firebase&labelColor=%23FFCA28&color=%23FFCA28&logoColor=%23FAFAFA
+[firebase-url]: https://firebase.google.com
+[arduino-badge]: https://img.shields.io/badge/arduino-badge?style=for-the-badge&logo=arduino&labelColor=%2300878F&color=%2300878F&logoColor=%23FAFAFA
+[arduino-url]: https://www.arduino.cc
+[html-badge]: https://img.shields.io/badge/html-badge?style=for-the-badge&logo=html5&labelColor=%23E34F26&color=%23E34F26&logoColor=%23FAFAFA
+[html-url]: https://en.wikipedia.org/wiki/HTML
+[css-badge]: https://img.shields.io/badge/css-badge?style=for-the-badge&logo=css3&labelColor=%231572B6&color=%231572B6&logoColor=%23FAFAFA
+[css-url]: https://it.wikipedia.org/wiki/CSS
+[telegram-badge]: https://img.shields.io/badge/telegram-badge?style=for-the-badge&logo=telegram&logoColor=%23FAFAFA&labelColor=%2326A5E4&color=%2326A5E4
+[telegram-url]: https://core.telegram.org/
+[sqlalchemy-badge]: https://img.shields.io/badge/telegram-badge?style=for-the-badge&logo=telegram&logoColor=%23FAFAFA&labelColor=%2326A5E4&color=%2326A5E4
+[sqlalchemy-url]: https://www.sqlalchemy.org/
