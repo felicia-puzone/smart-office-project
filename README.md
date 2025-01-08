@@ -15,7 +15,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-ばか ばか ばか <br>
+<br>
 Main Contributors:
 * Felicia
   - Building electronic prototipe, cabling, wiring, Arduino C code and MQTT protocol API both on MCU, python server-side and mobile application, Flutter app developement, CSS styling of the web app, telegram API connection, power consumption algorithm
